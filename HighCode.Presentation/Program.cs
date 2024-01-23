@@ -1,4 +1,5 @@
 using HighCode.Presentation.Data;
+using HighCode.Presentation.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
@@ -20,11 +22,18 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    
 }
 else
 {
     app.UseExceptionHandler("/Home/Error");
 }
+var sp = app.Services.CreateScope().ServiceProvider;
+SeedBaseData.InitSystem(
+    sp.GetService<UserManager<IdentityUser>>(),
+    sp.GetService<RoleManager<IdentityRole>>()
+    );
+
 app.UseStaticFiles();
 
 app.UseRouting();

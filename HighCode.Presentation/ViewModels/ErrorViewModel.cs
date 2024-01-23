@@ -1,4 +1,4 @@
-namespace HighCode.Presentation.Models
+namespace HighCode.Presentation.ViewModels
 {
     public class ErrorViewModel
     {
