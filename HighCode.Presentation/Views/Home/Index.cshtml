@@ -1,31 +1,22 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-<div class="text-center">
-    @if (User.IsInRole("Admin"))
-    {
-        <div class="d-flex gap-1 flex-row">
-            <form asp-action="ChangeRole" method="post">
-                <input type="radio" name="role" value="0" /> User
-                <input type="radio" name="role" value="1" /> Moderator
-                <button type="submit" class="btn btn-sm btn-primary">Add role</button>
-            </form>
-            <form asp-action="ResetRoles" method="post">
-                <button type="submit" class="btn btn-sm btn-primary d-flex">Reset roles</button>
-            </form>
 
-            <span>you are admin</span>
-            @if (User.IsInRole("Moderator"))
-            {
-                <span>,moder</span>
-            }
-            @if (User.IsInRole("User"))
-            {
-                <span>,user</span>
-            }
-        </div>
-        
+<style>
+    .hero_h1_gradient{
+        background-image: linear-gradient(to right, blue, red);
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
+</style>
 
-    
+<div class="text-center">
+    <h1 class="hero_h1_gradient">
+        Достигайте мастерства
+    </h1>
+    <h1>бросая вызов</h1>
+    <p>Совершенствуйте свои навыки разработки, тренируясь со своими коллегами по code, которые постоянно бросают вызов вашей практике программирования и расширяют ее.</p>
+@*     <a class="btn btn-primary btn-lg" asp-area="Identity" asp-page="/Account/Register">Начать</a>
+ *@    
+    <a class="btn btn-primary btn-lg" asp-page="/CodeTasks">Начать</a>
 </div>

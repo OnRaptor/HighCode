@@ -1,0 +1,43 @@
+﻿@model HighCode.Presentation.ViewModels.TaskSolutionViewModel
+
+@{
+    ViewData["Title"] = "Решение задачи";
+}
+
+<style>
+    .code_area{
+        resize: none;
+        outline: none;
+        border: none;
+        border-radius: 9px;
+        background-color: floralwhite;
+        font-family: Consolas;
+
+    }
+    .code_area:focus{
+        outline: none;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-5">
+        <h3>@Model.CodeTask.Title</h3>
+        <p>@Model.CodeTask.Description<p/>
+        <div class="form-group">
+            <input type="submit" value="Проверка" class="btn btn-secondary" />
+            <input type="submit" value="Отправка" class="btn btn-primary" />
+        </div>
+    </div>
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <textarea rows="12" cols="80" class="code_area code">@Model.CodeBoilerplate</textarea>
+            <textarea class="code_area" rows="11" cols="80">@Model.CodeTask.UnitTestCode</textarea>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

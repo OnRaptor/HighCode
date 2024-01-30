@@ -7,30 +7,27 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HighCode.Presentation.Data;
 using HighCode.Presentation.Data.Models;
-using Microsoft.AspNetCore.Authorization;
+using HighCode.Presentation.ViewModels;
+using HighCode.Presentation.Data.CodeTemplates;
 
 namespace HighCode.Presentation.Controllers
 {
-
-    [Authorize(Roles = "Moderator")]
-    public class CodeTasksController : Controller
+    public class CodeTaskSolutionsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CodeTasksController(ApplicationDbContext context)
+        public CodeTaskSolutionsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: CodeTasks
-        [AllowAnonymous]
+        // GET: CodeTaskSolutions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CodeTasks.ToListAsync());
+            return View(await _context.CodeTaskSolutions.ToListAsync());
         }
 
-        // GET: CodeTasks/Details/5
-        [AllowAnonymous]
+        // GET: CodeTaskSolutions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -38,39 +35,43 @@ namespace HighCode.Presentation.Controllers
                 return NotFound();
             }
 
-            var codeTask = await _context.CodeTasks
+            var codeTaskSolution = await _context.CodeTaskSolutions
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (codeTask == null)
+            if (codeTaskSolution == null)
             {
                 return NotFound();
             }
 
-            return View(codeTask);
+            return View(codeTaskSolution);
         }
 
-        // GET: CodeTasks/Create
-        public IActionResult Create()
+        // GET: CodeTaskSolutions/Create?id
+        public async Task<IActionResult> Create(int CodeTaskId)
         {
-            return View();
+            var codeTask = await _context.CodeTasks.FindAsync(CodeTaskId);
+            var vm = new TaskSolutionViewModel();
+            vm.CodeTask = codeTask;
+            vm.CodeBoilerplate = CsharpTemplates.CreateTemplate(codeTask.TemplateFuncSignature);
+            return View(vm);
         }
 
-        // POST: CodeTasks/Create
+        // POST: CodeTaskSolutions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,UnitTestCode,TemplateFuncSignature,Complexity,ProgrammingLanguage")] CodeTask codeTask)
+        public async Task<IActionResult> Create([Bind("Id,Code")] CodeTaskSolution codeTaskSolution)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(codeTask);
+                _context.Add(codeTaskSolution);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(codeTask);
+            return View(codeTaskSolution);
         }
 
-        // GET: CodeTasks/Edit/5
+        // GET: CodeTaskSolutions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -78,22 +79,22 @@ namespace HighCode.Presentation.Controllers
                 return NotFound();
             }
 
-            var codeTask = await _context.CodeTasks.FindAsync(id);
-            if (codeTask == null)
+            var codeTaskSolution = await _context.CodeTaskSolutions.FindAsync(id);
+            if (codeTaskSolution == null)
             {
                 return NotFound();
             }
-            return View(codeTask);
+            return View(codeTaskSolution);
         }
 
-        // POST: CodeTasks/Edit/5
+        // POST: CodeTaskSolutions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,UnitTestCode,TemplateFuncSignature,Complexity,ProgrammingLanguage")] CodeTask codeTask)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Code,VotesUp,VotesDown")] CodeTaskSolution codeTaskSolution)
         {
-            if (id != codeTask.Id)
+            if (id != codeTaskSolution.Id)
             {
                 return NotFound();
             }
@@ -102,12 +103,12 @@ namespace HighCode.Presentation.Controllers
             {
                 try
                 {
-                    _context.Update(codeTask);
+                    _context.Update(codeTaskSolution);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CodeTaskExists(codeTask.Id))
+                    if (!CodeTaskSolutionExists(codeTaskSolution.Id))
                     {
                         return NotFound();
                     }
@@ -118,10 +119,10 @@ namespace HighCode.Presentation.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(codeTask);
+            return View(codeTaskSolution);
         }
 
-        // GET: CodeTasks/Delete/5
+        // GET: CodeTaskSolutions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -129,34 +130,34 @@ namespace HighCode.Presentation.Controllers
                 return NotFound();
             }
 
-            var codeTask = await _context.CodeTasks
+            var codeTaskSolution = await _context.CodeTaskSolutions
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (codeTask == null)
+            if (codeTaskSolution == null)
             {
                 return NotFound();
             }
 
-            return View(codeTask);
+            return View(codeTaskSolution);
         }
 
-        // POST: CodeTasks/Delete/5
+        // POST: CodeTaskSolutions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var codeTask = await _context.CodeTasks.FindAsync(id);
-            if (codeTask != null)
+            var codeTaskSolution = await _context.CodeTaskSolutions.FindAsync(id);
+            if (codeTaskSolution != null)
             {
-                _context.CodeTasks.Remove(codeTask);
+                _context.CodeTaskSolutions.Remove(codeTaskSolution);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CodeTaskExists(int id)
+        private bool CodeTaskSolutionExists(int id)
         {
-            return _context.CodeTasks.Any(e => e.Id == id);
+            return _context.CodeTaskSolutions.Any(e => e.Id == id);
         }
     }
 }

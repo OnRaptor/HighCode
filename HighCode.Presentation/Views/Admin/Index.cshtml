@@ -1,0 +1,26 @@
+﻿
+@{
+    ViewData["Title"] = "View";
+}
+
+<div class="d-flex gap-1 flex-row">
+    <form asp-action="ChangeRole" method="post">
+        <input type="radio" name="role" value="0" /> User
+        <input type="radio" name="role" value="1" /> Moderator
+        <button type="submit" class="btn btn-sm btn-primary">Add role</button>
+    </form>
+    <form asp-action="ResetRoles" method="post">
+        <button type="submit" class="btn btn-sm btn-primary d-flex">Reset roles</button>
+    </form>
+
+    <span>you are admin</span>
+    @if (User.IsInRole("Moderator"))
+    {
+        <span>,moder</span>
+    }
+    @if (User.IsInRole("User"))
+    {
+        <span>,user</span>
+    }
+</div>
+
