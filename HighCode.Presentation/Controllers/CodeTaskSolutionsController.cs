@@ -45,30 +45,38 @@ namespace HighCode.Presentation.Controllers
             return View(codeTaskSolution);
         }
 
-        // GET: CodeTaskSolutions/Create?id
-        public async Task<IActionResult> Create(int CodeTaskId)
+        public async Task<IActionResult> TestCode(int codeTaskId, string code)
         {
-            var codeTask = await _context.CodeTasks.FindAsync(CodeTaskId);
+            var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
+            
+            return Json(true);
+        }
+
+        // GET: CodeTaskSolutions/Create?id
+        public async Task<IActionResult> Create(int codeTaskId)
+        {
+            var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
             var vm = new TaskSolutionViewModel();
-            vm.CodeTask = codeTask;
-            vm.CodeBoilerplate = CsharpTemplates.CreateTemplate(codeTask.TemplateFuncSignature);
+            if (codeTask != null)
+            {
+                vm.CodeTask = codeTask;
+                vm.CodeBoilerplate = CsharpTemplates.CreateTemplate(codeTask.TemplateFuncSignature);
+            }
+            
             return View(vm);
         }
 
         // POST: CodeTaskSolutions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Code")] CodeTaskSolution codeTaskSolution)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(codeTaskSolution);
-                await _context.SaveChangesAsync();
+                if (codeTaskSolution.IsTested)
                 return RedirectToAction(nameof(Index));
             }
-            return View(codeTaskSolution);
+            return View();
         }
 
         // GET: CodeTaskSolutions/Edit/5

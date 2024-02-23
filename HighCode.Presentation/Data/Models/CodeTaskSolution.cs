@@ -11,5 +11,6 @@ namespace HighCode.Presentation.Data.Models
         public IEnumerable<Comment> Comments { get; set; }
         public int VotesUp {  get; set; }
         public int VotesDown {  get; set; }
+        public bool IsTested { get; set; }
     }
 }

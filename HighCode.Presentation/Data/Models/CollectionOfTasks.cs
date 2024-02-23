@@ -10,6 +10,6 @@ namespace HighCode.Presentation.Data.Models
         public int Complexity { get; set; }
         public string Description { get; set; }
         public IdentityUser Author { get; set; }
-        public IEnumerable<string> ProgrammingLanguages { get; set; }
+        public string ProgrammingLanguages { get; set; }
     }
 }
