@@ -8,15 +8,22 @@
         background-clip: text;
         -webkit-text-fill-color: transparent;
     }
+    
+    main
+    {
+        display: flex;
+        justify-content: center;
+    }
+        
 </style>
 
-<div class="text-center">
+<div class="w-50 justify-content-center d-flex flex-column text-center">
     <h1 class="hero_h1_gradient">
         Достигайте мастерства
     </h1>
     <h1>бросая вызов</h1>
-    <p>Совершенствуйте свои навыки разработки, тренируясь со своими коллегами по code, которые постоянно бросают вызов вашей практике программирования и расширяют ее.</p>
+    <p style="display: flex; justify-content: center; text-align: center;">Совершенствуйте свои навыки разработки, тренируясь со своими коллегами по code, которые постоянно бросают вызов вашей практике программирования и расширяют ее.</p>
 @*     <a class="btn btn-primary btn-lg" asp-area="Identity" asp-page="/Account/Register">Начать</a>
  *@    
-    <a class="btn btn-primary btn-lg" asp-action="Index" asp-controller="CodeTasks">Начать</a>
+    <a class="btn btn-primary" asp-action="Index" asp-controller="CodeTasks">Начать</a>
 </div>
