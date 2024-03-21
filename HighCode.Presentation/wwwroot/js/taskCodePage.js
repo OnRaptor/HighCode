@@ -2,18 +2,24 @@ var checkBtn = $("#checkBtn")
 var sendBtn = $("#sendBtn")
 
 checkBtn.click(_ =>{
+    var code = $("#userCode").val().trim()
+    console.log(code)
     $.ajax({
         url: "/CodeTaskSolutions/TestCode",
         method: 'get',             /* Метод запроса (post или get) */
-        dataType: 'json',          /* Тип данных в ответе (xml, json, script, html). */
+        dataType: 'text',          /* Тип данных в ответе (xml, json, script, html). */
         data: {
             codeTaskId: checkBtn.data("codetaskid"),
-            code: $("#userCode").html()
+            code: code
         },
         success: function (data, status) {
+            $("#codeStatus").text(data)
             if (data === true){
                 $("#codeStatus").text("Код прошел тестирование")
             }
+        },
+        error: function (data, status){
+            $("#codeStatus").text(data)
         }
     })
 })

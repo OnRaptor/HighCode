@@ -18,23 +18,29 @@
         outline: none;
     }
 </style>
-
+<head>
+    <link
+    	rel="stylesheet"
+    	data-name="vs/editor/editor.main"
+    	href="~/lib/vs/editor/editor.main.css"
+    		/>
+</head>
 <div class="row">
     <div class="col-md-5">
         <h3>@Model.CodeTask.Title</h3>
         <p>@Model.CodeTask.Description<p/>
         <div class="form-group">
             <input type="submit" id="checkBtn" data-codetaskid=@Model.CodeTask.Id value="Проверка" class="btn btn-secondary" />
-            <input type="submit" id="sendBtn" value="Отправка" class="btn btn-primary" />
+            <input type="submit" id="sendBtn" value="Сохранить" class="btn btn-primary" />
         </div>
         <p id="codeStatus"></p>
     </div>
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div id="container" class="col-md-4">
+        @*<form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <textarea id="userCode" rows="12" cols="80" class="code_area code">@Model.CodeBoilerplate</textarea>
             <textarea class="code_area" rows="11" cols="80">@Model.CodeTask.UnitTestCode</textarea>
-        </form>
+        </form>*@
     </div>
 </div>
 
@@ -42,4 +48,17 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script src="~/js/taskCodePage.js"></script>
+    <script>
+        var require = { paths: { vs:'~/lib/vs' } };
+    </script>
+    <script src="~/lib/vs/loader.js"></script>
+    <script src="~/lib/vs/editor/editor.main.nls.js"></script>
+    <script src="~/lib/vs/editor/editor.main.js"></script>
+
+    <script>
+        var editor = monaco.editor.create(document.getElementById('container'), {
+            value: ['@Model.CodeBoilerplate'],
+            language: 'c#'
+        });
+    </script>
 }

@@ -48,8 +48,9 @@ namespace HighCode.Presentation.Controllers
         public async Task<IActionResult> TestCode(int codeTaskId, string code)
         {
             var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
-            
-            return Json(true);
+            var resultedCode = $"using NUnit.Framework;using NUnit.Framework.Constraints;\n{code}\n{codeTask.UnitTestCode}";
+            var result = await UnitTestExecutor.Execute(resultedCode);
+            return Content(result);
         }
 
         // GET: CodeTaskSolutions/Create?id
