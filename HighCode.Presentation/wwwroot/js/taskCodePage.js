@@ -2,8 +2,7 @@ var checkBtn = $("#checkBtn")
 var sendBtn = $("#sendBtn")
 
 checkBtn.click(_ =>{
-    var code = $("#userCode").val().trim()
-    console.log(code)
+    var code = window.codeEditor.getModel().getValue()
     $.ajax({
         url: "/CodeTaskSolutions/TestCode",
         method: 'get',             /* Метод запроса (post или get) */

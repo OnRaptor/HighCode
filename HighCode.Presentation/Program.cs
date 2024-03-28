@@ -1,3 +1,4 @@
+using System.Reflection;
 using HighCode.Presentation.Data;
 using HighCode.Presentation.Utils;
 using Microsoft.AspNetCore.Identity;
@@ -43,5 +44,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
 
 app.Run();

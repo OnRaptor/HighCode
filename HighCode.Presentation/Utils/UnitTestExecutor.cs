@@ -14,28 +14,6 @@ using NUnit.Framework.Constraints;
 
 public class UnitTestExecutor
 {
-    /*public async static Task<string> Execute(string code)
-    {
-        var options = ScriptOptions.Default
-            .AddReferences(Assembly.Load("NUnit"))
-            .AddImports("NUnit");
-        var script = CSharpScript.Create(code, options);
-        ScriptState state;
-        try
-        { 
-            state = await script.RunAsync();
-        }
-        catch (CompilationErrorException e)
-        {
-            return e.Message;
-        }
-
-        if (state.Exception != null)
-            return state.Exception.Message;
-
-        return state.ReturnValue as string;
-    }*/
-
     public async static Task<string> Execute(string code)
     {
         // Создание сборки из исходного кода
@@ -45,8 +23,8 @@ public class UnitTestExecutor
         {
             MetadataReference.CreateFromFile(typeof(object).Assembly.Location), 
             MetadataReference.CreateFromFile(typeof(Enumerable).Assembly.Location), 
-            MetadataReference.CreateFromFile(typeof(NUnit.Framework.Assert).Assembly.Location),
-            MetadataReference.CreateFromFile(@"C:\Program Files\dotnet\shared\Microsoft.NETCore.App\7.0.16\System.Runtime.dll")
+            MetadataReference.CreateFromFile(typeof(Assert).Assembly.Location),
+            MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location),
         };
         CSharpCompilation compilation = CSharpCompilation.Create(assemblyName, new[] { syntaxTree }, references, new CSharpCompilationOptions(OutputKind.DynamicallyLinkedLibrary));
         Assembly? resultAssembly = null;

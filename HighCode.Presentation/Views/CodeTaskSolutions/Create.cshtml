@@ -18,13 +18,6 @@
         outline: none;
     }
 </style>
-<head>
-    <link
-    	rel="stylesheet"
-    	data-name="vs/editor/editor.main"
-    	href="~/lib/vs/editor/editor.main.css"
-    		/>
-</head>
 <div class="row">
     <div class="col-md-5">
         <h3>@Model.CodeTask.Title</h3>
@@ -35,30 +28,37 @@
         </div>
         <p id="codeStatus"></p>
     </div>
-    <div id="container" class="col-md-4">
-        @*<form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <textarea id="userCode" rows="12" cols="80" class="code_area code">@Model.CodeBoilerplate</textarea>
-            <textarea class="code_area" rows="11" cols="80">@Model.CodeTask.UnitTestCode</textarea>
-        </form>*@
+    <div class="col-md-7">
+        <div id="container1" style="width: 100%; height: 30vh;"></div>
+        <p style="margin-left: 30px">Код для тестирования:</p>
+        <div id="container2" style="width: 100%; height: 30vh; margin-top: 10px"></div>
     </div>
 </div>
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script src="~/js/taskCodePage.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"
+        integrity="sha256-0SGl1PJNDyJwcV5T+weg2zpEMrh7xvlwO4oXgvZCeZk="
+        crossorigin="anonymous"></script>
     <script>
-        var require = { paths: { vs:'~/lib/vs' } };
-    </script>
-    <script src="~/lib/vs/loader.js"></script>
-    <script src="~/lib/vs/editor/editor.main.nls.js"></script>
-    <script src="~/lib/vs/editor/editor.main.js"></script>
-
-    <script>
-        var editor = monaco.editor.create(document.getElementById('container'), {
-            value: ['@Model.CodeBoilerplate'],
-            language: 'c#'
+        require.config({ paths: { vs: '../lib/vs' } });
+        
+        require(['vs/editor/editor.main'], function () {
+            window.codeEditor = monaco.editor.create(document.getElementById('container1'), {
+                value: `@Html.Raw(Model.CodeBoilerplate)`,
+                language: 'csharp',
+                minimap: { enabled: false },
+                autoIndent: 'full'
+            });
+            monaco.editor.create(document.getElementById('container2'), {
+                value: `@Html.Raw(Model.CodeTask.UnitTestCode)`,
+                language: 'csharp',
+                minimap: { enabled: false },
+                readOnly: true
+            });
         });
     </script>
 }
