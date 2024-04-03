@@ -35,6 +35,7 @@ public class UnitTestExecutor
             var result = compilation.Emit(ms);
             if (!result.Success)
             {
+                sb.AppendLine("🤡Ошибки:");
                 foreach (var diagnostic in result.Diagnostics)
                 {
                     sb.AppendLine(diagnostic.GetMessage());

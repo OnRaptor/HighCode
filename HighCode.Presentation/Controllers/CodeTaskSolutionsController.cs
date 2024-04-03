@@ -9,16 +9,19 @@ using HighCode.Presentation.Data;
 using HighCode.Presentation.Data.Models;
 using HighCode.Presentation.ViewModels;
 using HighCode.Presentation.Data.CodeTemplates;
+using Microsoft.AspNetCore.Identity;
 
 namespace HighCode.Presentation.Controllers
 {
     public class CodeTaskSolutionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CodeTaskSolutionsController(ApplicationDbContext context)
+        public CodeTaskSolutionsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: CodeTaskSolutions
@@ -41,11 +44,37 @@ namespace HighCode.Presentation.Controllers
             {
                 return NotFound();
             }
-
             return View(codeTaskSolution);
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> SaveCode(int codeTaskId, string code)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var cTs = await _context.CodeTaskSolutions
+                    .Where(x => 
+                        x.RelatedTaskId == codeTaskId 
+                        && x.AuthorId == user.Id)
+                    .FirstOrDefaultAsync();
+                if (cTs != null)
+                    cTs.Code = code;
+                else
+                    await _context.CodeTaskSolutions.AddAsync(new CodeTaskSolution()
+                    {
+                        Code = code,
+                        RelatedTaskId = codeTaskId,
+                        Author = user
+                    });
+                
+                await _context.SaveChangesAsync();
+            }
 
-        public async Task<IActionResult> TestCode(int codeTaskId, string code)
+            return Ok();
+        }
+        [HttpPost]
+        public async Task<IActionResult> TestCode(int codeTaskId,string code)
         {
             var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
             var resultedCode = $"using NUnit.Framework;using NUnit.Framework.Constraints;\n{code}\n{codeTask.UnitTestCode}";
@@ -61,9 +90,21 @@ namespace HighCode.Presentation.Controllers
             if (codeTask != null)
             {
                 vm.CodeTask = codeTask;
-                vm.CodeBoilerplate = CsharpTemplates.CreateTemplate(codeTask.TemplateFuncSignature);
+                vm.Code = CsharpTemplates.CreateTemplate(codeTask.TemplateFuncSignature);
             }
-            
+
+            if (User.Identity.IsAuthenticated)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var cTs = await _context.CodeTaskSolutions
+                    .Where(x => 
+                        x.RelatedTaskId == codeTaskId
+                        && x.AuthorId == user.Id)
+                    .FirstOrDefaultAsync();
+                if (cTs != null)
+                    vm.Code = cTs.Code;
+            }
+
             return View(vm);
         }
 
@@ -74,7 +115,6 @@ namespace HighCode.Presentation.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (codeTaskSolution.IsTested)
                 return RedirectToAction(nameof(Index));
             }
             return View();
