@@ -9,6 +9,7 @@ using HighCode.Presentation.Data;
 using HighCode.Presentation.Data.Models;
 using HighCode.Presentation.ViewModels;
 using HighCode.Presentation.Data.CodeTemplates;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace HighCode.Presentation.Controllers
@@ -48,37 +49,50 @@ namespace HighCode.Presentation.Controllers
         }
         
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> SaveCode(int codeTaskId, string code)
         {
-            if (User.Identity.IsAuthenticated)
-            {
-                var user = await _userManager.GetUserAsync(User);
-                var cTs = await _context.CodeTaskSolutions
-                    .Where(x => 
-                        x.RelatedTaskId == codeTaskId 
-                        && x.AuthorId == user.Id)
-                    .FirstOrDefaultAsync();
-                if (cTs != null)
-                    cTs.Code = code;
-                else
-                    await _context.CodeTaskSolutions.AddAsync(new CodeTaskSolution()
-                    {
-                        Code = code,
-                        RelatedTaskId = codeTaskId,
-                        Author = user
-                    });
-                
-                await _context.SaveChangesAsync();
-            }
-
+            await CreateOrSaveCodeTaskSolution(codeTaskId, code);
             return Ok();
+        }
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> Publish(int codeTaskId, string code)
+        {
+            var cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
+            if (cTs.IsTested)
+            {
+                cTs.IsPublished = true;
+                await _context.SaveChangesAsync();
+                return Content("Опубликовано");
+            }
+            var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
+            var res = await testCode(code, codeTask.UnitTestCode);
+            if (res.Contains('✅'))
+            {
+                cTs.IsTested = true;
+                cTs.IsPublished = true;
+                await _context.SaveChangesAsync();
+                return Content("Опубликовано");
+            }
+            return Content(res);
         }
         [HttpPost]
         public async Task<IActionResult> TestCode(int codeTaskId,string code)
         {
             var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
-            var resultedCode = $"using NUnit.Framework;using NUnit.Framework.Constraints;\n{code}\n{codeTask.UnitTestCode}";
-            var result = await UnitTestExecutor.Execute(resultedCode);
+            if (codeTask == null) return BadRequest();
+            var result = await testCode(code, codeTask.UnitTestCode);
+            if (User.Identity.IsAuthenticated)
+            {
+                var cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
+                if (result.Contains('✅'))
+                    cTs.IsTested = true;
+                else
+                    cTs.IsTested = false;
+                await _context.SaveChangesAsync();
+            }
+
             return Content(result);
         }
 
@@ -102,7 +116,11 @@ namespace HighCode.Presentation.Controllers
                         && x.AuthorId == user.Id)
                     .FirstOrDefaultAsync();
                 if (cTs != null)
+                {
                     vm.Code = cTs.Code;
+                    vm.CodeTaskSolutionId = cTs.Id;
+                    vm.IsPublished = cTs.IsPublished;
+                }
             }
 
             return View(vm);
@@ -207,6 +225,35 @@ namespace HighCode.Presentation.Controllers
         private bool CodeTaskSolutionExists(int id)
         {
             return _context.CodeTaskSolutions.Any(e => e.Id == id);
+        }
+        
+        private async Task<string> testCode(string code, string unitTestCode)
+        {
+            var resultedCode = $"using NUnit.Framework;using NUnit.Framework.Constraints;\n{code}\n{unitTestCode}";
+            return await UnitTestExecutor.Execute(resultedCode);
+        }
+
+        private async Task<CodeTaskSolution> CreateOrSaveCodeTaskSolution(int codeTaskId, string code)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var cTs = await _context.CodeTaskSolutions
+                .Where(x => 
+                    x.RelatedTaskId == codeTaskId 
+                    && x.AuthorId == user.Id)
+                .FirstOrDefaultAsync();
+            if (cTs != null)
+                cTs.Code = code;
+            else
+                cTs = (await _context.CodeTaskSolutions.AddAsync(new CodeTaskSolution()
+                {
+                    Code = code,
+                    RelatedTaskId = codeTaskId,
+                    AuthorId = user.Id
+                })).Entity;
+                
+            await _context.SaveChangesAsync();
+            
+            return cTs;
         }
     }
 }

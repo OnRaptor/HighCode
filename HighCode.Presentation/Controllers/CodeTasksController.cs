@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HighCode.Presentation.Data;
 using HighCode.Presentation.Data.Models;
+using HighCode.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HighCode.Presentation.Controllers
@@ -44,8 +45,16 @@ namespace HighCode.Presentation.Controllers
             {
                 return NotFound();
             }
-
-            return View(codeTask);
+            var solutions = await _context.CodeTaskSolutions
+                .Where(x => x.IsPublished && x.RelatedTaskId == id)
+                .Include(x => x.Author)
+                .ToListAsync();
+            var vm = new TaskViewModel
+            {
+                Task = codeTask,
+                Solutions = solutions
+            };
+            return View(vm);
         }
 
         // GET: CodeTasks/Create

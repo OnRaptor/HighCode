@@ -1,4 +1,6 @@
-﻿@model IEnumerable<HighCode.Presentation.Data.Models.CodeTask>
+﻿@using HighCode.Presentation.Data.Models
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<HighCode.Presentation.Data.Models.CodeTask>
 @inject SignInManager<IdentityUser> signInManager
 @{
     ViewData["Title"] = "Задачи";
@@ -21,7 +23,7 @@
         <p class="card-body">@item.Description</p>
         <div class="d-flex flex-row card-footer justify-content-between">
             <div class="d-flex flex-row">
-                <p>Сложность: <span>@item.Complexity.ToString()</span></p>
+                <p>Сложность: <span>@CodeTask.ComplexityToString(item.Complexity)</span></p>
                 <p> • Язык: @item.ProgrammingLanguage</p>
             </div>
             <div class="d-flex flex-row gap-1">

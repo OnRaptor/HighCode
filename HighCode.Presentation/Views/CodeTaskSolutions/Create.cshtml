@@ -26,7 +26,12 @@
             <input type="submit" id="checkBtn" data-codetaskid=@Model.CodeTask.Id value="Проверка" class="btn btn-secondary" />
             @if (User.Identity.IsAuthenticated){
                 <input type="submit" id="saveBtn" value="Сохранить" class="btn btn-secondary" />
-                <input type="submit" id="sendBtn" value="Опубликовать" class="btn btn-primary" />
+                @if (!Model.IsPublished){
+                    <input type="submit" id="sendBtn" value="Опубликовать" class="btn btn-primary" />
+                }
+                @if (Model.IsPublished){ 
+                <a asp-action="Delete" asp-route-id="@Model.CodeTaskSolutionId" class="btn btn-danger">Снять с публикации</a> 
+                }
             }
         </div>
     <div class="alert alert-info mt-2" id="statusBorder" style="display: none;">

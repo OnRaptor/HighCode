@@ -12,5 +12,20 @@ namespace HighCode.Presentation.Data.Models
         public int Complexity {  get; set; }
         public string ProgrammingLanguage { get; set; }
         public IdentityUser? Author { get; set; }
+
+        public static string ComplexityToString(int complexity)
+        {
+            switch (complexity)
+            {
+                case 0:
+                    return "Легко";
+                case 1:
+                    return "Средне";
+                case 2:
+                    return "Сложно";
+                default:
+                    return "";
+            }
+        }
     }
 }

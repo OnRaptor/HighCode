@@ -43,3 +43,23 @@ saveBtn.click(_ =>{
         }
     })
 })
+
+sendBtn.click(_ =>{
+    var code = window.codeEditor.getModel().getValue();
+    $.ajax({
+        url: "/CodeTaskSolutions/Publish",
+        method: 'POST',             /* Метод запроса (post или get) */
+        data: {
+            codeTaskId: checkBtn.data("codetaskid"),
+            code: code
+        },
+        success: function (data, status) {
+            $("#statusBorder").toggle(true);
+            $("#codeStatus").text(data);
+        },
+        error: function (data, status){
+            $("#statusBorder").toggle(true);
+            $("#codeStatus").text(data);
+        }
+    })
+})
