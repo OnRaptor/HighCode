@@ -5,6 +5,8 @@ namespace HighCode.Presentation.ViewModels;
 
 public class TaskViewModel
 {
-    public CodeTask Task { get; set; }
+    public CodeTask Task { get; set; } = new();
     public IEnumerable<CodeTaskSolution> Solutions { get; set; }
+    public IEnumerable<Comment> Comments { get; set; }
+    public string? NewComment { get; set; }
 }

@@ -21,20 +21,87 @@
         <small><strong>@Model.Task.ProgrammingLanguage 💠 @CodeTask.ComplexityToString(Model.Task.Complexity)</strong></small>
     </p>
     <hr class="mt-5"/>
-    <h4>Решения пользователей</h4>
-    @if (Model.Solutions.Count() == 0)
-    {
-        <p>Нет решений🥺</p>
-        <a class="btn btn-primary" asp-route-CodeTaskId="@Model.Task.Id" asp-action="Create" asp-controller="CodeTaskSolutions">Создать</a>
-    }
-    @foreach (var solution in Model.Solutions)
-    {
-        <div>
+    
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="comments-tab" data-bs-toggle="tab" data-bs-target="#comments" type="button" role="tab" aria-controls="home" aria-selected="true">Комментарии</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="solutions-tab" data-bs-toggle="tab" data-bs-target="#solutions" type="button" role="tab" aria-controls="profile" aria-selected="false">Решения задачи</button>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade show active" id="comments" role="tabpanel" aria-labelledby="home-tab">
+            <form class="d-flex flex-column gap-2 mt-1" asp-action="PostComment">
+                <input type="hidden" asp-for="Task.Id" value="@Model.Task.Id" />
+                <textarea placeholder="Введите комментарий" asp-for="NewComment" class="form-control"></textarea>
+                <button type="submit" class="btn btn-primary w-25">Прокомментировать</button>
+            </form>
             <hr/>
-            <h5>@solution.Author?.UserName</h5>
-            <pre class="pre-scrollable"><code>@solution.Code</code></pre>
-            <hr/>
+            @if (Model.Comments.Count() == 0)
+            {
+                <p>Нет комментариев🥺</p>
+            }
+            @foreach (var comment in Model.Comments)
+            {
+                <div class="card mt-2">
+                    <div class="card-header">
+                        @comment.Author.UserName
+                    </div>
+                    <div class="card-body">
+                        @comment.Content
+                    </div>
+                    <div class="d-flex gap-2 card-footer">
+                        <button class="btn btn-primary">Ответить</button>
+                    </div>
+                </div>
+            }
         </div>
-    }
+        <div class="tab-pane fade" id="solutions" role="tabpanel" aria-labelledby="profile-tab">
+            @if (Model.Solutions.Count() == 0)
+                {
+                    <p>Нет решений🥺</p>
+                    <a class="btn btn-primary" asp-route-CodeTaskId="@Model.Task.Id" asp-action="Create" asp-controller="CodeTaskSolutions">Создать</a>
+                }
+                @foreach (var solution in Model.Solutions)
+                {
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            @solution.Author?.UserName
+                        </div>
+                        <div class="card-body">
+                            <pre class="pre-scrollable"><code>@solution.Code</code></pre>
+                        </div>
+                        <div class="d-flex gap-2 card-footer">
+                            <button class="btn btn-success">+</button>
+                            <button class="btn btn-danger">-</button>
+                            <button class="btn btn-primary">Прокомментировать</button>
+                            <a class="btn-secondary btn" asp-action="Details" asp-controller="CodeTaskSolutions" asp-route-id="@solution.Id">Подробнее</a>
+                        </div>
+                    </div>
+                    @if (solution.Comments.Count() != 0)
+                    {
+                        <div class="ms-2">
+                            <hr/>
+                            <h6>Комментарии</h6>
+                            @foreach (var comment in solution.Comments.Take(3))
+                            {
+                                <div class="card">
+                                    <div class="card-header">
+                                        @comment.Author.UserName
+                                    </div>
+                                    <div class="card-body">
+                                        @comment.Content
+                                    </div>
+                                    <div class="d-flex gap-2 card-footer">
+                                        <button class="btn btn-primary">Ответить</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+        </div>
+    </div>
 </div>
 

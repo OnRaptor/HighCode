@@ -9,6 +9,7 @@ using HighCode.Presentation.Data;
 using HighCode.Presentation.Data.Models;
 using HighCode.Presentation.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace HighCode.Presentation.Controllers
 {
@@ -17,10 +18,12 @@ namespace HighCode.Presentation.Controllers
     public class CodeTasksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CodeTasksController(ApplicationDbContext context)
+        public CodeTasksController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: CodeTasks
@@ -48,11 +51,18 @@ namespace HighCode.Presentation.Controllers
             var solutions = await _context.CodeTaskSolutions
                 .Where(x => x.IsPublished && x.RelatedTaskId == id)
                 .Include(x => x.Author)
+                .Include(x => x.Comments)
+                .ToListAsync();
+            var comments = await _context.Comments
+                .Where(c => c.RelatedTaskId == id)
+                .OrderByDescending(c => c.DateCreated)
+                .Include(c => c.Author)
                 .ToListAsync();
             var vm = new TaskViewModel
             {
                 Task = codeTask,
-                Solutions = solutions
+                Solutions = solutions,
+                Comments = comments
             };
             return View(vm);
         }
@@ -146,6 +156,19 @@ namespace HighCode.Presentation.Controllers
             return View(codeTask);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> PostComment(TaskViewModel vm)
+        {
+            await _context.Comments.AddAsync(new Comment
+            {
+                RelatedTaskId = vm.Task.Id,
+                Author = await _userManager.GetUserAsync(User),
+                Content = vm.NewComment,
+                DateCreated = DateTime.Now
+            });
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = vm.Task.Id});
+        }
         // POST: CodeTasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -160,6 +183,8 @@ namespace HighCode.Presentation.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        
+        
 
         private bool CodeTaskExists(int id)
         {
