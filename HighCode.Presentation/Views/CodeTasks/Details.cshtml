@@ -32,12 +32,15 @@
     </ul>
     <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="comments" role="tabpanel" aria-labelledby="home-tab">
-            <form class="d-flex flex-column gap-2 mt-1" asp-action="PostComment">
-                <input type="hidden" asp-for="Task.Id" value="@Model.Task.Id" />
-                <textarea placeholder="Введите комментарий" asp-for="NewComment" class="form-control"></textarea>
-                <button type="submit" class="btn btn-primary w-25">Прокомментировать</button>
-            </form>
-            <hr/>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form class="d-flex flex-column gap-2 mt-1" asp-action="PostComment">
+                    <input type="hidden" asp-for="Task.Id" value="@Model.Task.Id" />
+                    <textarea placeholder="Введите комментарий" asp-for="NewComment" class="form-control"></textarea>
+                    <button type="submit" class="btn btn-primary w-25">Прокомментировать</button>
+                </form>
+                <hr/>
+            }
             @if (Model.Comments.Count() == 0)
             {
                 <p>Нет комментариев🥺</p>

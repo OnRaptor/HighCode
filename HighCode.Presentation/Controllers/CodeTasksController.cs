@@ -157,6 +157,7 @@ namespace HighCode.Presentation.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> PostComment(TaskViewModel vm)
         {
             await _context.Comments.AddAsync(new Comment
