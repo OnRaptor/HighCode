@@ -6,14 +6,14 @@
 }
 
 <div>
-    <div class="d-flex flex-row gap-1">
+    <div class="d-flex flex-row gap-1 align-items-center">
         <a class="btn btn-primary" asp-action="Index">Назад</a>
         @if (User.IsInRole("Moderator"))
         {
-            <a class="btn btn-primary" asp-action="Edit" asp-route-id="@Model.Task.Id">Изменить</a>
+            <a class="btn btn-check" asp-action="Edit" asp-route-id="@Model.Task.Id">Изменить</a>
         }
+        <h4>Задача</h4>
     </div>
-    <h4>Задача</h4>
     <hr/>
     <h3>@Model.Task.Title</h3>
     <p class="m-2 lead">@Model.Task.Description</p>
@@ -35,9 +35,9 @@
             @if (User.Identity.IsAuthenticated)
             {
                 <form class="d-flex flex-column gap-2 mt-1" asp-action="PostComment">
-                    <input type="hidden" asp-for="Task.Id" value="@Model.Task.Id" />
-                    <textarea placeholder="Введите комментарий" asp-for="NewComment" class="form-control"></textarea>
-                    <button type="submit" class="btn btn-primary w-25">Прокомментировать</button>
+                    <input type="hidden" asp-for="NewComment.RelatedTaskId" value="@Model.Task.Id" />
+                    <textarea placeholder="Введите комментарий" asp-for="NewComment.Content" class="form-control"></textarea>
+                    <button type="submit" class="btn btn-primary mw-25">Прокомментировать</button>
                 </form>
                 <hr/>
             }
@@ -47,15 +47,68 @@
             }
             @foreach (var comment in Model.Comments)
             {
-                <div class="card mt-2">
-                    <div class="card-header">
-                        @comment.Author.UserName
+                <div class="comment-container">
+                    <div class="card mt-2">
+                        <div class="card-header">
+                            <div class="d-flex flex-row justify-content-between align-content-center">
+                                <p class="m-0 p-0">@comment.Author.UserName</p>
+                                <p class="text-muted m-0 p-0">@comment.DateCreated</p>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            @comment.Content
+                        </div>
+                        <div class="d-flex gap-2 card-footer">
+                            <button class="btn btn-success btnlike" data-commentid="@comment.Id">
+                                <i class="fa-regular fa-thumbs-up"></i>
+                                <span>@comment.Likes</span>
+                            </button>
+                            <button class="btn btn-danger btndislike" data-commentid="@comment.Id">
+                                <i class="fa-regular fa-thumbs-down"></i>
+                                <span>@comment.Dislikes</span>
+                            </button>
+                            <button data-btnreplyid="@comment.Id" class="btn btn-primary">Ответить</button>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        @comment.Content
+                    <div class="reply-container mt-1 ms-5" style="display: none;">
+                        <form data-crcommentid="@comment.Id" class="d-flex flex-column gap-2" asp-action="PostReply">
+                            <input type="hidden" asp-for="NewComment.RepliedCommentId" value=@comment.Id/>
+                            <input type="hidden" asp-for="Task.Id" value=@Model.Task.Id/>
+                            <input class="newreplyhrepliername" type="hidden" asp-for="NewComment.AnotherAuthor" value="@comment.Author.UserName"/>
+                            <p class="newreplyhreplierlabel">в ответ на @comment.Author.UserName</p>
+                            <textarea placeholder="Введите ответ" asp-for="NewComment.Content" class="form-control"></textarea>
+                            <button type="submit" class="btn btn-primary w-25">Ответить</button>
+                        </form>
                     </div>
-                    <div class="d-flex gap-2 card-footer">
-                        <button class="btn btn-primary">Ответить</button>
+                    <div class="mt-1 ms-5">
+                        @foreach (var reply in comment.Replies)
+                        {
+                            <div class="card mt-2">
+                                <div class="card-header">
+                                    <div class="d-flex flex-row justify-content-between align-content-center">
+                                        <p class="m-0 p-0">@reply.Author.UserName</p>
+                                        <p class="text-muted m-0 p-0">@reply.DateCreated</p>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div>
+                                        <p class="text-muted h6 text-sm-start"><em>в ответ на @reply.AnotherAuthor</em></p>
+                                        <p>@reply.Content</p>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-2 card-footer">
+                                    <button class="btn btn-success btnlike" data-commentid="@reply.Id">
+                                        <i class="fa-regular fa-thumbs-up"></i>
+                                        <span>@reply.Likes</span>
+                                    </button>
+                                    <button class="btn btn-danger btndislike" data-commentid="@reply.Id">
+                                        <i class="fa-regular fa-thumbs-down"></i>
+                                        <span>@reply.Dislikes</span>
+                                    </button>
+                                    <button data-origcomment="@comment.Id" data-btnnewreplyid="@reply.Id" data-authorname="@reply.Author.UserName" class="btn btn-primary">Ответить</button>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             }
@@ -75,36 +128,113 @@
                         <div class="card-body">
                             <pre class="pre-scrollable"><code>@solution.Code</code></pre>
                         </div>
-                        <div class="d-flex gap-2 card-footer">
-                            <button class="btn btn-success">+</button>
-                            <button class="btn btn-danger">-</button>
-                            <button class="btn btn-primary">Прокомментировать</button>
+                        <div class="d-flex gap-2 card-footer flex-wrap">
+                            <button class="btn btn-success">
+                                <i class="fa-regular fa-star"></i>
+                                Интересно!
+                            </button>
+                            <button class="btn btn-warning">
+                                <i class="fa-regular fa-brain"></i>
+                                Умно!
+                            </button>
+                            <button class="btn btn-primary">
+                                <i class="fa-regular fa-face-smile-wink"></i>
+                                Весело!
+                            </button>
+                            <button data-btncommentsid="@solution.Id" class="btn btn-info">Комментарии</button>
                             <a class="btn-secondary btn" asp-action="Details" asp-controller="CodeTaskSolutions" asp-route-id="@solution.Id">Подробнее</a>
                         </div>
                     </div>
-                    @if (solution.Comments.Count() != 0)
-                    {
-                        <div class="ms-2">
-                            <hr/>
-                            <h6>Комментарии</h6>
-                            @foreach (var comment in solution.Comments.Take(3))
-                            {
-                                <div class="card">
-                                    <div class="card-header">
-                                        @comment.Author.UserName
+                    <div data-commentsid="@solution.Id" style="display: none" >
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <form class="d-flex flex-column gap-2 mt-1 ms-5" asp-action="PostComment">
+                                <input type="hidden" asp-for="NewComment.RelatedTaskSolutionId" value="@solution.Id" />
+                                <input type="hidden" asp-for="NewComment.RelatedTaskId" value="@Model.Task.Id" />
+                                <textarea placeholder="Введите комментарий" asp-for="NewComment.Content" class="form-control"></textarea>
+                                <button type="submit" class="btn btn-primary  mw-25">Прокомментировать</button>
+                            </form>
+                        }
+                        @if (solution.Comments.Count() != 0)
+                        {
+                            <div class="ms-5" >
+                                <h6>Комментарии</h6>
+                                @foreach (var comment in solution.Comments)
+                                {
+                                    <div class="comment-container">
+                                        <div class="card mt-2">
+                                            <div class="card-header">
+                                                <div class="d-flex flex-row justify-content-between align-content-center">
+                                                    <p class="m-0 p-0">@comment.Author.UserName</p>
+                                                    <p class="text-muted m-0 p-0">@comment.DateCreated</p>
+                                                </div>
+                                            </div>
+                                            <div class="card-body">
+                                                @comment.Content
+                                            </div>
+                                            <div class="d-flex gap-2 card-footer">
+                                                <button class="btn btn-success btnlike" data-commentid="@comment.Id">
+                                                    <i class="fa-regular fa-thumbs-up"></i>
+                                                    <span>@comment.Likes</span>
+                                                </button>
+                                                <button class="btn btn-danger btndislike" data-commentid="@comment.Id">
+                                                    <i class="fa-regular fa-thumbs-down"></i>
+                                                    <span>@comment.Dislikes</span>
+                                                </button>
+                                                <button data-btnreplyid="@comment.Id" class="btn btn-primary">Ответить</button>
+                                            </div>
+                                        </div>
+                                        <div class="reply-container mt-1 ms-5" style="display: none;">
+                                            <form data-crcommentid="@comment.Id" class="d-flex flex-column gap-2" asp-action="PostReply">
+                                                <input type="hidden" asp-for="NewComment.RepliedCommentId" value=@comment.Id/>
+                                                <input type="hidden" asp-for="Task.Id" value=@Model.Task.Id/>
+                                                <input class="newreplyhrepliername" type="hidden" asp-for="NewComment.AnotherAuthor" value="@comment.Author.UserName"/>
+                                                <p class="newreplyhreplierlabel">в ответ на @comment.Author.UserName</p>
+                                                <textarea placeholder="Введите ответ" asp-for="NewComment.Content" class="form-control"></textarea>
+                                                <button type="submit" class="btn btn-primary w-25">Ответить</button>
+                                            </form>
+                                        </div>
+                                        <div class="mt-1 ms-5">
+                                            @foreach (var reply in comment.Replies)
+                                            {
+                                                <div class="card mt-2">
+                                                    <div class="card-header">
+                                                        <div class="d-flex flex-row justify-content-between align-content-center">
+                                                            <p class="m-0 p-0">@reply.Author.UserName</p>
+                                                            <p class="text-muted m-0 p-0">@reply.DateCreated</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="card-body">
+                                                        <div>
+                                                            <p class="text-muted h6 text-sm-start"><em>в ответ на @reply.AnotherAuthor</em></p>
+                                                            <p>@reply.Content</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-flex gap-2 card-footer">
+                                                        <button class="btn btn-success btnlike" data-commentid="@reply.Id">
+                                                            <i class="fa-regular fa-thumbs-up"></i>
+                                                            <span>@reply.Likes</span>
+                                                        </button>
+                                                        <button class="btn btn-danger btndislike" data-commentid="@reply.Id">
+                                                            <i class="fa-regular fa-thumbs-down"></i>
+                                                            <span>@reply.Dislikes</span>
+                                                        </button>
+                                                        <button data-origcomment="@comment.Id" data-btnnewreplyid="@reply.Id" data-authorname="@reply.Author.UserName" class="btn btn-primary">Ответить</button>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        @comment.Content
-                                    </div>
-                                    <div class="d-flex gap-2 card-footer">
-                                        <button class="btn btn-primary">Ответить</button>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                    <hr/>
                 }
         </div>
     </div>
 </div>
 
+@section Scripts{
+    <script src="~/js/commentsPage.js"></script>
+}

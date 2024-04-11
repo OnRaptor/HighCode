@@ -11,7 +11,7 @@ namespace HighCode.Presentation.Data.Models
         public string TemplateFuncSignature { get; set; }
         public int Complexity {  get; set; }
         public string ProgrammingLanguage { get; set; }
-        public IdentityUser? Author { get; set; }
+        public User? Author { get; set; }
 
         public static string ComplexityToString(int complexity)
         {

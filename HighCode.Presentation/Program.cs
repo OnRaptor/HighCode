@@ -1,5 +1,6 @@
 using System.Reflection;
 using HighCode.Presentation.Data;
+using HighCode.Presentation.Data.Models;
 using HighCode.Presentation.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
@@ -28,11 +29,11 @@ else
 {
     app.UseExceptionHandler("/Home/Error");
 }
-var sp = app.Services.CreateScope().ServiceProvider;
+/*var sp = app.Services.CreateScope().ServiceProvider;
 SeedBaseData.InitSystem(
-    sp.GetService<UserManager<IdentityUser>>(),
+    sp.GetService<UserManager<User>>(),
     sp.GetService<RoleManager<IdentityRole>>()
-    );
+    );*/
 
 app.UseStaticFiles();
 

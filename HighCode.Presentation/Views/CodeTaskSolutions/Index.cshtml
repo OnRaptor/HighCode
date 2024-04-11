@@ -15,12 +15,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Code)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VotesUp)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.VotesDown)
-            </th>
             <th></th>
         </tr>
     </thead>
@@ -29,12 +23,6 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VotesUp)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.VotesDown)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

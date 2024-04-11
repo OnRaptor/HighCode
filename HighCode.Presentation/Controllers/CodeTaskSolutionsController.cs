@@ -17,9 +17,9 @@ namespace HighCode.Presentation.Controllers
     public class CodeTaskSolutionsController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public CodeTaskSolutionsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public CodeTaskSolutionsController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;

@@ -98,12 +98,6 @@ namespace HighCode.Presentation.Data.Migrations
                     b.Property<int>("RelatedTaskId")
                         .HasColumnType("int");
 
-                    b.Property<int>("VotesDown")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VotesUp")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("AuthorId");
@@ -111,6 +105,32 @@ namespace HighCode.Presentation.Data.Migrations
                     b.HasIndex("RelatedTaskId");
 
                     b.ToTable("CodeTaskSolutions");
+                });
+
+            modelBuilder.Entity("HighCode.Presentation.Data.Models.CodeTaskSolutionReactions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Reaction")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SolutionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("SolutionId");
+
+                    b.ToTable("CodeTaskSolutionReactions");
                 });
 
             modelBuilder.Entity("HighCode.Presentation.Data.Models.CollectionOfTasks", b =>
@@ -154,6 +174,9 @@ namespace HighCode.Presentation.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AnotherAuthor")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("AuthorId")
                         .HasColumnType("nvarchar(450)");
 
@@ -184,6 +207,97 @@ namespace HighCode.Presentation.Data.Migrations
                     b.HasIndex("RepliedCommentId");
 
                     b.ToTable("Comments");
+                });
+
+            modelBuilder.Entity("HighCode.Presentation.Data.Models.CommentsReactions", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AuthorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("CommentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Reaction")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("CommentId");
+
+                    b.ToTable("CommentsReactions");
+                });
+
+            modelBuilder.Entity("HighCode.Presentation.Data.Models.User", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("HighCode.Presentation.Data.Models.UserData", b =>
@@ -254,71 +368,6 @@ namespace HighCode.Presentation.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUser", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("LockoutEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("NormalizedEmail")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("NormalizedUserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.Property<string>("PasswordHash")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("SecurityStamp")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("UserName")
-                        .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedEmail")
-                        .HasDatabaseName("EmailIndex");
-
-                    b.HasIndex("NormalizedUserName")
-                        .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -408,7 +457,7 @@ namespace HighCode.Presentation.Data.Migrations
 
             modelBuilder.Entity("HighCode.Presentation.Data.Models.CodeTask", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
+                    b.HasOne("HighCode.Presentation.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
@@ -425,7 +474,7 @@ namespace HighCode.Presentation.Data.Migrations
 
             modelBuilder.Entity("HighCode.Presentation.Data.Models.CodeTaskSolution", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
+                    b.HasOne("HighCode.Presentation.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -442,9 +491,26 @@ namespace HighCode.Presentation.Data.Migrations
                     b.Navigation("RelatedTask");
                 });
 
+            modelBuilder.Entity("HighCode.Presentation.Data.Models.CodeTaskSolutionReactions", b =>
+                {
+                    b.HasOne("HighCode.Presentation.Data.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("HighCode.Presentation.Data.Models.CodeTaskSolution", "Solution")
+                        .WithMany()
+                        .HasForeignKey("SolutionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Solution");
+                });
+
             modelBuilder.Entity("HighCode.Presentation.Data.Models.CollectionOfTasks", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
+                    b.HasOne("HighCode.Presentation.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
@@ -453,7 +519,7 @@ namespace HighCode.Presentation.Data.Migrations
 
             modelBuilder.Entity("HighCode.Presentation.Data.Models.Comment", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Author")
+                    b.HasOne("HighCode.Presentation.Data.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId");
 
@@ -466,7 +532,7 @@ namespace HighCode.Presentation.Data.Migrations
                         .HasForeignKey("RelatedTaskSolutionId");
 
                     b.HasOne("HighCode.Presentation.Data.Models.Comment", "RepliedComment")
-                        .WithMany()
+                        .WithMany("Replies")
                         .HasForeignKey("RepliedCommentId");
 
                     b.Navigation("Author");
@@ -478,9 +544,26 @@ namespace HighCode.Presentation.Data.Migrations
                     b.Navigation("RepliedComment");
                 });
 
+            modelBuilder.Entity("HighCode.Presentation.Data.Models.CommentsReactions", b =>
+                {
+                    b.HasOne("HighCode.Presentation.Data.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId");
+
+                    b.HasOne("HighCode.Presentation.Data.Models.Comment", "Comment")
+                        .WithMany("Reactions")
+                        .HasForeignKey("CommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Comment");
+                });
+
             modelBuilder.Entity("HighCode.Presentation.Data.Models.UserData", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                    b.HasOne("HighCode.Presentation.Data.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
@@ -498,7 +581,7 @@ namespace HighCode.Presentation.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("HighCode.Presentation.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -507,7 +590,7 @@ namespace HighCode.Presentation.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("HighCode.Presentation.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -522,7 +605,7 @@ namespace HighCode.Presentation.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("HighCode.Presentation.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -531,7 +614,7 @@ namespace HighCode.Presentation.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("HighCode.Presentation.Data.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -546,6 +629,13 @@ namespace HighCode.Presentation.Data.Migrations
             modelBuilder.Entity("HighCode.Presentation.Data.Models.CollectionOfTasks", b =>
                 {
                     b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("HighCode.Presentation.Data.Models.Comment", b =>
+                {
+                    b.Navigation("Reactions");
+
+                    b.Navigation("Replies");
                 });
 
             modelBuilder.Entity("HighCode.Presentation.Data.Models.UserData", b =>

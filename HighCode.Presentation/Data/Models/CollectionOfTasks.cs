@@ -9,7 +9,7 @@ namespace HighCode.Presentation.Data.Models
         public string Title { get; set; }
         public int Complexity { get; set; }
         public string Description { get; set; }
-        public IdentityUser Author { get; set; }
+        public User Author { get; set; }
         public string ProgrammingLanguages { get; set; }
     }
 }

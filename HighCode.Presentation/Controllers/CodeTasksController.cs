@@ -18,9 +18,9 @@ namespace HighCode.Presentation.Controllers
     public class CodeTasksController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<User> _userManager;
 
-        public CodeTasksController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public CodeTasksController(ApplicationDbContext context, UserManager<User> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -51,13 +51,41 @@ namespace HighCode.Presentation.Controllers
             var solutions = await _context.CodeTaskSolutions
                 .Where(x => x.IsPublished && x.RelatedTaskId == id)
                 .Include(x => x.Author)
-                .Include(x => x.Comments)
+                .Include("Comments.Author")
+                .Include("Comments.Replies")
                 .ToListAsync();
             var comments = await _context.Comments
                 .Where(c => c.RelatedTaskId == id)
                 .OrderByDescending(c => c.DateCreated)
                 .Include(c => c.Author)
+                .Include(c => c.Replies)
                 .ToListAsync();
+            
+            solutions.ForEach(s =>
+            {
+                s.Comments.ForEach(c =>
+                {
+                    c.Likes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Like && r.Comment == c);
+                    c.Dislikes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Dislike && r.Comment == c);
+                    c.Replies.ForEach(r =>
+                    {
+                        r.Likes = _context.CommentsReactions.Count(cr => cr.Reaction == ReactionType.Like && cr.Comment == r);
+                        r.Dislikes = _context.CommentsReactions.Count(cr => cr.Reaction == ReactionType.Dislike && cr.Comment == r);
+                    });
+                });
+            });
+            
+            comments.ForEach(c =>
+            {
+                c.Likes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Like && r.Comment == c);
+                c.Dislikes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Dislike && r.Comment == c);
+                c.Replies.ForEach(r =>
+                {
+                    r.Likes = _context.CommentsReactions.Count(cr => cr.Reaction == ReactionType.Like && cr.Comment == r);
+                    r.Dislikes = _context.CommentsReactions.Count(cr => cr.Reaction == ReactionType.Dislike && cr.Comment == r);
+                });
+            });
+            
             var vm = new TaskViewModel
             {
                 Task = codeTask,
@@ -160,16 +188,65 @@ namespace HighCode.Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> PostComment(TaskViewModel vm)
         {
-            await _context.Comments.AddAsync(new Comment
-            {
-                RelatedTaskId = vm.Task.Id,
-                Author = await _userManager.GetUserAsync(User),
-                Content = vm.NewComment,
-                DateCreated = DateTime.Now
-            });
+            vm.NewComment.Author = await _userManager.GetUserAsync(User);
+            vm.NewComment.DateCreated = DateTime.Now;
+            await _context.Comments.AddAsync(vm.NewComment);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("Details", new { id = vm.NewComment.RelatedTaskId});
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> PostReply(TaskViewModel vm)
+        {
+            vm.NewComment.Author = await _userManager.GetUserAsync(User);
+            vm.NewComment.DateCreated = DateTime.Now;
+            await _context.Comments.AddAsync(vm.NewComment);
             await _context.SaveChangesAsync();
             return RedirectToAction("Details", new { id = vm.Task.Id});
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ReactForComment(int commentId, ReactionType reaction)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            var comment = await _context.Comments
+                .Include(c => c.Reactions)
+                .FirstOrDefaultAsync(c => c.Id == commentId);
+            if (await _context.CommentsReactions
+                    .Where(r => 
+                        r.Author == user &&
+                        r.Comment.Id == comment.Id &&
+                        r.Reaction == reaction
+                        )
+                    .ExecuteDeleteAsync() > 0)
+            return Ok(new
+            {
+                likes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Like && r.Comment == comment),
+                dislikes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Dislike && r.Comment == comment)
+            });
+            
+            await _context.CommentsReactions
+                .Where(r =>
+                    r.Author == user &&
+                    r.Comment.Id == comment.Id
+                )
+                .ExecuteDeleteAsync();
+            await _context.CommentsReactions.AddAsync(new CommentsReactions
+            {
+                 Author = user,
+                 Comment = comment,
+                 Reaction = reaction
+            });
+            await _context.SaveChangesAsync();
+            return Ok(new
+            {
+                likes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Like && r.Comment == comment),
+                dislikes = _context.CommentsReactions.Count(r => r.Reaction == ReactionType.Dislike && r.Comment == comment)
+            });
+        }
+        
         // POST: CodeTasks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

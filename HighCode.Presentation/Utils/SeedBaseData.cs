@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using HighCode.Presentation.Data.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace HighCode.Presentation.Utils
 {
     public class SeedBaseData
     {
         public static async void InitSystem(
-            UserManager<IdentityUser> userManager,
+            UserManager<User> userManager,
             RoleManager<IdentityRole> roleManager)
         {
             if (!await roleManager.RoleExistsAsync("Admin"))
@@ -20,7 +21,7 @@ namespace HighCode.Presentation.Utils
 
             if (!userManager.Users.Any(user => user.Id == "0"))
             {
-                var user = new IdentityUser() { 
+                var user = new User() { 
                     Id = "0",
                     UserName = "admin@mail.ru",
                     Email="admin@mail.ru"
