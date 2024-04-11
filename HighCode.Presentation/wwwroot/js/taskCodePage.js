@@ -2,20 +2,31 @@ var checkBtn = $("#checkBtn")
 var saveBtn = $("#saveBtn")
 var sendBtn = $("#sendBtn")
 
+displayTestResult = (testResult) => {
+    const out = [];
+    if (!testResult.useRawOutput){
+        out.push(`Пройдено тестов ${testResult.testsPassed} из ${testResult.testsTotalCount}\n`)
+        out.push(testResult.output)
+    }
+    else{
+        out.push(testResult.output)
+    }
+    $("#codeStatus").text(out.join("\n"))
+    $("#statusBorder").toggle(true);
+}
+
 checkBtn.click(_ =>{
     var code = window.codeEditor.getModel().getValue()
     $.ajax({
         url: "/CodeTaskSolutions/TestCode",
         method: 'POST',             /* Метод запроса (post или get) */
-        dataType: 'text',          /* Тип данных в ответе (xml, json, script, html). */
         data: {
             codeTaskId: checkBtn.data("codetaskid"),
             code: code
         },
         success: function (data, status) {
             console.log(data)
-            $("#codeStatus").text(data)
-            $("#statusBorder").toggle(true);
+            displayTestResult(data)
         },
         error: function (data, status){
             $("#codeStatus").text(status)
@@ -34,7 +45,7 @@ saveBtn.click(_ =>{
         },
         success: function (data, status) {
             if (status){
-                $("#codeStatus").text(status)
+                $("#codeStatus").text(data)
                 $("#statusBorder").toggle(true);
             }
         },
@@ -54,8 +65,7 @@ sendBtn.click(_ =>{
             code: code
         },
         success: function (data, status) {
-            $("#statusBorder").toggle(true);
-            $("#codeStatus").text(data);
+            displayTestResult(data);
         },
         error: function (data, status){
             $("#statusBorder").toggle(true);

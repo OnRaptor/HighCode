@@ -9,6 +9,7 @@ using HighCode.Presentation.Data;
 using HighCode.Presentation.Data.Models;
 using HighCode.Presentation.ViewModels;
 using HighCode.Presentation.Data.CodeTemplates;
+using HighCode.Presentation.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -24,13 +25,7 @@ namespace HighCode.Presentation.Controllers
             _context = context;
             _userManager = userManager;
         }
-
-        // GET: CodeTaskSolutions
-        public async Task<IActionResult> Index()
-        {
-            return View(await _context.CodeTaskSolutions.ToListAsync());
-        }
-
+        
         // GET: CodeTaskSolutions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -53,29 +48,40 @@ namespace HighCode.Presentation.Controllers
         public async Task<IActionResult> SaveCode(int codeTaskId, string code)
         {
             await CreateOrSaveCodeTaskSolution(codeTaskId, code);
-            return Ok();
+            return Ok("Сохранено");
         }
         [HttpPost]
         [Authorize]
         public async Task<IActionResult> Publish(int codeTaskId, string code)
         {
-            var cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
+            var cTs = await _context.CodeTaskSolutions.FirstOrDefaultAsync(m => m.Id == codeTaskId);
+            if (cTs is { IsPublished: true }) return 
+                Ok(new TestExecutionReport{
+                    Output = "Уже опубликовано!",
+                    UseRawOutput = true
+                });
+            
+            cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
             if (cTs.IsTested)
             {
                 cTs.IsPublished = true;
                 await _context.SaveChangesAsync();
-                return Content("Опубликовано");
+                return Ok(new TestExecutionReport
+                {
+                    Output = "Опубликовано",
+                    UseRawOutput = true
+                });
             }
             var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
             var res = await testCode(code, codeTask.UnitTestCode);
-            if (res.Contains('✅'))
-            {
-                cTs.IsTested = true;
-                cTs.IsPublished = true;
-                await _context.SaveChangesAsync();
-                return Content("Опубликовано");
-            }
-            return Content(res);
+            if (res.TestsTotalCount == 0 || res.TestsPassed != res.TestsTotalCount) return Ok(res);
+            cTs.IsTested = true;
+            cTs.IsPublished = true;
+            await _context.SaveChangesAsync();
+            res.UseRawOutput = true;
+            res.Output = "Опубликовано\n" + res.Output;
+            
+            return Ok(res);
         }
         [HttpPost]
         public async Task<IActionResult> TestCode(int codeTaskId,string code)
@@ -86,14 +92,11 @@ namespace HighCode.Presentation.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
-                if (result.Contains('✅'))
-                    cTs.IsTested = true;
-                else
-                    cTs.IsTested = false;
+                cTs.IsTested = result.TestsPassed == result.TestsTotalCount;
                 await _context.SaveChangesAsync();
             }
 
-            return Content(result);
+            return Ok(result);
         }
 
         // GET: CodeTaskSolutions/Create?id
@@ -125,18 +128,7 @@ namespace HighCode.Presentation.Controllers
 
             return View(vm);
         }
-
-        // POST: CodeTaskSolutions/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Code")] CodeTaskSolution codeTaskSolution)
-        {
-            if (ModelState.IsValid)
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            return View();
-        }
+        
 
         // GET: CodeTaskSolutions/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -149,7 +141,7 @@ namespace HighCode.Presentation.Controllers
             var codeTaskSolution = await _context.CodeTaskSolutions.FindAsync(id);
             if (codeTaskSolution == null)
             {
-                return NotFound();
+                return RedirectToAction("Index", controllerName: "CodeTasks");
             }
             return View(codeTaskSolution);
         }
@@ -184,7 +176,8 @@ namespace HighCode.Presentation.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+
+                return RedirectToAction("Index", controllerName: "CodeTasks");
             }
             return View(codeTaskSolution);
         }
@@ -203,7 +196,6 @@ namespace HighCode.Presentation.Controllers
             {
                 return NotFound();
             }
-
             return View(codeTaskSolution);
         }
 
@@ -212,14 +204,17 @@ namespace HighCode.Presentation.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var codeTaskSolution = await _context.CodeTaskSolutions.FindAsync(id);
+            var codeTaskSolution = await _context.CodeTaskSolutions
+                .Include(x => x.Comments)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (codeTaskSolution != null)
             {
+                codeTaskSolution.Comments.Clear();
                 _context.CodeTaskSolutions.Remove(codeTaskSolution);
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", controllerName: "CodeTasks");
         }
 
         private bool CodeTaskSolutionExists(int id)
@@ -227,7 +222,7 @@ namespace HighCode.Presentation.Controllers
             return _context.CodeTaskSolutions.Any(e => e.Id == id);
         }
         
-        private async Task<string> testCode(string code, string unitTestCode)
+        private async Task<TestExecutionReport> testCode(string code, string unitTestCode)
         {
             var resultedCode = $"using NUnit.Framework;using NUnit.Framework.Constraints;\n{code}\n{unitTestCode}";
             return await UnitTestExecutor.Execute(resultedCode);
