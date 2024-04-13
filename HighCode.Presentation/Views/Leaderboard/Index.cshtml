@@ -1,0 +1,28 @@
+﻿@model List<HighCode.Presentation.Data.Models.Leaderboard>
+
+@{
+    ViewBag.Title = "Рейтинг";
+    Layout = "_Layout";
+}
+
+<h1>Рейтинг по очкам</h1>
+
+<table class="table w-auto">
+    <thead>
+    <tr>
+        <th>Место</th>
+        <th>Пользователь</th>
+        <th>Очки</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var row in Model.Select((x, i) => new { x, i = i + 1 }))
+    {
+        <tr>
+            <td scope="row">@row.i</td>
+            <td>@row.x.User.UserName</td>
+            <td>@row.x.Score</td>
+        </tr>
+    }
+    </tbody>
+</table>

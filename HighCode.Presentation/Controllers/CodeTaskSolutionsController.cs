@@ -10,6 +10,7 @@ using HighCode.Presentation.Data.Models;
 using HighCode.Presentation.ViewModels;
 using HighCode.Presentation.Data.CodeTemplates;
 using HighCode.Presentation.Models;
+using HighCode.Presentation.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -18,12 +19,14 @@ namespace HighCode.Presentation.Controllers
     public class CodeTaskSolutionsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly StatisticService _statisticService;
         private readonly UserManager<User> _userManager;
 
-        public CodeTaskSolutionsController(ApplicationDbContext context, UserManager<User> userManager)
+        public CodeTaskSolutionsController(ApplicationDbContext context, UserManager<User> userManager, StatisticService statisticService)
         {
             _context = context;
             _userManager = userManager;
+            _statisticService = statisticService;
         }
         
         // GET: CodeTaskSolutions/Details/5
@@ -80,6 +83,10 @@ namespace HighCode.Presentation.Controllers
             await _context.SaveChangesAsync();
             res.UseRawOutput = true;
             res.Output = "Опубликовано\n" + res.Output;
+            await _statisticService.CalculateScoreForCompletedTask(
+                await _userManager.GetUserAsync(User),
+                res,
+                await _context.CodeTasks.FindAsync(codeTaskId));
             
             return Ok(res);
         }
@@ -146,7 +153,7 @@ namespace HighCode.Presentation.Controllers
             return View(codeTaskSolution);
         }
 
-        // POST: CodeTaskSolutions/Edit/5
+        /*// POST: CodeTaskSolutions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -180,7 +187,7 @@ namespace HighCode.Presentation.Controllers
                 return RedirectToAction("Index", controllerName: "CodeTasks");
             }
             return View(codeTaskSolution);
-        }
+        }*/
 
         // GET: CodeTaskSolutions/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -206,15 +213,16 @@ namespace HighCode.Presentation.Controllers
         {
             var codeTaskSolution = await _context.CodeTaskSolutions
                 .Include(x => x.Comments)
+                .Include(x => x.RelatedTask)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (codeTaskSolution != null)
             {
                 codeTaskSolution.Comments.Clear();
-                _context.CodeTaskSolutions.Remove(codeTaskSolution);
+                codeTaskSolution.IsPublished = false;   
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index", controllerName: "CodeTasks");
+            return RedirectToAction("Create", new { CodeTaskId = codeTaskSolution.RelatedTaskId });
         }
 
         private bool CodeTaskSolutionExists(int id)

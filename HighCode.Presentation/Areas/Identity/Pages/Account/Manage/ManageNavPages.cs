@@ -24,6 +24,7 @@ namespace  HighCode.Presentation.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public static string Email => "Email";
+        public static string Tasks => "Tasks";
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -66,6 +67,7 @@ namespace  HighCode.Presentation.Areas.Identity.Pages.Account.Manage
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
+        public static string TasksNavClass(ViewContext viewContext) => PageNavClass(viewContext, Tasks);
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

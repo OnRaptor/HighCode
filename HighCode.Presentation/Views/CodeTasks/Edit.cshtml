@@ -4,54 +4,49 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
-
-<h4>CodeTask</h4>
+<h1>Изменение задачи</h1>
+<a asp-action="Index" class="btn btn-secondary">Вернуться</a>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form class="d-flex flex-column gap-3" asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
+                <label class="control-label">Название</label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
+                <label class="control-label">Описание</label>
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UnitTestCode" class="control-label"></label>
+                <label class="control-label">Код для юнит тестирования</label>
                 <textarea asp-for="UnitTestCode" class="form-control"></textarea>
                 <span asp-validation-for="UnitTestCode" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="TemplateFuncSignature" class="control-label"></label>
+                <label class="control-label">Сигнатура для тестируемой функции</label>
                 <input asp-for="TemplateFuncSignature" class="form-control" />
                 <span asp-validation-for="TemplateFuncSignature" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Complexity" class="control-label"></label>
+                <label class="control-label">Сложность(от 1 до 3)</label>
                 <input asp-for="Complexity" class="form-control" />
                 <span asp-validation-for="Complexity" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ProgrammingLanguage" class="control-label"></label>
+                <label class="control-label">Язык программирования</label>
                 <input asp-for="ProgrammingLanguage" class="form-control" />
                 <span asp-validation-for="ProgrammingLanguage" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-group mt-1">
+                <input type="submit" value="Изменить" class="btn btn-primary" />
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

@@ -72,9 +72,13 @@ public class UnitTestExecutor
                     sb.AppendLine($"{method.Name}: 🤡Завален");
                     finalException = ex.InnerException.Message;
                 }
-            }        
-            sb.AppendLine("\nОшибки:");
-            sb.AppendLine(finalException);
+            }
+
+            if (report.TestsTotalCount != report.TestsPassed)
+            {
+                sb.AppendLine("\nОшибки:");
+                sb.AppendLine(finalException);
+            }
         }
         report.Output = sb.ToString()
             .Replace("\r\n\r\n\r\n", ""); // почему эти символы появляются????

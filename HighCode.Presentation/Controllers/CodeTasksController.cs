@@ -14,7 +14,7 @@ using Microsoft.AspNetCore.Identity;
 namespace HighCode.Presentation.Controllers
 {
 
-    [Authorize(Roles = "Moderator")]
+    [Authorize]
     public class CodeTasksController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -185,25 +185,23 @@ namespace HighCode.Presentation.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> PostComment(TaskViewModel vm)
         {
             vm.NewComment.Author = await _userManager.GetUserAsync(User);
             vm.NewComment.DateCreated = DateTime.Now;
             await _context.Comments.AddAsync(vm.NewComment);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Details", new { id = vm.NewComment.RelatedTaskId});
+            return RedirectToAction("Details", new { id = vm.NewComment.RelatedTaskId ?? vm.TaskId});
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> PostReply(TaskViewModel vm)
         {
             vm.NewComment.Author = await _userManager.GetUserAsync(User);
             vm.NewComment.DateCreated = DateTime.Now;
             await _context.Comments.AddAsync(vm.NewComment);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Details", new { id = vm.Task.Id});
+            return RedirectToAction("Details", new { id = vm.Task?.Id ?? vm.TaskId});
         }
 
         [HttpPost]

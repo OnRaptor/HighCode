@@ -22,8 +22,7 @@ namespace HighCode.Presentation.Utils
             if (!userManager.Users.Any(user => user.Id == "0"))
             {
                 var user = new User() { 
-                    Id = "0",
-                    UserName = "admin@mail.ru",
+                    UserName = "admin🤡",
                     Email="admin@mail.ru"
                 };
                 await userManager.CreateAsync(user, "Root_0");

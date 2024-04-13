@@ -9,4 +9,5 @@ public class TaskViewModel
     public IEnumerable<CodeTaskSolution> Solutions { get; set; }
     public IEnumerable<Comment> Comments { get; set; }
     public Comment NewComment { get; set; }
+    public int TaskId { get; set; }
 }

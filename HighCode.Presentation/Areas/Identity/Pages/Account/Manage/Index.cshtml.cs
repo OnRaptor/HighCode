@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using HighCode.Presentation.Data.Models;
+using HighCode.Presentation.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -16,14 +17,15 @@ namespace HighCode.Presentation.Areas.Identity.Pages.Account.Manage
     public class IndexModel : PageModel
     {
         private readonly UserManager<User> _userManager;
-        private readonly SignInManager<User> _signInManager;
-
+        private readonly SignInManager<User> _signInManager;    
+        private readonly StatisticService _statisticService;
         public IndexModel(
             UserManager<User> userManager,
-            SignInManager<User> signInManager)
+            SignInManager<User> signInManager, StatisticService statisticService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _statisticService = statisticService;
         }
 
         /// <summary>
@@ -61,6 +63,10 @@ namespace HighCode.Presentation.Areas.Identity.Pages.Account.Manage
             public string PhoneNumber { get; set; }
         }
 
+        public record AvailableStatistic(int completedTasks, double? ratingsScore, int? ratingsPosition);
+        
+        public AvailableStatistic Statistic { get; set; }
+    
         private async Task LoadAsync(User user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
@@ -81,8 +87,13 @@ namespace HighCode.Presentation.Areas.Identity.Pages.Account.Manage
             {
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
-
+            
             await LoadAsync(user);
+
+            Statistic = new(
+                await _statisticService.GetCompletedTasksCountForUser(user),
+                await _statisticService.GetScoreForUser(user),
+                await _statisticService.GetRatingPositionForUser(user) + 1);
             return Page();
         }
 

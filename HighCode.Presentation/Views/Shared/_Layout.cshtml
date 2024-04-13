@@ -22,14 +22,11 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @if (!User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Главная</a>
-                            </li>
-                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="CodeTasks" asp-action="Index">Задачи</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Leaderboard" asp-action="Index">Рейтинг</a>
                         </li>
                     </ul>
                     <partial name="_LoginPartial" />
@@ -44,8 +41,10 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - HighCode
+        <div class="container d-flex align-items-center">
+            <p class="mb-0 pb-0">&copy; 2024 -- HighCode -</p>
+            -
+            <a href="https://vk.com/lightlessq"> Автор</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

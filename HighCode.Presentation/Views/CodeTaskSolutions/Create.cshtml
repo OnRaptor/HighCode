@@ -39,7 +39,7 @@
     </div>
     </div>
     <div class="col-md-7">
-        <div id="container1" style="width: 100%; height: 30vh;"></div>
+        <div id="container1" style="width: 100%; height: 30vh; margin-top: 10px"></div>
         <p style="margin-left: 30px">Код для тестирования:</p>
         <div id="container2" style="width: 100%; height: 30vh; margin-top: 10px"></div>
     </div>
@@ -50,7 +50,7 @@
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
     <script src="~/js/taskCodePage.js"></script>
     <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"
+        src="~/lib/require.min.js"
         integrity="sha256-0SGl1PJNDyJwcV5T+weg2zpEMrh7xvlwO4oXgvZCeZk="
         crossorigin="anonymous"></script>
     <script>

@@ -4,8 +4,6 @@
     ViewData["Title"] = "Профиль";
     ViewData["ActivePage"] = ManageNavPages.Index;
 }
-
-<h3>@ViewData["Title"]</h3>
 <partial name="_StatusMessage" for="StatusMessage" />
 <div class="row">
     @* <div class="col-md-6">
@@ -23,8 +21,20 @@
             <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
         </form>
     </div> *@
-
+    <h3>Профиль @Model.Username</h3>
     <p>Статистика</p>
+    <dl class="row">
+        <dt class = "col-sm-auto">Завершенных задач:</dt>
+        <dd class = "col-sm-2">@Model.Statistic.completedTasks</dd>
+    </dl>
+    <dl class="row">
+        <dt class = "col-sm-auto">Очков в рейтинге:</dt>
+        <dd class = "col-sm-2">@Model.Statistic.ratingsScore</dd>
+    </dl>
+    <dl class="row">
+        <dt class = "col-sm-auto">Позиция в рейтинге:</dt>
+        <dd class = "col-sm-2">@Model.Statistic.ratingsPosition</dd>
+    </dl>
 </div>
 
 @section Scripts {

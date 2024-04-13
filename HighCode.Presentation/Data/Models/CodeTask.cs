@@ -17,11 +17,11 @@ namespace HighCode.Presentation.Data.Models
         {
             switch (complexity)
             {
-                case 0:
-                    return "Легко";
                 case 1:
-                    return "Средне";
+                    return "Легко";
                 case 2:
+                    return "Средне";
+                case 3:
                     return "Сложно";
                 default:
                     return "";

@@ -1,0 +1,31 @@
+﻿@page 
+@model TasksModel
+
+@{
+    ViewBag.Title = "Задачи";
+    Layout = "_Layout";
+}
+
+<h2>Ваши задачи</h2>
+
+@if (Model.Solutions.Count == 0)
+{
+    <p>Нет задач</p>
+    <a asp-controller="CodeTasks" asp-action="Index" class="btn btn-primary">Найти задачи</a>
+}
+else
+{
+    @foreach (var solution in Model.Solutions)
+    {
+        <div class="card d-flex flex-row p-3 justify-content-between mt-2 flex-wrap">
+            <div class="d-flex gap-3 flex-row align-items-center flex-wrap">
+                <h5 class="m-0">@solution.RelatedTask.Title</h5>
+                <p class="m-0">- @(solution.IsPublished ? "Опубликована" : "Не опубликована")</p>
+            </div>
+            <div class="d-flex gap-3 flex-row align-items-center flex-wrap">
+                <a asp-controller="CodeTasks" asp-action="Details" asp-route-id="@solution.RelatedTask.Id" class="btn btn-secondary">Перейти к задаче</a>
+                <a asp-controller="CodeTaskSolutions" asp-action="Create" asp-route-CodeTaskId="@solution.RelatedTask.Id" class="btn btn-primary">Перейти к решению</a>
+            </div>
+        </div>
+    }
+}

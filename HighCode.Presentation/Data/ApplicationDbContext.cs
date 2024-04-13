@@ -15,6 +15,7 @@ namespace HighCode.Presentation.Data
         public DbSet<User> Users { get; set; }
         public DbSet<CommentsReactions> CommentsReactions { get; set; }
         public DbSet<CodeTaskSolutionReactions> CodeTaskSolutionReactions { get; set; }
+        public DbSet<Leaderboard> Leaderboard { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
