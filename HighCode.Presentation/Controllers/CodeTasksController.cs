@@ -96,6 +96,7 @@ namespace HighCode.Presentation.Controllers
         }
 
         // GET: CodeTasks/Create
+        [Authorize(Roles = "Moderator")]
         public IActionResult Create()
         {
             return View();
@@ -103,6 +104,7 @@ namespace HighCode.Presentation.Controllers
 
         // POST: CodeTasks/Create
         [HttpPost]
+        [Authorize(Roles = "Moderator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Description,UnitTestCode,TemplateFuncSignature,Complexity,ProgrammingLanguage")] CodeTask codeTask)
         {
@@ -116,6 +118,7 @@ namespace HighCode.Presentation.Controllers
         }
 
         // GET: CodeTasks/Edit/5
+        [Authorize(Roles = "Moderator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -135,6 +138,7 @@ namespace HighCode.Presentation.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Moderator")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,UnitTestCode,TemplateFuncSignature,Complexity,ProgrammingLanguage")] CodeTask codeTask)
         {
@@ -165,7 +169,8 @@ namespace HighCode.Presentation.Controllers
             }
             return View(codeTask);
         }
-
+        
+        [Authorize(Roles = "Moderator")]
         // GET: CodeTasks/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {

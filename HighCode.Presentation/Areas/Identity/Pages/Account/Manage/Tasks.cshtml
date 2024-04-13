@@ -20,7 +20,7 @@ else
         <div class="card d-flex flex-row p-3 justify-content-between mt-2 flex-wrap">
             <div class="d-flex gap-3 flex-row align-items-center flex-wrap">
                 <h5 class="m-0">@solution.RelatedTask.Title</h5>
-                <p class="m-0">- @(solution.IsPublished ? "Опубликована" : "Не опубликована")</p>
+                <p class="m-0">- @(solution.IsTested ? "Решена" : "Не решена")</p>
             </div>
             <div class="d-flex gap-3 flex-row align-items-center flex-wrap">
                 <a asp-controller="CodeTasks" asp-action="Details" asp-route-id="@solution.RelatedTask.Id" class="btn btn-secondary">Перейти к задаче</a>

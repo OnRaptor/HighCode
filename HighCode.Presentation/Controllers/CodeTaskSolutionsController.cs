@@ -29,7 +29,7 @@ namespace HighCode.Presentation.Controllers
             _statisticService = statisticService;
         }
         
-        // GET: CodeTaskSolutions/Details/5
+        // Не используется
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -99,7 +99,8 @@ namespace HighCode.Presentation.Controllers
             if (User.Identity.IsAuthenticated)
             {
                 var cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
-                cTs.IsTested = result.TestsPassed == result.TestsTotalCount;
+                if (result.TestsTotalCount != 0)
+                    cTs.IsTested = result.TestsPassed == result.TestsTotalCount;
                 await _context.SaveChangesAsync();
             }
 
@@ -137,7 +138,7 @@ namespace HighCode.Presentation.Controllers
         }
         
 
-        // GET: CodeTaskSolutions/Edit/5
+        // Не используется, для этого есть функция Create
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
