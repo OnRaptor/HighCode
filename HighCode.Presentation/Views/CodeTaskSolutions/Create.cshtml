@@ -21,7 +21,7 @@
 <div class="row">
     <div class="col-md-5">
         <h3>@Model.CodeTask.Title</h3>
-        <p>@Model.CodeTask.Description<p/>
+        <p style="white-space: pre-line; ">@Model.CodeTask.Description<p/>
         <div class="form-group">
             <input type="submit" id="checkBtn" data-codetaskid=@Model.CodeTask.Id value="Проверка" class="btn btn-secondary" />
             @if (User.Identity.IsAuthenticated){

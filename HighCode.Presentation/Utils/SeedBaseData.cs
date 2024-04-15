@@ -19,15 +19,14 @@ namespace HighCode.Presentation.Utils
             //var a = await userManager.FindByNameAsync("Admin");
             //await userManager.DeleteAsync(await userManager.FindByNameAsync("Admin"));
 
-            if (!userManager.Users.Any(user => user.Id == "0"))
-            {
-                var user = new User() { 
-                    UserName = "admin🤡",
-                    Email="admin@mail.ru"
-                };
-                await userManager.CreateAsync(user, "Root_0");
-                await userManager.AddToRoleAsync(user, "Admin"); 
-            }
+            if (userManager.Users.Any(user => user.Email == "admin@mail.ru")) return;
+            
+            var user = new User() { 
+                UserName = "admin",
+                Email="admin@mail.ru"
+            };
+            if ((await userManager.CreateAsync(user, "Root_0")).Succeeded)
+                await userManager.AddToRoleAsync(user, "Admin");
         }
     }
 }

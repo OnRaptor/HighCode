@@ -30,7 +30,9 @@ namespace HighCode.Presentation.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CodeTasks.ToListAsync());
+            var items = await _context.CodeTasks.ToListAsync();
+            items.Reverse();
+            return View(items);
         }
 
         // GET: CodeTasks/Details/5

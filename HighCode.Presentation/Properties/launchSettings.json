@@ -4,10 +4,10 @@
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Release"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "http://192.168.0.105:5158"
+      "applicationUrl": "http://localhost:5158"
     },
     "IIS Express": {
       "commandName": "IISExpress",

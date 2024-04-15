@@ -37,7 +37,7 @@ public class UnitTestExecutor
             var result = compilation.Emit(ms);
             if (!result.Success)
             {
-                sb.AppendLine("🤡Не удалось скомпилировать:");
+                sb.AppendLine("❌Не удалось скомпилировать:");
                 foreach (var diagnostic in result.Diagnostics.Where(diagnostic 
                              => diagnostic.Severity == DiagnosticSeverity.Error)) //отлов только ошибок не предупреждений
                 {
@@ -69,7 +69,7 @@ public class UnitTestExecutor
                 }
                 catch (Exception ex)
                 {
-                    sb.AppendLine($"{method.Name}: 🤡Завален");
+                    sb.AppendLine($"{method.Name}: ❌Завален");
                     finalException = ex.InnerException.Message;
                 }
             }

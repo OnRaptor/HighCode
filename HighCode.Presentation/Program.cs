@@ -36,11 +36,11 @@ else
 {
     app.UseExceptionHandler("/Home/Error");
 }
-/*var sp = app.Services.CreateScope().ServiceProvider;
+var sp = app.Services.CreateScope().ServiceProvider;
 SeedBaseData.InitSystem(
     sp.GetService<UserManager<User>>(),
     sp.GetService<RoleManager<IdentityRole>>()
-    );*/
+    );
 
 app.UseStaticFiles();
 

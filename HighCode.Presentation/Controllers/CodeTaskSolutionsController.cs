@@ -57,15 +57,16 @@ namespace HighCode.Presentation.Controllers
         [Authorize]
         public async Task<IActionResult> Publish(int codeTaskId, string code)
         {
-            var cTs = await _context.CodeTaskSolutions.FirstOrDefaultAsync(m => m.Id == codeTaskId);
+            var user = await _userManager.GetUserAsync(User);
+            var cTs = await _context.CodeTaskSolutions
+                .FirstOrDefaultAsync(m => m.Id == codeTaskId && m.AuthorId == user.Id);
             if (cTs is { IsPublished: true }) return 
                 Ok(new TestExecutionReport{
                     Output = "Уже опубликовано!",
                     UseRawOutput = true
                 });
             
-            cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
-            if (cTs.IsTested)
+            if (cTs is { IsTested: true } && cTs.Code == code)
             {
                 cTs.IsPublished = true;
                 await _context.SaveChangesAsync();
@@ -75,6 +76,7 @@ namespace HighCode.Presentation.Controllers
                     UseRawOutput = true
                 });
             }
+            cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
             var codeTask = await _context.CodeTasks.FindAsync(codeTaskId);
             var res = await testCode(code, codeTask.UnitTestCode);
             if (res.TestsTotalCount == 0 || res.TestsPassed != res.TestsTotalCount) return Ok(res);
@@ -101,6 +103,8 @@ namespace HighCode.Presentation.Controllers
                 var cTs = await CreateOrSaveCodeTaskSolution(codeTaskId, code);
                 if (result.TestsTotalCount != 0)
                     cTs.IsTested = result.TestsPassed == result.TestsTotalCount;
+                else
+                    cTs.IsTested = false;
                 await _context.SaveChangesAsync();
             }
 
@@ -122,10 +126,9 @@ namespace HighCode.Presentation.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 var cTs = await _context.CodeTaskSolutions
-                    .Where(x => 
+                    .FirstOrDefaultAsync(x => 
                         x.RelatedTaskId == codeTaskId
-                        && x.AuthorId == user.Id)
-                    .FirstOrDefaultAsync();
+                        && x.AuthorId == user.Id);
                 if (cTs != null)
                 {
                     vm.Code = cTs.Code;
@@ -220,6 +223,7 @@ namespace HighCode.Presentation.Controllers
             {
                 codeTaskSolution.Comments.Clear();
                 codeTaskSolution.IsPublished = false;   
+                codeTaskSolution.IsTested = false;   
             }
 
             await _context.SaveChangesAsync();
