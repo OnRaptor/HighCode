@@ -6,6 +6,7 @@
     <UserSecretsId>aspnet-HighCode.Presentation-0635f364-a21e-4df8-b992-eb7f85baf89b</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <TargetFrameworks>net7.0;</TargetFrameworks>
+    <RootNamespace>HighCode.Presentation</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
