@@ -4,14 +4,13 @@ namespace HighCode.Application.Responses;
 
 public class ResponseFactory<TResponse> where TResponse : ResponseBase
 {
-    public Result<TResponse> ConflictResponse(string message, string description)
+    public Result<TResponse> ConflictResponse(string message)
     {
         return new Result<TResponse>
         {
             Error = new ErrorResponse
             {
                 ErrorMessage = message,
-                ErrorDetails = description,
                 Success = false
             },
             Response = null,
@@ -25,7 +24,7 @@ public class ResponseFactory<TResponse> where TResponse : ResponseBase
         {
             Error = null,
             Response = response,
-            StatusCode = HttpStatusCode.OK,
+            StatusCode = HttpStatusCode.OK
         };
     }
 }

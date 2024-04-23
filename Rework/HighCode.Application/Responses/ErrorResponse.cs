@@ -9,12 +9,6 @@ public class ErrorResponse
     [DefaultValue("ERROR_MESSAGE")]
     public string ErrorMessage { get; init; }
 
-    [DefaultValue("Error description")]
-    public string ErrorDetails { get; init; }
-
-    [DefaultValue(400)]
-    public HttpStatusCode StatusCode { get; init; }
-
     [DefaultValue(false)]
     public bool Success { get; init; }
 
