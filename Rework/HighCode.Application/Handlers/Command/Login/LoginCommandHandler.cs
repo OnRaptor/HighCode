@@ -1,13 +1,17 @@
-﻿using HighCode.Application.Responses;
+﻿#region
+
+using HighCode.Application.Responses;
 using HighCode.Application.Services;
 using MediatR;
 
+#endregion
+
 namespace HighCode.Application.Handlers.Command.Login;
 
-public class LoginCommandHandler : IRequestHandler<LoginCommand,Result<LoginCommandResponse>>
+public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginCommandResponse>>
 {
-    private readonly UserService _userService;
     private readonly ResponseFactory<LoginCommandResponse> _responseFactory;
+    private readonly UserService _userService;
 
     public LoginCommandHandler(UserService userService, ResponseFactory<LoginCommandResponse> responseFactory)
     {
@@ -19,13 +23,13 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand,Result<LoginComm
     {
         var result = await _userService.LoginUser(request.Login, request.Password);
         if (result.success)
-            return _responseFactory.SuccessResponse(new()
+            return _responseFactory.SuccessResponse(new LoginCommandResponse
             {
                 Message = "Успех!",
                 Token = result.token,
                 Success = true
             });
-        
-        return _responseFactory.ConflictResponse(result.message);
+
+        return _responseFactory.BadRequestResponse(result.message);
     }
 }

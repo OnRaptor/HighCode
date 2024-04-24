@@ -1,16 +1,17 @@
+#region
+
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using HighCode.Application.Common;
 using HighCode.Application.DependencyInjection;
 using HighCode.Application.Handlers.Command.Register;
 using HighCode.Infrastructure;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+
+#endregion
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwagger("HighCode API", "1");
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.WriteIndented = true;
@@ -35,6 +36,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 app.UseHttpsRedirection();
 app.UseCors(config =>
 {
@@ -44,4 +46,3 @@ app.UseCors(config =>
 });
 app.MapControllers();
 app.Run();
-

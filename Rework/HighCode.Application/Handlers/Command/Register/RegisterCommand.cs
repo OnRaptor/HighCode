@@ -1,9 +1,13 @@
-﻿using HighCode.Application.Responses;
+﻿#region
+
+using HighCode.Application.Responses;
 using MediatR;
+
+#endregion
 
 namespace HighCode.Application.Handlers.Command.Register;
 
-public class RegisterCommand : IRequest<Result<SimpleResponse>>
+public class RegisterCommand : IRequest<Result<RegisterCommandResponse>>
 {
     public string Login { get; set; }
     public string UserName { get; set; }

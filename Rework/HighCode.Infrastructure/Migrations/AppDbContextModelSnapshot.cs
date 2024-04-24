@@ -243,7 +243,6 @@ namespace HighCode.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Login")
@@ -257,6 +256,9 @@ namespace HighCode.Infrastructure.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("bytea");
+
+                    b.Property<string>("Role")
+                        .HasColumnType("text");
 
                     b.Property<string>("UserName")
                         .IsRequired()

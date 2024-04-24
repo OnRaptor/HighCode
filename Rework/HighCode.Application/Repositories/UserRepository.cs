@@ -1,7 +1,11 @@
-﻿using HighCode.Application.Models;
+﻿#region
+
+using HighCode.Application.Models;
 using HighCode.Infrastructure;
 using HighCode.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
+
+#endregion
 
 namespace HighCode.Application.Repositories;
 
@@ -27,17 +31,17 @@ public class UserRepository
     public async Task<CreateUserResult> CreateUserAsync(User user)
     {
         var match = await FindUserByLogin(user.Login);
-        if (match != null) return new(false, true, null);
-        
+        if (match != null) return new CreateUserResult(false, true, null);
+
         await _context.Users.AddAsync(user);
         try
         {
             await _context.SaveChangesAsync();
-            return new(true, false, user.Id);
+            return new CreateUserResult(true, false, user.Id);
         }
         catch (DbUpdateException ex)
         {
-            return new(false, false, null);
+            return new CreateUserResult(false, false, null);
         }
     }
 }

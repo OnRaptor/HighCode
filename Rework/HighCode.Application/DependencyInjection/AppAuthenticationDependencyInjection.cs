@@ -1,7 +1,11 @@
-﻿using HighCode.Application.Common;
+﻿#region
+
+using HighCode.Application.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+
+#endregion
 
 namespace HighCode.Application.DependencyInjection;
 
@@ -14,23 +18,16 @@ public static class AppAuthenticationDependencyInjection
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    // указывает, будет ли валидироваться издатель при валидации токена
                     ValidateIssuer = true,
-                    // строка, представляющая издателя
                     ValidIssuer = AuthOptions.ISSUER,
-                    // будет ли валидироваться потребитель токена
                     ValidateAudience = true,
-                    // установка потребителя токена
                     ValidAudience = AuthOptions.AUDIENCE,
-                    // будет ли валидироваться время существования
                     ValidateLifetime = true,
-                    // установка ключа безопасности
                     IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-                    // валидация ключа безопасности
-                    ValidateIssuerSigningKey = true,
+                    ValidateIssuerSigningKey = true
                 };
             });
-        
+
         return services;
     }
 }

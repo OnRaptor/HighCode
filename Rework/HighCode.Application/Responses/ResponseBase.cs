@@ -1,18 +1,20 @@
-﻿using System.ComponentModel;
+﻿#region
+
+using System.ComponentModel;
+
+#endregion
 
 namespace HighCode.Application.Responses;
 
 public class ResponseBase
 {
-    [DefaultValue("SUCCESS")]
-    public string Message { get; set; }
+    [DefaultValue("SUCCESS")] public string Message { get; set; }
 
-    [DefaultValue(true)]
-    public bool Success { get; set; }
+    [DefaultValue(true)] public bool Success { get; set; }
 
     public static ResponseBase SuccessResponse => new()
     {
         Message = "SUCCESS",
-        Success = true,
+        Success = true
     };
 }

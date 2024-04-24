@@ -1,4 +1,8 @@
-﻿using System.Net;
+﻿#region
+
+using System.Net;
+
+#endregion
 
 namespace HighCode.Application.Responses;
 
@@ -8,7 +12,6 @@ public record Result<TResponse> where TResponse : ResponseBase
 
     public ErrorResponse Error { get; init; }
     public HttpStatusCode StatusCode { get; init; }
-
 }
 
 public record Result
@@ -17,5 +20,4 @@ public record Result
 
     public ErrorResponse Error { get; init; }
     public HttpStatusCode StatusCode { get; init; }
-
 }

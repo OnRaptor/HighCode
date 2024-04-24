@@ -1,5 +1,9 @@
-﻿using HighCode.Application.Responses;
+﻿#region
+
+using HighCode.Application.Responses;
 using MediatR;
+
+#endregion
 
 namespace HighCode.Application.Handlers.Command.Login;
 

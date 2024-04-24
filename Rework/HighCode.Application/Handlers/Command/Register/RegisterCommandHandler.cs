@@ -1,32 +1,43 @@
-﻿using HighCode.Application.Responses;
+﻿#region
+
+using HighCode.Application.Responses;
 using HighCode.Application.Services;
 using HighCode.Infrastructure.Entities;
 using MediatR;
 
+#endregion
+
 namespace HighCode.Application.Handlers.Command.Register;
 
-public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<SimpleResponse>>
+public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<RegisterCommandResponse>>
 {
+    private readonly ResponseFactory<RegisterCommandResponse> _responseFactory;
     private readonly UserService _userService;
-    private readonly ResponseFactory<SimpleResponse> _responseFactory;
 
-    public RegisterCommandHandler(UserService userService, ResponseFactory<SimpleResponse> responseFactory)
+    public RegisterCommandHandler(UserService userService, ResponseFactory<RegisterCommandResponse> responseFactory)
     {
         _userService = userService;
         _responseFactory = responseFactory;
     }
 
-    public async Task<Result<SimpleResponse>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RegisterCommandResponse>> Handle(RegisterCommand request,
+        CancellationToken cancellationToken)
     {
         var user = new User
         {
             Login = request.Login,
-            UserName = request.UserName
+            UserName = request.UserName,
+            Role = "User"
         };
         var result = await _userService.RegisterUser(user, request.Password);
         if (result.Success)
-            return  _responseFactory.SuccessResponse(new(){ Message = "Успех", Success = true });
-        return _responseFactory.ConflictResponse( result.UserExist
+            return _responseFactory.SuccessResponse(new RegisterCommandResponse
+            {
+                Message = "Успех",
+                Success = true,
+                Token = result.Token
+            });
+        return _responseFactory.BadRequestResponse(result.UserExist
             ? "Пользователь существует"
             : "Не удалось создать пользователя"
         );

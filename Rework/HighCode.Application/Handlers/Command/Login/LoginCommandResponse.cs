@@ -1,4 +1,8 @@
-﻿using HighCode.Application.Responses;
+﻿#region
+
+using HighCode.Application.Responses;
+
+#endregion
 
 namespace HighCode.Application.Handlers.Command.Login;
 
