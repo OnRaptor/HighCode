@@ -48,7 +48,6 @@ public class SolutionController(
     }
 
     [HttpPost]
-    [Authorize]
     public async Task<IActionResult> TestCode(
         [FromBody] TestCodeCommand command,
         CancellationToken cancellationToken)
