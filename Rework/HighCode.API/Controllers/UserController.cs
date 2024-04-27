@@ -11,8 +11,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace HighCode.API.Controllers;
 
 [Route("api/user/[action]")]
-public class UserController(IMediator _mediator, ILogger<UserController> logger, CorrelationContext _correlationContext)
-    : BaseApiController<UserController>(_mediator, logger, _correlationContext)
+public class UserController(IMediator _mediator, ILogger<UserController> logger)
+    : BaseApiController<UserController>(_mediator, logger)
 {
     [HttpPost]
     public async Task<IActionResult> Login(

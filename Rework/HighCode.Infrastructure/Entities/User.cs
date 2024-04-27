@@ -6,6 +6,13 @@ using System.ComponentModel;
 
 namespace HighCode.Infrastructure.Entities;
 
+public enum RoleType
+{
+    User,
+    Moderator,
+    Administrator
+}
+
 public class User
 {
     public Guid Id { get; set; }
@@ -13,7 +20,7 @@ public class User
     public string UserName { get; set; }
     public string? Description { get; set; }
 
-    [DefaultValue("User")] public string? Role { get; set; }
+    [DefaultValue("1")] public RoleType Role { get; set; }
 
     public byte[] PasswordHash { get; set; }
     public byte[] PasswordSalt { get; set; }

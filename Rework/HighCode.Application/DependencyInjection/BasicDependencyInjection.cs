@@ -19,7 +19,11 @@ public static class BasicDependencyInjection
         services.AddScoped<UserRepository>();
         services.AddScoped<UserService>();
         services.AddScoped<TaskRepository>();
+        services.AddScoped<CommentRepository>();
         services.AddScoped<SolutionRepository>();
+        services.AddScoped<ReactionRepository>();
+        services.AddScoped<LeaderboardRepository>();
+        services.AddScoped<RatingService>();
         services.AddTransient<CorrelationContext>();
         services.AddTransient<IRunner, CsharpRunner>();
         services.AddTransient<RunnerFactory>();

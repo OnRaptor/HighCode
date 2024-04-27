@@ -20,7 +20,7 @@ public class TasksController(
     IMediator _mediator,
     ILogger<TasksController> logger,
     CorrelationContext _correlationContext)
-    : BaseApiController<TasksController>(_mediator, logger, _correlationContext)
+    : BaseApiController<TasksController>(_mediator, logger)
 {
     [HttpPost]
     [Authorize(Roles = "Moderator")]

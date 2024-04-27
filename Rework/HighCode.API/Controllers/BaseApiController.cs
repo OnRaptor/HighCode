@@ -14,8 +14,7 @@ namespace HighCode.API.Controllers;
 [Produces("application/json")]
 public class BaseApiController<TController>(
     IMediator _mediator,
-    ILogger<TController> logger,
-    CorrelationContext _correlationContext) : ControllerBase
+    ILogger<TController> logger) : ControllerBase
     where TController : ControllerBase
 {
     [NonAction]

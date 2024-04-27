@@ -1,5 +1,6 @@
 ﻿#region
 
+using HighCode.Application.Handlers.Command.TaskSolution.TestCode;
 using HighCode.Application.Repositories;
 using HighCode.Application.Responses;
 using HighCode.Application.Services;
@@ -12,7 +13,10 @@ namespace HighCode.Application.Handlers.Command.TaskSolution.ChangeSolutionPubli
 public class ChangeSolutionPublishHandler(
     ResponseFactory<SimpleResponse> responseFactory,
     SolutionRepository repository,
-    CorrelationContext correlationContext
+    CorrelationContext correlationContext,
+    RatingService ratingService,
+    IMediator mediator,
+    TaskRepository taskRepository
 )
     : IRequestHandler<ChangeSolutionPublishCommand, Result<SimpleResponse>>
 {
@@ -25,6 +29,20 @@ public class ChangeSolutionPublishHandler(
         if (existingSolution == null) return responseFactory.BadRequestResponse("Решение не найдено");
 
         existingSolution.IsPublished = request.IsPublish;
+        if (!existingSolution.FirstPublishDate.HasValue)
+        {
+            existingSolution.FirstPublishDate = DateTime.UtcNow;
+            var testResult = await mediator.Send(new TestCodeCommand
+            {
+                TaskId = request.TaskId,
+                Code = existingSolution.Code
+            });
+            if (testResult.Response.Success)
+                await ratingService.ApplyScoreFromCompletedTask(
+                    userId.Value,
+                    testResult.Response.TestResult,
+                    await taskRepository.GetById(request.TaskId));
+        }
         await repository.UpdateSolution(existingSolution);
         return responseFactory.SuccessResponse(new SimpleResponse { Message = "Статус публикации решения изменен" });
     }

@@ -27,7 +27,7 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Re
         {
             Login = request.Login,
             UserName = request.UserName,
-            Role = "User"
+            Role = 0
         };
         var result = await _userService.RegisterUser(user, request.Password);
         if (result.Success)

@@ -29,4 +29,11 @@ public class CorrelationContext
             ? null
             : parsedUserId;
     }
+
+    public string GetUserRole()
+    {
+        var context = httpContextAccessor.HttpContext;
+
+        return context?.User.FindFirstValue(ClaimTypes.Role);
+    }
 }

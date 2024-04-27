@@ -4,6 +4,7 @@ using HighCode.Application.Handlers.Command.TaskSolution.ChangeSolutionPublish;
 using HighCode.Application.Handlers.Command.TaskSolution.SaveSolution;
 using HighCode.Application.Handlers.Command.TaskSolution.TestCode;
 using HighCode.Application.Handlers.Queries.TaskSolution.GetSolutionForUser;
+using HighCode.Application.Handlers.Queries.TaskSolution.GetSolutions;
 using HighCode.Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -16,9 +17,8 @@ namespace HighCode.API.Controllers;
 [Route("api/solution/[action]")]
 public class SolutionController(
     IMediator _mediator,
-    ILogger<SolutionController> logger,
-    CorrelationContext _correlationContext)
-    : BaseApiController<SolutionController>(_mediator, logger, _correlationContext)
+    ILogger<SolutionController> logger)
+    : BaseApiController<SolutionController>(_mediator, logger)
 {
     [HttpPost]
     [Authorize]
@@ -45,6 +45,13 @@ public class SolutionController(
         CancellationToken cancellationToken)
     {
         return await RequestAsync(command, cancellationToken);
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetSolutions(
+        CancellationToken cancellationToken)
+    {
+        return await RequestAsync(new GetSolutionsQuery(), cancellationToken);
     }
 
     [HttpPost]

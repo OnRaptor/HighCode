@@ -15,13 +15,7 @@ public class CodeTaskSolution
     public User Author { get; set; }
     public string Code { get; set; }
     public List<Comment> Comments { get; set; }
-
-    [NotMapped] public int InterestingReactionCount { get; set; }
-
-    [NotMapped] public int CleverReactionCount { get; set; }
-
-    [NotMapped] public int FunReactionCount { get; set; }
-
+    public DateTime? FirstPublishDate { get; set; }
     public bool IsTested { get; set; }
     public bool IsPublished { get; set; }
 }

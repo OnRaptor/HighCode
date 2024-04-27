@@ -15,14 +15,10 @@ public class Comment
     public CodeTask? RelatedTask { get; set; }
     public Guid? RepliedCommentId { get; set; }
     public Comment? RepliedComment { get; set; }
+    public Guid AuthorId { get; set; }
     public User Author { get; set; }
     public string Content { get; set; }
     public DateTime DateCreated { get; set; }
-
-    [NotMapped] public int Likes { get; set; }
-
-    [NotMapped] public int Dislikes { get; set; }
-
     public string? AnotherAuthor { get; set; }
     public List<Comment> Replies { get; set; }
 

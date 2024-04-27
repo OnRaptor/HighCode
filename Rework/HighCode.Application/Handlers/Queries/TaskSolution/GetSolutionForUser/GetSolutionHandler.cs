@@ -2,6 +2,7 @@
 
 using HighCode.Application.Repositories;
 using HighCode.Application.Responses;
+using HighCode.Application.Runners;
 using HighCode.Application.Services;
 using HighCode.Domain.DTO;
 using MediatR;
@@ -13,7 +14,9 @@ namespace HighCode.Application.Handlers.Queries.TaskSolution.GetSolutionForUser;
 public class GetSolutionHandler(
     ResponseFactory<GetSolutionResponse> responseFactory,
     SolutionRepository repository,
-    CorrelationContext correlationContext
+    CorrelationContext correlationContext,
+    RunnerFactory runnerFactory,
+    TaskRepository  taskRepository
 ) : IRequestHandler<GetSolutionQuery, Result<GetSolutionResponse>>
 {
     public async Task<Result<GetSolutionResponse>> Handle(GetSolutionQuery request, CancellationToken cancellationToken)
@@ -29,7 +32,10 @@ public class GetSolutionHandler(
                     Code = solution.Code,
                     IsPublished = solution.IsPublished,
                     IsTested = solution.IsTested,
-                    Id = solution.Id
+                    Id = solution.Id,
+                    IsTestingAvailable = runnerFactory.GetRunnerByLanguage(
+                        (await taskRepository.GetById(request.TaskId)).ProgrammingLanguage
+                        ) != null
                 }
             });
         return responseFactory.BadRequestResponse("Не удалось найти решение");

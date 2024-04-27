@@ -55,7 +55,7 @@ public class UserService
             if (!result) return new LoginUserResult(false, message: "Пароль не верный");
 
 
-            var token = JwtGenerator.GenerateToken(user.Id.ToString(), user.UserName, user.Role ?? "User");
+            var token = JwtGenerator.GenerateToken(user.Id.ToString(), user.UserName, user.Role);
             return new LoginUserResult(result, token);
         }
     }
