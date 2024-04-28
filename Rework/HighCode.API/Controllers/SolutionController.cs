@@ -5,6 +5,7 @@ using HighCode.Application.Handlers.Command.TaskSolution.SaveSolution;
 using HighCode.Application.Handlers.Command.TaskSolution.TestCode;
 using HighCode.Application.Handlers.Queries.TaskSolution.GetSolutionForUser;
 using HighCode.Application.Handlers.Queries.TaskSolution.GetSolutions;
+using HighCode.Application.Responses;
 using HighCode.Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,6 +23,8 @@ public class SolutionController(
 {
     [HttpPost]
     [Authorize]
+    [ProducesResponseType<SimpleResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> SaveSolution(
         [FromBody] SaveSolutionCommand command,
         CancellationToken cancellationToken)
@@ -31,6 +34,8 @@ public class SolutionController(
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType<SimpleResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> ChangeSolutionPublish(
         [FromBody] ChangeSolutionPublishCommand command,
         CancellationToken cancellationToken)
@@ -40,6 +45,8 @@ public class SolutionController(
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType<GetSolutionResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetSolutionForUser(
         [FromQuery] GetSolutionQuery command,
         CancellationToken cancellationToken)
@@ -48,6 +55,8 @@ public class SolutionController(
     }
     
     [HttpGet]
+    [ProducesResponseType<GetSolutionsResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetSolutions(
         CancellationToken cancellationToken)
     {
@@ -55,6 +64,8 @@ public class SolutionController(
     }
 
     [HttpPost]
+    [ProducesResponseType<TestCodeResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> TestCode(
         [FromBody] TestCodeCommand command,
         CancellationToken cancellationToken)

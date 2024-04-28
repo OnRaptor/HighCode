@@ -1,0 +1,19 @@
+﻿@page "/register"
+
+<MudCard Style="max-width: 500px">
+    <MudCardContent>
+        <MudText Typo="Typo.h5">Регистрация</MudText>
+        <MudStack Spacing="2">
+            <MudTextField Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Никнейм" Variant="Variant.Filled"></MudTextField>
+            <MudTextField Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
+            <MudTextField InputType="InputType.Password" Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
+            <MudCheckBox T="bool">Запомнить</MudCheckBox>
+            <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Zарегистрироваться</MudButton>
+            <MudLink Href="/login">Уже есть аккаунт?</MudLink>
+        </MudStack>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    
+}

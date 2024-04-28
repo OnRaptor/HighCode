@@ -1,0 +1,70 @@
+﻿@page "/rating"
+@using HighCode.Client.Services
+@inject IHighCodeAPI api;
+
+@if (Leaderboards.Count == 0)
+{
+    <MudProgressCircular Indeterminate="true"/>
+}
+<MudText Typo="Typo.h5">Рейтинг пользователей</MudText>
+<MudSimpleTable Loading="@(Leaderboards.Count == 0)" Hover="true">
+    <thead>
+    <tr>
+        <th>Место</th>
+        <th>Пользователь</th>
+        <th>Очки</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    @foreach (var l in Leaderboards.Select((x, i) => new { index = i, leaderboard = x }))
+    {
+        <tr>
+            <td>@(l.index + 1)</td>
+            <td>@l.leaderboard.Username</td>
+            <td>@l.leaderboard.Score</td>
+        </tr>
+    }
+    </tbody>
+</MudSimpleTable>
+
+
+@code {
+    ICollection<LeaderboardDTO> Leaderboards { get; set; } = new List<LeaderboardDTO>();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        try
+        {
+            Leaderboards.Add(new LeaderboardDTO()
+            {
+                Score = 155,
+                Username = "aby abak ali"
+            });
+            Leaderboards.Add(new LeaderboardDTO()
+            {
+                Score = 155,
+                Username = "aby abak ali"
+            });
+            Leaderboards.Add(new LeaderboardDTO()
+            {
+                Score = 155,
+                Username = "aby abak ali"
+            });
+            Leaderboards.Add(new LeaderboardDTO()
+            {
+                Score = 155,
+                Username = "aby abak ali"
+            });
+            StateHasChanged();
+            //var r = await api.GetLeaderboard();
+            //Leaderboards = r.Leaderboards;
+            //StateHasChanged();
+        }
+        catch
+        {
+            
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+}

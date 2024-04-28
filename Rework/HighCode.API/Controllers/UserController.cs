@@ -2,7 +2,7 @@
 
 using HighCode.Application.Handlers.Command.Login;
 using HighCode.Application.Handlers.Command.Register;
-using HighCode.Application.Services;
+using HighCode.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,6 +15,8 @@ public class UserController(IMediator _mediator, ILogger<UserController> logger)
     : BaseApiController<UserController>(_mediator, logger)
 {
     [HttpPost]
+    [ProducesResponseType<LoginCommandResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Login(
         [FromBody] LoginCommand command,
         CancellationToken cancellationToken)
@@ -23,6 +25,8 @@ public class UserController(IMediator _mediator, ILogger<UserController> logger)
     }
 
     [HttpPost]
+    [ProducesResponseType<RegisterCommandResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register(
         [FromBody] RegisterCommand command,
         CancellationToken cancellationToken)

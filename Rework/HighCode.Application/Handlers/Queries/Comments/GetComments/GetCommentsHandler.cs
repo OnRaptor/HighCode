@@ -5,6 +5,7 @@ using HighCode.Application.Services;
 using HighCode.Domain.DTO;
 using HighCode.Infrastructure.Entities;
 using MediatR;
+using ReactionType = HighCode.Domain.DTO.ReactionType;
 
 public class GetCommentsHandler(
     ResponseFactory<GetCommentsResponse> responseFactory,

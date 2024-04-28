@@ -1,4 +1,7 @@
 ﻿using HighCode.Application.Handlers.Command.Comments.PostComment;
+using HighCode.Application.Handlers.Command.Reactions.PostReactionForComment;
+using HighCode.Application.Handlers.Command.Reactions.PostReactionForSolution;
+using HighCode.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +14,8 @@ public class ReactionController(IMediator _mediator, ILogger<UserController> log
 {
     [HttpPost]
     [Authorize]
+    [ProducesResponseType<PostReactionForCommentResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddReactionToComment(
         [FromBody] PostReactionForCommentCommand command,
         CancellationToken cancellationToken)
@@ -20,6 +25,8 @@ public class ReactionController(IMediator _mediator, ILogger<UserController> log
     
     [HttpPost]
     [Authorize]
+    [ProducesResponseType<PostReactionForSolutionResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddReactionToSolution(
         [FromBody] PostReactionForSolutionCommand command,
         CancellationToken cancellationToken)

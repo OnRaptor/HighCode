@@ -8,5 +8,6 @@ public class SolutionDTO
     public bool? IsTested { get; set; }
     public bool? IsTestingAvailable { get; set; }
     public SolutionReactions SolutionReactions { get; set; }
+    public int? MyReaction { get; set; }
     public string? AuthorName { get; set; }
 }

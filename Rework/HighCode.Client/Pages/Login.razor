@@ -1,0 +1,18 @@
+﻿@page "/login"
+
+<MudCard Style="max-width: 500px">
+    <MudCardContent>
+        <MudText Typo="Typo.h5">Авторизация</MudText>
+        <MudStack Spacing="2">
+            <MudTextField T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
+            <MudTextField InputType="InputType.Password" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
+            <MudCheckBox T="bool">Запомнить</MudCheckBox>
+            <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Войти</MudButton>
+            <MudLink Href="/register">Регистрация</MudLink>
+        </MudStack>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    
+}

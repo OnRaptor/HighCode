@@ -1,0 +1,37 @@
+﻿@inherits LayoutComponentBase
+<MudThemeProvider @bind-IsDarkMode="IsDarkTheme" @bind-IsDarkMode:after="Reload"/>
+<MudDialogProvider />
+<MudSnackbarProvider/>
+
+<MudLayout>
+    <MudAppBar WrapContent="true" Color="Color.Transparent" Elevation="5">
+        <MudStack Wrap="Wrap.Wrap" Style="width: 100%" AlignItems="AlignItems.Center" Row="true" Justify="Justify.SpaceBetween">
+            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                <MudHidden Breakpoint="Breakpoint.Xs">
+                    <MudLink Class="mr-2" Typo="Typo.h5" Underline="Underline.None" Href="">HighCode</MudLink>
+                </MudHidden>
+                <MudButton StartIcon="@Icons.Material.Filled.Task" Href="/tasks">Задачи</MudButton>
+                <MudButton StartIcon="@Icons.Material.Filled.TableChart" Href="/rating">Рейтинг</MudButton>
+            </MudStack>
+            <MudStack Row="true" AlignItems="AlignItems.Center">
+                <MudIconButton Icon="@ThemeSwitchIcon" OnClick="() => IsDarkTheme = !IsDarkTheme"></MudIconButton>
+                <MudButton Style="justify-self: end;" Href="/login">Войти</MudButton>
+            </MudStack>
+        </MudStack>
+    </MudAppBar>
+    <MudMainContent>
+        <MudContainer Class="mt-5" MaxWidth="MaxWidth.Medium">
+            @Body
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code{
+    bool IsDarkTheme { get; set; } 
+    string ThemeSwitchIcon => IsDarkTheme ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
+
+    void Reload()
+    {
+        this.StateHasChanged();
+    }
+}

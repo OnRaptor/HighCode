@@ -1,0 +1,43 @@
+﻿@page "/tasks"
+@using HighCode.Client.Services
+@inject IHighCodeAPI api;
+
+
+@if (CodeTasks.Count == 0)
+{
+    <MudProgressCircular Indeterminate="true"/>
+}
+@foreach (var task in CodeTasks)
+{
+    <MudCard Outlined="true" Class="mt-5">
+        <MudCardContent>
+            <MudText Color="Color.Info" Typo="Typo.subtitle1">@task.Title</MudText>
+            <MudText Typo="Typo.subtitle2">@task.Description</MudText>
+        </MudCardContent>
+        <MudCardActions>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Error">Удалить</MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Warning">Изменить</MudButton>
+        </MudCardActions>
+    </MudCard>
+}
+@code {
+    ICollection<CodeTask> CodeTasks { get; set; } = new List<CodeTask>();
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        try
+        {
+            var r = await api.GetTasks();
+            CodeTasks = r.Tasks;
+            StateHasChanged();
+        }
+        catch
+        {
+            
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}

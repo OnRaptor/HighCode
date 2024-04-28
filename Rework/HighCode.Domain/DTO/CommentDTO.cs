@@ -1,6 +1,4 @@
-﻿using HighCode.Infrastructure.Entities;
-
-namespace HighCode.Domain.DTO;
+﻿namespace HighCode.Domain.DTO;
 
 public class CommentDTO
 {
@@ -11,5 +9,5 @@ public class CommentDTO
     public DateTime CreatedDate { get; set; }
     public int Likes { get; set; }
     public int Dislikes { get; set; }
-    public ReactionType? MyReaction { get; set; }
+    public int? MyReaction { get; set; }
 }

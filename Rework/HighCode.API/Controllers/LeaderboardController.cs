@@ -1,4 +1,5 @@
 ﻿using HighCode.Application.Handlers.Queries.Leaderboard;
+using HighCode.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +10,8 @@ public class LeaderboardController(IMediator _mediator, ILogger<LeaderboardContr
     : BaseApiController<LeaderboardController>(_mediator, logger)
 {
     [HttpGet]
+    [ProducesResponseType<GetLeaderboardsResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetLeaderboard(
         CancellationToken cancellationToken)
     {

@@ -3,17 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34321.82
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.Presentation.Legacy", "HighCode.Presentation.Legacy\HighCode.Presentation.Legacy.csproj", "{59E638DC-5752-4758-9776-6BECF3224FA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HighCode.Presentation.Legacy", "HighCode.Presentation.Legacy\HighCode.Presentation.Legacy.csproj", "{59E638DC-5752-4758-9776-6BECF3224FA5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rework", "Rework", "{7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.API", "Rework\HighCode.API\HighCode.API.csproj", "{F9CD1496-526C-435B-BBF6-F3DDBCB91410}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HighCode.API", "Rework\HighCode.API\HighCode.API.csproj", "{F9CD1496-526C-435B-BBF6-F3DDBCB91410}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.Domain", "Rework\HighCode.Domain\HighCode.Domain.csproj", "{2B07B4C2-8E48-4A21-B425-54663E02A4F3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HighCode.Domain", "Rework\HighCode.Domain\HighCode.Domain.csproj", "{2B07B4C2-8E48-4A21-B425-54663E02A4F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.Infrastructure", "Rework\HighCode.Infrastructure\HighCode.Infrastructure.csproj", "{87FE6014-8868-4F77-8F1D-AD041F6AF21E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HighCode.Infrastructure", "Rework\HighCode.Infrastructure\HighCode.Infrastructure.csproj", "{87FE6014-8868-4F77-8F1D-AD041F6AF21E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.Application", "Rework\HighCode.Application\HighCode.Application.csproj", "{3B05E253-C6A6-4A57-99DB-CEB1FFD48604}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HighCode.Application", "Rework\HighCode.Application\HighCode.Application.csproj", "{3B05E253-C6A6-4A57-99DB-CEB1FFD48604}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.Client", "Rework\HighCode.Client\HighCode.Client.csproj", "{DD012E67-2451-4E27-A743-86213EC3710D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,17 +43,22 @@ Global
 		{3B05E253-C6A6-4A57-99DB-CEB1FFD48604}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B05E253-C6A6-4A57-99DB-CEB1FFD48604}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B05E253-C6A6-4A57-99DB-CEB1FFD48604}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD012E67-2451-4E27-A743-86213EC3710D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD012E67-2451-4E27-A743-86213EC3710D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD012E67-2451-4E27-A743-86213EC3710D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD012E67-2451-4E27-A743-86213EC3710D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {559A6019-2EE5-4BCA-A6DB-EFB35E69C17C}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{F9CD1496-526C-435B-BBF6-F3DDBCB91410} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
 		{2B07B4C2-8E48-4A21-B425-54663E02A4F3} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
 		{87FE6014-8868-4F77-8F1D-AD041F6AF21E} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
 		{3B05E253-C6A6-4A57-99DB-CEB1FFD48604} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
+		{DD012E67-2451-4E27-A743-86213EC3710D} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {559A6019-2EE5-4BCA-A6DB-EFB35E69C17C}
 	EndGlobalSection
 EndGlobal

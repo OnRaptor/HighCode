@@ -4,6 +4,7 @@ using HighCode.Infrastructure;
 using HighCode.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
+using ReactionType = HighCode.Infrastructure.Entities.ReactionType;
 
 namespace HighCode.Application.Repositories;
 
@@ -22,7 +23,7 @@ public class ReactionRepository(AppDbContext _context)
                 cr.CommentId == commentId &&
                 cr.AuthorId == userId).ExecuteDeleteAsync();
             
-            if (existingReaction == reactionType)
+            if (existingReaction == (int?)reactionType)
                 return true;
         }
         
@@ -59,8 +60,9 @@ public class ReactionRepository(AppDbContext _context)
         ).CountAsync();
     }
     
-    public async Task<ReactionType?> GetReactionCommentForUser(Guid commentId, Guid userId) =>
-        (await _context.CommentsReactions
+    public async Task<int?> GetReactionCommentForUser(Guid commentId, Guid userId) =>
+        (int?)(await _context.CommentsReactions
+            .AsNoTracking()
             .FirstOrDefaultAsync(cr => 
                 cr.CommentId == commentId && 
                 cr.AuthorId == userId))?.Reaction;
@@ -75,8 +77,9 @@ public class ReactionRepository(AppDbContext _context)
             solutionReactions.Count(sr => sr.Reaction == SolutionReactionType.Clever),
             solutionReactions.Count(sr => sr.Reaction == SolutionReactionType.Fun));
     }
-    public async Task<SolutionReactionType?> GetReactionSolutionForUser(Guid solutionId, Guid userId) =>
-        (await _context.CodeTaskSolutionReactions
+    public async Task<int?> GetReactionSolutionForUser(Guid solutionId, Guid userId) =>
+        (int?)(await _context.CodeTaskSolutionReactions
+            .AsNoTracking()
             .FirstOrDefaultAsync(cr => 
                 cr.SolutionId == solutionId && 
                 cr.AuthorId == userId))?.Reaction;
@@ -90,7 +93,7 @@ public class ReactionRepository(AppDbContext _context)
                 cr.SolutionId == solutionId &&
                 cr.AuthorId == userId).ExecuteDeleteAsync();
             
-            if (existingReaction == reactionType)
+            if (existingReaction == (int?)reactionType)
                 return true;
         }
         

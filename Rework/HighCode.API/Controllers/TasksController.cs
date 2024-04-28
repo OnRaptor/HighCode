@@ -5,6 +5,7 @@ using HighCode.Application.Handlers.Command.CodeTask.DeleteTask;
 using HighCode.Application.Handlers.Command.CodeTask.EditTask;
 using HighCode.Application.Handlers.Queries.CodeTask.GetAllTasks;
 using HighCode.Application.Handlers.Queries.CodeTask.GetTaskById;
+using HighCode.Application.Responses;
 using HighCode.Application.Services;
 using HighCode.Domain.DTO;
 using MediatR;
@@ -24,6 +25,8 @@ public class TasksController(
 {
     [HttpPost]
     [Authorize(Roles = "Moderator")]
+    [ProducesResponseType<CreateTaskResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateTask(
         [FromBody] TaskDTO task,
         CancellationToken cancellationToken)
@@ -37,12 +40,16 @@ public class TasksController(
     }
 
     [HttpGet]
+    [ProducesResponseType<GetAllTaskResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetTasks(CancellationToken cancellationToken)
     {
         return await RequestAsync(new GetAllTaskQuery(), cancellationToken);
     }
 
     [HttpGet]
+    [ProducesResponseType<GetTaskByIdResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetTask(
         [FromQuery] GetTaskByIdQuery command,
         CancellationToken cancellationToken)
@@ -52,6 +59,8 @@ public class TasksController(
 
     [HttpPost]
     [Authorize(Roles = "Moderator")]
+    [ProducesResponseType<SimpleResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> EditTask(
         [FromBody] EditTaskCommand command,
         CancellationToken cancellationToken)
@@ -61,6 +70,8 @@ public class TasksController(
 
     [HttpPost]
     [Authorize(Roles = "Moderator")]
+    [ProducesResponseType<SimpleResponse>(200)]
+    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> DeleteTask(
         [FromBody] DeleteTaskCommand command,
         CancellationToken cancellationToken)
