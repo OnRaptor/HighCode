@@ -1,18 +1,56 @@
 ﻿@page "/login"
+@using HighCode.Client.Services
+@using Refit
+@inject AuthService AuthService
+@inject ISnackbar SnackbarService
+@inject NavigationManager NavigationManager
+@inject IHighCodeAPI Api;
 
 <MudCard Style="max-width: 500px">
     <MudCardContent>
         <MudText Typo="Typo.h5">Авторизация</MudText>
-        <MudStack Spacing="2">
-            <MudTextField T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
-            <MudTextField InputType="InputType.Password" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
-            <MudCheckBox T="bool">Запомнить</MudCheckBox>
-            <MudButton FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Войти</MudButton>
-            <MudLink Href="/register">Регистрация</MudLink>
-        </MudStack>
+        <MudForm @bind-IsValid="Success">
+            <MudStack Spacing="2">
+                <MudTextField Required="true" @bind-Value="LoginValue" T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
+                <MudTextField Required="true" @bind-Value="PasswordValue" InputType="InputType.Password" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
+                @* Нужен refresh token что бы это нормально реализовать
+                <MudCheckBox @bind-Value="IsRememberValue" T="bool">Запомнить</MudCheckBox>
+                *@
+                <MudButton Disabled="@(!Success)" OnClick="LoginCommand" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Войти</MudButton>
+                <MudLink Href="/register">Регистрация</MudLink>
+            </MudStack>
+        </MudForm>
     </MudCardContent>
 </MudCard>
 
 @code {
-    
+    string LoginValue { get; set; }
+    string PasswordValue { get; set; }
+    bool IsRememberValue { get; set; }
+    bool Success;
+
+
+    private async void LoginCommand()
+    {
+        LoginCommandResponse result = null;
+        try
+        {
+            result = await Api.Login(new LoginCommand()
+            {
+                Login = LoginValue,
+                Password = PasswordValue
+            });
+            if (result.Success)
+            {
+                await AuthService.SaveToken(result.Token, result.ValidTo.Value);
+                NavigationManager.NavigateTo("/tasks", true, true);
+            }
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
 }

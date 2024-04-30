@@ -27,7 +27,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginCom
             {
                 Message = "Успех!",
                 Token = result.token,
-                Success = true
+                Success = true,
+                ValidTo = DateTime.UtcNow.Add(TimeSpan.FromMinutes(60))
             });
 
         return _responseFactory.BadRequestResponse(result.message);

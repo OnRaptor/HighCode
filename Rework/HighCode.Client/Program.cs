@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazored.LocalStorage;
 using HighCode.Client;
 using HighCode.Client.Services;
-using Refit;
+using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using Refit;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -15,5 +16,7 @@ builder.Services.AddMudServices();
 builder.Services
     .AddRefitClient<IHighCodeAPI>()
     .ConfigureHttpClient(c => c.BaseAddress = new Uri("http://localhost:5148"));
+builder.Services.AddBlazoredLocalStorageAsSingleton();
+builder.Services.AddSingleton<AuthService>();
 
 await builder.Build().RunAsync();

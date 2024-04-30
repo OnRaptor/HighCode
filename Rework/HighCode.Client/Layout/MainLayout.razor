@@ -1,5 +1,9 @@
-﻿@inherits LayoutComponentBase
-<MudThemeProvider @bind-IsDarkMode="IsDarkTheme" @bind-IsDarkMode:after="Reload"/>
+﻿@using HighCode.Client.Services
+@inherits LayoutComponentBase
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+
+<MudThemeProvider @bind-IsDarkMode="IsDarkTheme" @bind-IsDarkMode:after="StateHasChanged"/>
 <MudDialogProvider />
 <MudSnackbarProvider/>
 
@@ -15,7 +19,15 @@
             </MudStack>
             <MudStack Row="true" AlignItems="AlignItems.Center">
                 <MudIconButton Icon="@ThemeSwitchIcon" OnClick="() => IsDarkTheme = !IsDarkTheme"></MudIconButton>
-                <MudButton Style="justify-self: end;" Href="/login">Войти</MudButton>
+                @if (IsAuthenticated)
+                {
+                    <MudButton Href="/profile">Профиль</MudButton>
+                    <MudButton OnClick="SignOut">Выйти</MudButton>
+                }
+                else
+                {
+                    <MudButton Href="/login">Войти</MudButton>
+                }
             </MudStack>
         </MudStack>
     </MudAppBar>
@@ -27,11 +39,20 @@
 </MudLayout>
 
 @code{
-    bool IsDarkTheme { get; set; } 
+    bool IsDarkTheme { get; set; }
+    bool IsAuthenticated { get; set; }
     string ThemeSwitchIcon => IsDarkTheme ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
 
-    void Reload()
+    protected override async Task OnInitializedAsync()
     {
-        this.StateHasChanged();
+        IsAuthenticated = await AuthService.IsAuthenticated();
+        await base.OnInitializedAsync();
+    }
+
+    private async void SignOut()
+    {
+        await AuthService.RemoveToken();
+        IsAuthenticated = false;
+        NavigationManager.Refresh(true);
     }
 }

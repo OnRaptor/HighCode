@@ -2,6 +2,7 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using HighCode.API.Filters;
 using HighCode.Application.DependencyInjection;
 using HighCode.Application.Handlers.Command.Register;
 using HighCode.Infrastructure;
@@ -12,12 +13,15 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger("HighCode API", "1");
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.WriteIndented = true;
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-});
+builder.Services
+    .AddControllers(options => { options.Filters.Add<DefaultModelStateFilter>(); })
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.WriteIndented = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+    })
+    .ConfigureApiBehaviorOptions(options => { options.SuppressModelStateInvalidFilter = true; });
 builder.Services.AddMediatR(options =>
 {
     options.RegisterServicesFromAssembly(typeof(RegisterCommandHandler).Assembly);
@@ -29,6 +33,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddAuthorization();
 builder.Services.AddAppAuthentication();
 builder.Services.AddBasicServices();
+
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

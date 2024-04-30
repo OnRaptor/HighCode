@@ -9,4 +9,5 @@ namespace HighCode.Application.Handlers.Command.Register;
 public class RegisterCommandResponse : ResponseBase
 {
     public string Token { get; set; }
+    public DateTime? ValidTo { get; set; }
 }

@@ -10,4 +10,5 @@ public class LoginCommandResponse : ResponseBase
 {
     public string? Message { get; set; }
     public string? Token { get; set; }
+    public DateTime? ValidTo { get; set; }
 }
