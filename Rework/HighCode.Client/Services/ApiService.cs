@@ -585,6 +585,8 @@ namespace HighCode.Client
 
         [JsonPropertyName("task")]
         public TaskDTO Task { get; set; }
+        [JsonPropertyName("isTestingAvailable")]
+        public bool? IsTestingAvailable { get; set; }
 
     }
 
@@ -804,7 +806,7 @@ namespace HighCode.Client
     {
 
         [JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
+        public System.Guid? Id { get; set; }
 
         [JsonPropertyName("code")]
         public string Code { get; set; }
@@ -814,9 +816,6 @@ namespace HighCode.Client
 
         [JsonPropertyName("isTested")]
         public bool? IsTested { get; set; }
-
-        [JsonPropertyName("isTestingAvailable")]
-        public bool? IsTestingAvailable { get; set; }
 
         [JsonPropertyName("solutionReactions")]
         public SolutionReactions SolutionReactions { get; set; }
@@ -869,8 +868,8 @@ namespace HighCode.Client
         [JsonPropertyName("unitTestCode")]
         public string UnitTestCode { get; set; }
 
-        [JsonPropertyName("templateFuncSignature")]
-        public string TemplateFuncSignature { get; set; }
+        [JsonPropertyName("codeTemplate")]
+        public string CodeTemplate { get; set; }
 
         [JsonPropertyName("complexity")]
         public int? Complexity { get; set; }

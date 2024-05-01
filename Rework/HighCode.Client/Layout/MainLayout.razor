@@ -3,46 +3,57 @@
 @inject AuthService AuthService
 @inject NavigationManager NavigationManager
 
-<MudThemeProvider @bind-IsDarkMode="IsDarkTheme" @bind-IsDarkMode:after="StateHasChanged"/>
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="IsDarkTheme" @bind-IsDarkMode:after="StateHasChanged"/>
 <MudDialogProvider />
 <MudSnackbarProvider/>
 
-<MudLayout>
-    <MudAppBar WrapContent="true" Color="Color.Transparent" Elevation="5">
-        <MudStack Wrap="Wrap.Wrap" Style="width: 100%" AlignItems="AlignItems.Center" Row="true" Justify="Justify.SpaceBetween">
-            <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-                <MudHidden Breakpoint="Breakpoint.Xs">
-                    <MudLink Class="mr-2" Typo="Typo.h5" Underline="Underline.None" Href="">HighCode</MudLink>
-                </MudHidden>
-                <MudButton StartIcon="@Icons.Material.Filled.Task" Href="/tasks">Задачи</MudButton>
-                <MudButton StartIcon="@Icons.Material.Filled.TableChart" Href="/rating">Рейтинг</MudButton>
+<CascadingValue Value="_mudThemeProvider">
+    <MudLayout>
+        <MudAppBar WrapContent="true" Color="Color.Transparent" Elevation="5">
+            <MudStack Wrap="Wrap.Wrap" Style="width: 100%" AlignItems="AlignItems.Center" Row="true" Justify="Justify.SpaceBetween">
+                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
+                    <MudHidden Breakpoint="Breakpoint.Xs">
+                        <MudLink Class="mr-2" Typo="Typo.h5" Underline="Underline.None" Href="">HighCode</MudLink>
+                    </MudHidden>
+                    <MudButton StartIcon="@Icons.Material.Filled.Task" Href="/tasks">Задачи</MudButton>
+                    <MudButton StartIcon="@Icons.Material.Filled.TableChart" Href="/rating">Рейтинг</MudButton>
+                </MudStack>
+                <MudStack Row="true" AlignItems="AlignItems.Center">
+                    <MudIconButton Icon="@ThemeSwitchIcon" OnClick="() => IsDarkTheme = !IsDarkTheme"></MudIconButton>
+                    @if (IsAuthenticated)
+                    {
+                        <MudButton Href="/profile">Профиль</MudButton>
+                        <MudButton OnClick="SignOut">Выйти</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton Href="/login">Войти</MudButton>
+                    }
+                </MudStack>
             </MudStack>
-            <MudStack Row="true" AlignItems="AlignItems.Center">
-                <MudIconButton Icon="@ThemeSwitchIcon" OnClick="() => IsDarkTheme = !IsDarkTheme"></MudIconButton>
-                @if (IsAuthenticated)
-                {
-                    <MudButton Href="/profile">Профиль</MudButton>
-                    <MudButton OnClick="SignOut">Выйти</MudButton>
-                }
-                else
-                {
-                    <MudButton Href="/login">Войти</MudButton>
-                }
-            </MudStack>
-        </MudStack>
-    </MudAppBar>
-    <MudMainContent>
-        <MudContainer Class="mt-5" MaxWidth="MaxWidth.Medium">
+        </MudAppBar>
+        <MudMainContent Class="mt-5">
             @Body
-        </MudContainer>
-    </MudMainContent>
-</MudLayout>
+        </MudMainContent>
+    </MudLayout>
+</CascadingValue>
 
 @code{
     bool IsDarkTheme { get; set; }
     bool IsAuthenticated { get; set; }
     string ThemeSwitchIcon => IsDarkTheme ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
 
+    private MudThemeProvider _mudThemeProvider;
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            IsDarkTheme = await _mudThemeProvider.GetSystemPreference();
+            StateHasChanged();
+        }
+    }
+    
     protected override async Task OnInitializedAsync()
     {
         IsAuthenticated = await AuthService.IsAuthenticated();

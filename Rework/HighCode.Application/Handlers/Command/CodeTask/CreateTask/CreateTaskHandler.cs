@@ -20,7 +20,7 @@ public class CreateTaskHandler(TaskRepository taskRepository, ResponseFactory<Si
             UnitTestCode = request.Task.UnitTestCode,
             Complexity = request.Task.Complexity.Value,
             ProgrammingLanguage = request.Task.ProgrammingLanguage,
-            TemplateFuncSignature = request.Task.TemplateFuncSignature,
+            CodeTemplate = request.Task.CodeTemplate,
             AuthorId = request.UserId
         };
         if (await taskRepository.CreateTask(task))

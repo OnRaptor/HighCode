@@ -2,32 +2,33 @@
 @using HighCode.Client.Services
 @inject IHighCodeAPI api;
 
-@if (Leaderboards.Count == 0)
-{
-    <MudProgressCircular Indeterminate="true"/>
-}
-<MudText Typo="Typo.h5">Рейтинг пользователей</MudText>
-<MudSimpleTable Loading="@(Leaderboards.Count == 0)" Hover="true">
-    <thead>
-    <tr>
-        <th>Место</th>
-        <th>Пользователь</th>
-        <th>Очки</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    @foreach (var l in Leaderboards.Select((x, i) => new { index = i, leaderboard = x }))
+<MudContainer MaxWidth="MaxWidth.Medium">
+    @if (Leaderboards.Count == 0)
     {
-        <tr>
-            <td>@(l.index + 1)</td>
-            <td>@l.leaderboard.Username</td>
-            <td>@l.leaderboard.Score</td>
-        </tr>
+        <MudProgressCircular Indeterminate="true"/>
     }
-    </tbody>
-</MudSimpleTable>
+    <MudText Typo="Typo.h5">Рейтинг пользователей</MudText>
+    <MudSimpleTable Loading="@(Leaderboards.Count == 0)" Hover="true">
+        <thead>
+        <tr>
+            <th>Место</th>
+            <th>Пользователь</th>
+            <th>Очки</th>
+        </tr>
+        </thead>
 
+        <tbody>
+        @foreach (var l in Leaderboards.Select((x, i) => new { index = i, leaderboard = x }))
+        {
+            <tr>
+                <td>@(l.index + 1)</td>
+                <td>@l.leaderboard.Username</td>
+                <td>@l.leaderboard.Score</td>
+            </tr>
+        }
+        </tbody>
+    </MudSimpleTable>
+</MudContainer>
 
 @code {
     ICollection<LeaderboardDTO> Leaderboards { get; set; } = new List<LeaderboardDTO>();

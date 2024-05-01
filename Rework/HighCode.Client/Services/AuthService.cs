@@ -7,9 +7,10 @@ public class AuthService(ILocalStorageService localStorage)
     public async Task<bool> IsAuthenticated()
     {
         var tokenValid = await localStorage.GetItemAsync<DateTime?>("tokenValid");
-        return tokenValid.HasValue && tokenValid < DateTime.Now;
+        return tokenValid.HasValue && tokenValid > DateTime.UtcNow;
     }
-
+    
+    public async Task<string?> GetToken() => await localStorage.GetItemAsStringAsync("token");
     public async Task SaveToken(string token, DateTime validTo)
     {
         await localStorage.SetItemAsStringAsync("token", token);

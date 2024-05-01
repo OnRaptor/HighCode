@@ -1,0 +1,132 @@
+﻿@page "/solution/{TaskId}"
+@using HighCode.Client.Services
+@using Refit
+@inject AuthService AuthService
+@inject ISnackbar SnackbarService
+@inject NavigationManager NavigationManager
+@inject IHighCodeAPI Api;
+@inject IJSRuntime JSRuntime;
+
+<MudSpacer />
+<MudContainer  MaxWidth="MaxWidth.Large">
+    @if (loading)
+    {
+        <MudGrid Spacing="4" Justify="Justify.Center">
+            <MudItem xs="8" sm="4">
+                <MudStack Spacing="4">
+                    <MudSkeleton Height="200px" SkeletonType="SkeletonType.Rectangle"/>
+                    <MudSkeleton Height="50px" SkeletonType="SkeletonType.Rectangle"/>
+                </MudStack>
+            </MudItem>
+            <MudItem xs="16" sm="8">
+                <MudStack Spacing="4">
+                    <MudSkeleton Height="250px" SkeletonType="SkeletonType.Rectangle"/>
+                    <MudSkeleton Height="250px" SkeletonType="SkeletonType.Rectangle"/>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <MudGrid Spacing="4" Justify="Justify.Center">
+            <MudItem xs="8" sm="4">
+                <MudPaper>
+                    <MudCard>
+                        <MudCardContent>
+                            <MudText Typo="Typo.h6">@CurrentTask.Title</MudText>
+                            <MudText Typo="Typo.body1">@CurrentTask.Description</MudText>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudStack Row="true" Spacing="2">
+                                @if (isTestingAvaible)
+                                {
+                                    <MudButton Variant="Variant.Outlined" Color="Color.Info">Проверить</MudButton>
+                                }
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary">Опубликовать</MudButton>
+                            </MudStack>
+                        </MudCardActions>
+                    </MudCard>
+                </MudPaper>
+            </MudItem>
+            <MudItem xs="16" sm="8">
+                <MudStack Spacing="4">
+                    <MudPaper Class="pa-4" Width="400">
+                        <div style="height: 30vh; width: 100%" id="container1"></div>
+                    </MudPaper>
+                    <MudPaper Class="pa-4" Width="400">
+                        <div style="height: 30vh; width: 100%" id="container2"></div>
+                    </MudPaper>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    }
+</MudContainer>
+
+@code {
+    [Parameter]
+    public string TaskId { get; set; }
+
+    [CascadingParameter]
+    MudThemingProvider theme { get; set; }
+    
+    bool loading { get; set; } = true;
+    bool isTestingAvaible { get; set; }
+    SolutionDTO CurrentSolution { get; set; }
+    TaskDTO CurrentTask { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Guid.TryParse(TaskId, out var parsedTaskId))
+        {
+            SnackbarService.Add("Не корректный индефикатор задачи");
+            return;
+        }
+        try
+        {
+            var taskResponse = await Api.GetTask(parsedTaskId);
+            if (taskResponse.Success)
+            {
+                CurrentTask = taskResponse.Task;
+                isTestingAvaible = taskResponse.IsTestingAvailable.HasValue && taskResponse.IsTestingAvailable.Value;
+            }
+
+            if (await AuthService.IsAuthenticated())
+            {
+                var solutionResponse = await Api.GetSolutionForUser(parsedTaskId);
+                if (solutionResponse.Success)
+                    CurrentSolution = solutionResponse.Solution;
+            }
+            else
+            {
+                CurrentSolution = new()
+                {
+                    Code = taskResponse.Task.CodeTemplate,
+                };
+            }
+
+            await LoadEditors(CurrentSolution.Code, CurrentTask.UnitTestCode);
+            loading = false;
+        }
+        catch(ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+
+        theme.IsDarkModeChanged = new EventCallback<bool>(this, ThemeChanged);
+        await base.OnInitializedAsync();
+    }
+
+
+    async Task LoadEditors(string code, string unitTestCode)
+    {
+        await JSRuntime.InvokeVoidAsync("window.initEditors", code, unitTestCode, theme.IsDarkMode? "vs-dark" : "vs");
+    }
+
+    private async void ThemeChanged()
+    {
+        await JSRuntime.InvokeVoidAsync("monaco.editor.setTheme", theme.IsDarkMode ? "vs-dark" : "vs");
+        theme.IsDarkModeChanged = new EventCallback<bool>(this, ThemeChanged); //Гоооооол
+    }
+
+}

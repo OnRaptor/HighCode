@@ -1,8 +1,6 @@
-﻿using MudBlazor;
+﻿namespace HighCode.Client.Services;
 
-namespace HighCode.Client.Services;
-
-public class ThemeService(MudThemeProvider provider)
+public class ThemeService
 {
     
 }

@@ -15,7 +15,6 @@ public class GetSolutionHandler(
     ResponseFactory<GetSolutionResponse> responseFactory,
     SolutionRepository repository,
     CorrelationContext correlationContext,
-    RunnerFactory runnerFactory,
     TaskRepository  taskRepository
 ) : IRequestHandler<GetSolutionQuery, Result<GetSolutionResponse>>
 {
@@ -24,6 +23,7 @@ public class GetSolutionHandler(
         var userId = correlationContext.GetUserId();
         if (userId == null) responseFactory.BadRequestResponse("Нет доступа");
         var solution = await repository.GetSolutionByTaskForUser(request.TaskId, userId.Value);
+        var task = await taskRepository.GetById(request.TaskId);
         if (solution != null)
             return responseFactory.SuccessResponse(new GetSolutionResponse()
             {
@@ -32,12 +32,16 @@ public class GetSolutionHandler(
                     Code = solution.Code,
                     IsPublished = solution.IsPublished,
                     IsTested = solution.IsTested,
-                    Id = solution.Id,
-                    IsTestingAvailable = runnerFactory.GetRunnerByLanguage(
-                        (await taskRepository.GetById(request.TaskId)).ProgrammingLanguage
-                        ) != null
+                    Id = solution.Id
                 }
             });
-        return responseFactory.BadRequestResponse("Не удалось найти решение");
+        return responseFactory.SuccessResponse(new GetSolutionResponse()
+        {
+            Solution = new SolutionDTO()
+            {
+                Id=null,
+                Code = task.CodeTemplate
+            }
+        });
     }
 }

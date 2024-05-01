@@ -2,6 +2,7 @@
 
 using HighCode.Application.Repositories;
 using HighCode.Application.Responses;
+using HighCode.Application.Runners;
 using HighCode.Domain.DTO;
 using MediatR;
 
@@ -11,7 +12,8 @@ namespace HighCode.Application.Handlers.Queries.CodeTask.GetTaskById;
 
 public class GetTaskByIdHandler(
     ResponseFactory<GetTaskByIdResponse> responseFactory,
-    TaskRepository repository
+    TaskRepository repository,
+    RunnerFactory runnerFactory
 ) : IRequestHandler<GetTaskByIdQuery, Result<GetTaskByIdResponse>>
 {
     public async Task<Result<GetTaskByIdResponse>> Handle(GetTaskByIdQuery request, CancellationToken cancellationToken)
@@ -27,8 +29,12 @@ public class GetTaskByIdHandler(
             UnitTestCode = result.UnitTestCode,
             Complexity = result.Complexity,
             ProgrammingLanguage = result.ProgrammingLanguage,
-            TemplateFuncSignature = result.TemplateFuncSignature
+            CodeTemplate = result.CodeTemplate
         };
-        return responseFactory.SuccessResponse(new GetTaskByIdResponse { Task = task });
+        return responseFactory.SuccessResponse(new GetTaskByIdResponse
+        {
+            Task = task,
+            IsTestingAvailable = runnerFactory.GetRunnerByLanguage(task.ProgrammingLanguage) != null
+        });
     }
 }

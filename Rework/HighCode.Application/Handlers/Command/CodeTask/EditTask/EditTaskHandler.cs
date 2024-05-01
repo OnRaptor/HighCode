@@ -25,7 +25,7 @@ public class EditTaskHandler(
             UnitTestCode = request.Task.UnitTestCode ?? baseTask.UnitTestCode,
             Complexity = request.Task.Complexity.HasValue ? request.Task.Complexity.Value : 0,
             ProgrammingLanguage = request.Task.ProgrammingLanguage ?? baseTask.ProgrammingLanguage,
-            TemplateFuncSignature = request.Task.TemplateFuncSignature ?? baseTask.TemplateFuncSignature,
+            CodeTemplate = request.Task.CodeTemplate ?? baseTask.CodeTemplate,
             AuthorId = baseTask.AuthorId
         };
         if (await repository.EditTask(task))

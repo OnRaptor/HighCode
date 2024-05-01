@@ -6,25 +6,25 @@
 @inject NavigationManager NavigationManager
 @inject IHighCodeAPI Api;
 
-
-<MudCard Style="max-width: 500px">
-    <MudCardContent>
-        <MudText Typo="Typo.h5">Регистрация</MudText>
-        <MudForm @bind-IsValid="@Success">
-            <MudStack Spacing="2">
-                <MudTextField @bind-Value="UserNameValue" Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Никнейм" Variant="Variant.Filled"></MudTextField>
-                <MudTextField @bind-Value="LoginValue" Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
-                <MudTextField @bind-Value="PasswordValue" InputType="InputType.Password" Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
-                @*
-                <MudCheckBox T="bool">Запомнить</MudCheckBox>
-                *@
-                <MudButton Disabled="@(!Success)" OnClick="RegisterCommand" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Zарегистрироваться</MudButton>
-                <MudLink Href="/login">Уже есть аккаунт?</MudLink>
-            </MudStack>
-        </MudForm>
-    </MudCardContent>
-</MudCard>
-
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudCard Style="max-width: 500px">
+        <MudCardContent>
+            <MudText Typo="Typo.h5">Регистрация</MudText>
+            <MudForm @bind-IsValid="@Success">
+                <MudStack Spacing="2">
+                    <MudTextField @bind-Value="UserNameValue" Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Никнейм" Variant="Variant.Filled"></MudTextField>
+                    <MudTextField @bind-Value="LoginValue" Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
+                    <MudTextField @bind-Value="PasswordValue" InputType="InputType.Password" Required="true" Immediate="true" Counter="15" MaxLength="15" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
+                    @*
+                    <MudCheckBox T="bool">Запомнить</MudCheckBox>
+                    *@
+                    <MudButton Disabled="@(!Success)" OnClick="RegisterCommand" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Zарегистрироваться</MudButton>
+                    <MudLink Href="/login">Уже есть аккаунт?</MudLink>
+                </MudStack>
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
 @code {
     string LoginValue { get; set; }
     string UserNameValue { get; set; }

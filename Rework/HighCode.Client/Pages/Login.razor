@@ -6,22 +6,24 @@
 @inject NavigationManager NavigationManager
 @inject IHighCodeAPI Api;
 
-<MudCard Style="max-width: 500px">
-    <MudCardContent>
-        <MudText Typo="Typo.h5">Авторизация</MudText>
-        <MudForm @bind-IsValid="Success">
-            <MudStack Spacing="2">
-                <MudTextField Required="true" @bind-Value="LoginValue" T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
-                <MudTextField Required="true" @bind-Value="PasswordValue" InputType="InputType.Password" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
-                @* Нужен refresh token что бы это нормально реализовать
-                <MudCheckBox @bind-Value="IsRememberValue" T="bool">Запомнить</MudCheckBox>
-                *@
-                <MudButton Disabled="@(!Success)" OnClick="LoginCommand" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Войти</MudButton>
-                <MudLink Href="/register">Регистрация</MudLink>
-            </MudStack>
-        </MudForm>
-    </MudCardContent>
-</MudCard>
+<MudContainer MaxWidth="MaxWidth.Small">
+    <MudCard Style="max-width: 500px">
+        <MudCardContent>
+            <MudText Typo="Typo.h5">Авторизация</MudText>
+            <MudForm @bind-IsValid="Success">
+                <MudStack Spacing="2">
+                    <MudTextField Required="true" @bind-Value="LoginValue" T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
+                    <MudTextField Required="true" @bind-Value="PasswordValue" InputType="InputType.Password" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
+                    @* Нужен refresh token что бы это нормально реализовать
+                    <MudCheckBox @bind-Value="IsRememberValue" T="bool">Запомнить</MudCheckBox>
+                    *@
+                    <MudButton Disabled="@(!Success)" OnClick="LoginCommand" FullWidth="true" Variant="Variant.Filled" Color="Color.Primary">Войти</MudButton>
+                    <MudLink Href="/register">Регистрация</MudLink>
+                </MudStack>
+            </MudForm>
+        </MudCardContent>
+    </MudCard>
+</MudContainer>
 
 @code {
     string LoginValue { get; set; }

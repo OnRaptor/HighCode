@@ -31,6 +31,10 @@ namespace HighCode.Infrastructure.Migrations
                     b.Property<Guid?>("AuthorId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CodeTemplate")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("CollectionOfTasksId")
                         .HasColumnType("uuid");
 
@@ -42,10 +46,6 @@ namespace HighCode.Infrastructure.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ProgrammingLanguage")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TemplateFuncSignature")
                         .IsRequired()
                         .HasColumnType("text");
 
