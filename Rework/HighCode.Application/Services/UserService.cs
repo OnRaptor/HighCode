@@ -56,7 +56,7 @@ public class UserService
 
 
             var token = JwtGenerator.GenerateToken(user.Id.ToString(), user.UserName, user.Role);
-            return new LoginUserResult(result, token);
+            return new LoginUserResult(result, token, role: user.Role);
         }
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text.Json;
 using HighCode.Client.Services;
-using MudBlazor;
 
 namespace HighCode.Client.HttpHandlers;
 
@@ -11,7 +9,7 @@ public class TokenHandler(AuthService authService) : DelegatingHandler
 {
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        if (await authService.IsAuthenticated())
+        if (authService.IsAuthenticated)
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await authService.GetToken());
         try
         {

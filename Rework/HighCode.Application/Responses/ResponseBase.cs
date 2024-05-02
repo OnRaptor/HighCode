@@ -8,7 +8,7 @@ namespace HighCode.Application.Responses;
 
 public class ResponseBase
 {
-    [DefaultValue("SUCCESS")] public string Message { get; set; }
+    [DefaultValue("SUCCESS")] public string? Message { get; set; }
 
     [DefaultValue(true)] public bool Success { get; set; }
 

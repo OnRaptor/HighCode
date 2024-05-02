@@ -227,7 +227,7 @@ namespace HighCode.Client.Services
         /// </exception>
         [Headers("Accept: application/json")]
         [Post("/api/tasks/CreateTask")]
-        Task<CreateTaskResponse> CreateTask([Body] TaskDTO body);
+        Task<SimpleResponse> CreateTask([Body] TaskDTO body);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -628,6 +628,8 @@ namespace HighCode.Client
         public string Token { get; set; }
         [JsonPropertyName("validTo")]
         public DateTime? ValidTo { get; set; }
+        [JsonPropertyName("role")]
+        public RoleType Role { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -759,18 +761,17 @@ namespace HighCode.Client
         public string Token { get; set; }
         [JsonPropertyName("validTo")]
         public DateTime? ValidTo { get; set; }
-
+        [JsonPropertyName("role")]
+        public RoleType Role { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum RoleType
     {
 
-        _0 = 0,
-
-        _1 = 1,
-
-        _2 = 2,
+        User,
+        Moderator,
+        Administrator
 
     }
 

@@ -1,4 +1,4 @@
-﻿@page "/solution/{TaskId}"
+﻿@page "/solution/{TaskIdParam}"
 @using HighCode.Client.Services
 @using Refit
 @inject AuthService AuthService
@@ -8,17 +8,17 @@
 @inject IJSRuntime JSRuntime;
 
 <MudSpacer />
-<MudContainer  MaxWidth="MaxWidth.Large">
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
     @if (loading)
     {
         <MudGrid Spacing="4" Justify="Justify.Center">
-            <MudItem xs="8" sm="4">
+            <MudItem xs="4" sm="3">
                 <MudStack Spacing="4">
                     <MudSkeleton Height="200px" SkeletonType="SkeletonType.Rectangle"/>
                     <MudSkeleton Height="50px" SkeletonType="SkeletonType.Rectangle"/>
                 </MudStack>
             </MudItem>
-            <MudItem xs="16" sm="8">
+            <MudItem xs="6" sm="4">
                 <MudStack Spacing="4">
                     <MudSkeleton Height="250px" SkeletonType="SkeletonType.Rectangle"/>
                     <MudSkeleton Height="250px" SkeletonType="SkeletonType.Rectangle"/>
@@ -29,32 +29,52 @@
     else
     {
         <MudGrid Spacing="4" Justify="Justify.Center">
-            <MudItem xs="8" sm="4">
-                <MudPaper>
+            <MudItem xs="4" sm="3">
+                <MudStack Spacing="4">
                     <MudCard>
                         <MudCardContent>
-                            <MudText Typo="Typo.h6">@CurrentTask.Title</MudText>
-                            <MudText Typo="Typo.body1">@CurrentTask.Description</MudText>
+                            <MudText Typo="Typo.h6">@currentTask.Title</MudText>
+                            <MudText Style="white-space: pre-line;" Typo="Typo.body1">@currentTask.Description</MudText>
                         </MudCardContent>
                         <MudCardActions>
-                            <MudStack Row="true" Spacing="2">
+                            <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
                                 @if (isTestingAvaible)
                                 {
-                                    <MudButton Variant="Variant.Outlined" Color="Color.Info">Проверить</MudButton>
+                                    <MudButton OnClick="TestCodeClick" Variant="Variant.Outlined" Color="Color.Info">Проверить</MudButton>
                                 }
-                                <MudButton Variant="Variant.Filled" Color="Color.Primary">Опубликовать</MudButton>
+                                @if (!isTestingAvaible)
+                                {
+                                    <MudAlert Dense="true" Severity="Severity.Info">Для данной задачи не поддерживается автоматическое тестирование</MudAlert>
+                                }
+                                @if (AuthService.IsAuthenticated && isTestingAvaible)
+                                {
+                                    if (isPublished)
+                                    {
+                                        <MudButton OnClick="RemoveFromPublishClick" Variant="Variant.Filled" Color="Color.Error">Снять с публикации</MudButton>
+                                    }
+                                    else
+                                    {
+                                        <MudButton OnClick="PublishClick" Variant="Variant.Filled" Color="Color.Primary">Опубликовать</MudButton>
+                                    }
+                                }
                             </MudStack>
                         </MudCardActions>
                     </MudCard>
-                </MudPaper>
+                    @if (!string.IsNullOrWhiteSpace(testCodeOutput))
+                    {
+                        <MudPaper Class="pa-4">
+                            <MudText Style="white-space: pre-line;" Typo="Typo.body2">@testCodeOutput</MudText>
+                        </MudPaper>
+                    }
+                </MudStack>
             </MudItem>
-            <MudItem xs="16" sm="8">
+            <MudItem xs="6" sm="4">
                 <MudStack Spacing="4">
-                    <MudPaper Class="pa-4" Width="400">
-                        <div style="height: 30vh; width: 100%" id="container1"></div>
+                    <MudPaper Class="pa-4">
+                        <div style="height: 40vh; width: 100%; overflow: clip;" id="container1"></div>
                     </MudPaper>
-                    <MudPaper Class="pa-4" Width="400">
-                        <div style="height: 30vh; width: 100%" id="container2"></div>
+                    <MudPaper Class="pa-4">
+                        <div style="height: 30vh; width: 100%; overflow: clip;" id="container2"></div>
                     </MudPaper>
                 </MudStack>
             </MudItem>
@@ -63,64 +83,22 @@
 </MudContainer>
 
 @code {
-    [Parameter]
-    public string TaskId { get; set; }
+    [Parameter] public string TaskIdParam { get; set; }
 
     [CascadingParameter]
     MudThemingProvider theme { get; set; }
-    
-    bool loading { get; set; } = true;
-    bool isTestingAvaible { get; set; }
-    SolutionDTO CurrentSolution { get; set; }
-    TaskDTO CurrentTask { get; set; }
-    
-    protected override async Task OnInitializedAsync()
-    {
-        if (!Guid.TryParse(TaskId, out var parsedTaskId))
-        {
-            SnackbarService.Add("Не корректный индефикатор задачи");
-            return;
-        }
-        try
-        {
-            var taskResponse = await Api.GetTask(parsedTaskId);
-            if (taskResponse.Success)
-            {
-                CurrentTask = taskResponse.Task;
-                isTestingAvaible = taskResponse.IsTestingAvailable.HasValue && taskResponse.IsTestingAvailable.Value;
-            }
 
-            if (await AuthService.IsAuthenticated())
-            {
-                var solutionResponse = await Api.GetSolutionForUser(parsedTaskId);
-                if (solutionResponse.Success)
-                    CurrentSolution = solutionResponse.Solution;
-            }
-            else
-            {
-                CurrentSolution = new()
-                {
-                    Code = taskResponse.Task.CodeTemplate,
-                };
-            }
-
-            await LoadEditors(CurrentSolution.Code, CurrentTask.UnitTestCode);
-            loading = false;
-        }
-        catch(ApiException e)
-        {
-            var error = await e.GetContentAsAsync<ErrorResponse>();
-            SnackbarService.Add(error.ErrorMessage, Severity.Error);
-        }
-
-        theme.IsDarkModeChanged = new EventCallback<bool>(this, ThemeChanged);
-        await base.OnInitializedAsync();
-    }
-
+    Guid taskId;
+    bool loading = true;
+    bool isTestingAvaible;
+    SolutionDTO currentSolution;
+    TaskDTO currentTask;
+    string testCodeOutput;
+    bool isPublished;
 
     async Task LoadEditors(string code, string unitTestCode)
     {
-        await JSRuntime.InvokeVoidAsync("window.initEditors", code, unitTestCode, theme.IsDarkMode? "vs-dark" : "vs");
+        await JSRuntime.InvokeVoidAsync("window.initEditors", code, unitTestCode, theme.IsDarkMode ? "vs-dark" : "vs");
     }
 
     private async void ThemeChanged()
@@ -129,4 +107,136 @@
         theme.IsDarkModeChanged = new EventCallback<bool>(this, ThemeChanged); //Гоооооол
     }
 
+    private async void TestCodeClick()
+    {
+        try
+        {
+            var testResponse = await Api.TestCode(new TestCodeCommand()
+            {
+                TaskId = taskId,
+                Code = await JSRuntime.InvokeAsync<string>("window.getCodeFromEditor")
+            });
+            if (testResponse.Success)
+            {
+                testCodeOutput = testResponse.TestResult.TestOutput;
+                StateHasChanged();
+            }
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            testCodeOutput = error.ErrorMessage;
+            StateHasChanged();
+        }
+
+        await Save();
+    }
+
+    private async void PublishClick()
+    {
+        try
+        {
+            await Save();
+            var publishResponse = await Api.ChangeSolutionPublish(new ChangeSolutionPublishCommand
+            {
+                TaskId = taskId,
+                IsPublish = true
+            });
+            if (publishResponse.Success)
+            {
+                isPublished = true;
+                StateHasChanged();
+            }
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    private async void RemoveFromPublishClick()
+    {
+        try
+        {
+            await Save();
+            var changePublishResponse = await Api.ChangeSolutionPublish(new ChangeSolutionPublishCommand
+            {
+                TaskId = taskId,
+                IsPublish = false
+            });
+            if (changePublishResponse.Success)
+            {
+                isPublished = false;
+                StateHasChanged();
+            }
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    async Task Save()
+    {
+        if (!AuthService.IsAuthenticated) return; // сохранение работает только для авторизованных пользователей
+        try
+        {
+            await Api.SaveSolution(new SaveSolutionCommand
+            {
+                TaskId = taskId,
+                Code = await JSRuntime.InvokeAsync<string>("window.getCodeFromEditor")
+            });
+        }
+        catch
+        {
+        }
+    }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Guid.TryParse(TaskIdParam, out taskId))
+        {
+            SnackbarService.Add("Не корректный индефикатор задачи");
+            return;
+        }
+        try
+        {
+            var taskResponse = await Api.GetTask(taskId);
+            if (taskResponse.Success)
+            {
+                currentTask = taskResponse.Task;
+                isTestingAvaible = taskResponse.IsTestingAvailable.GetValueOrDefault();
+            }
+
+            if (AuthService.IsAuthenticated)
+            {
+                var solutionResponse = await Api.GetSolutionForUser(taskId);
+                if (solutionResponse.Success)
+                {
+                    currentSolution = solutionResponse.Solution;
+                    isPublished = solutionResponse.Solution.IsPublished.GetValueOrDefault();
+                }
+            }
+            else
+            {
+                currentSolution = new SolutionDTO
+                {
+                    Code = taskResponse.Task.CodeTemplate,
+                };
+            }
+
+            await LoadEditors(currentSolution.Code, currentTask.UnitTestCode);
+            loading = false;
+        }
+        catch(ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+        
+        theme.IsDarkModeChanged = new EventCallback<bool>(this, ThemeChanged);
+        await base.OnInitializedAsync();
+    }
 }

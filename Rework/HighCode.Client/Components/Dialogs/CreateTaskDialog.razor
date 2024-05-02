@@ -1,0 +1,42 @@
+﻿<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Создание задачи</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @bind-IsValid="modelValid">
+            <MudTextField Immediate="true" Counter="50" MaxLength="50" Required="true" @bind-Value="_task.Title" T="string" Label="Название" Variant="Variant.Outlined"></MudTextField>
+            <MudTextField Immediate="true" Counter="10" MaxLength="10" Required="true" @bind-Value="_task.ProgrammingLanguage" T="string" Label="Язык программирования" Variant="Variant.Outlined"></MudTextField>
+            <MudSelect Variant="Variant.Outlined" T="int?" @bind-Value="_task.Complexity" Label="Сложность">
+                <MudSelectItem T="int?" Value="0">Легко</MudSelectItem>
+                <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
+                <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
+            </MudSelect>
+            <MudTextField Lines="3" Required="true" @bind-Value="_task.Description" T="string" Label="Описание" Variant="Variant.Outlined"></MudTextField>
+            <MudTextField Lines="6" Required="true" @bind-Value="_task.CodeTemplate" T="string" Label="Шаблон кода" Variant="Variant.Outlined"></MudTextField>
+            <MudTextField Lines="6" Required="true" @bind-Value="_task.UnitTestCode" T="string" Label="Код для тестирования" Variant="Variant.Outlined"></MudTextField>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Отмена</MudButton>
+        <MudButton Disabled="@(!modelValid)" Color="Color.Primary" OnClick="Create">Добавить</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    TaskDTO _task = new();
+    bool modelValid;
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void Create()
+    {
+        MudDialog.Close(DialogResult.Ok(_task));
+    }
+
+}

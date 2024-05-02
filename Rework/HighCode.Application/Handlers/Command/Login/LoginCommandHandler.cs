@@ -25,10 +25,10 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Result<LoginCom
         if (result.success)
             return _responseFactory.SuccessResponse(new LoginCommandResponse
             {
-                Message = "Успех!",
                 Token = result.token,
                 Success = true,
-                ValidTo = DateTime.UtcNow.Add(TimeSpan.FromMinutes(60))
+                ValidTo = DateTime.UtcNow.Add(TimeSpan.FromMinutes(60)),
+                Role = result.role.GetValueOrDefault()
             });
 
         return _responseFactory.BadRequestResponse(result.message);

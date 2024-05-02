@@ -1,10 +1,17 @@
 ﻿@page "/tasks"
 @using HighCode.Client.Services
 @using Refit
+@using HighCode.Client.Components.Dialogs
 @inject IHighCodeAPI api;
 @inject ISnackbar SnackbarService
+@inject AuthService AuthService
+@inject IDialogService DialogService
 
 <MudContainer MaxWidth="MaxWidth.Small">
+    @if (AuthService.CurrentRole.GetValueOrDefault() != RoleType.User)
+    {
+        <MudButton OnClick="AddTaskClick" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
+    }
     @if (CodeTasks.Count == 0)
     {
         <MudProgressCircular Indeterminate="true"/>
@@ -13,14 +20,19 @@
     {
         <MudCard Outlined="true" Class="mt-5">
             <MudCardContent>
-                <MudText Color="Color.Info" Typo="Typo.subtitle1">@task.Title</MudText>
-                <MudText Typo="Typo.subtitle2">@task.Description</MudText>
+                <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
+                <MudText Style="white-space: nowrap; max-height: 5vh; overflow: hidden; text-overflow: ellipsis;" Typo="Typo.body1">@task.Description</MudText>
             </MudCardContent>
             <MudCardActions>
-                <MudButton Href=@("/solution/" + task.Id) Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Error">Удалить</MudButton>
-                <MudButton Variant="Variant.Text" Color="Color.Warning">Изменить</MudButton>
+                <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
+                    <MudButton Href=@("/solution/" + task.Id) Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
+                    @if (AuthService.CurrentRole.GetValueOrDefault() != RoleType.User)
+                    {
+                        <MudButton OnClick="() => DeleteTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Error">Удалить</MudButton>
+                        <MudButton OnClick="() => EditTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Warning">Изменить</MudButton>
+                    }
+                </MudStack>
             </MudCardActions>
         </MudCard>
     }
@@ -28,23 +40,119 @@
 
 @code {
     ICollection<CodeTask> CodeTasks { get; set; } = new List<CodeTask>();
+
+    async Task LoadTasks()
+    {
+        try
+        {
+            var r = await api.GetTasks();
+            if (r is { Success: true })
+            {
+                CodeTasks = r.Tasks;
+                StateHasChanged();
+            }
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
-            try
-            {
-                var r = await api.GetTasks();
-                if (r is { Success: true })
-                {
-                    CodeTasks = r.Tasks;
-                    StateHasChanged();
-                }
-            }
-            catch (ApiException e)
-            {
-                var error = await e.GetContentAsAsync<ErrorResponse>();
-                SnackbarService.Add(error.ErrorMessage, Severity.Error);
-            }
+            await LoadTasks();
+
         await base.OnAfterRenderAsync(firstRender);
     }
+
+    private async void DeleteTaskClick(Guid taskId)
+    {
+        var result = await DialogService.ShowMessageBox(
+            "Внимание",
+            "Вы уверены что хотите удалить задачу?",
+            "Удалить!", cancelText: "Отмена");
+
+        if (result == null) return;
+
+        try
+        {
+            await api.DeleteTask(new DeleteTaskCommand
+            {
+                TaskId = taskId
+            });
+            SnackbarService.Add("Задача удалена", Severity.Info);
+            await LoadTasks();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    private async void EditTaskClick(Guid taskId)
+    {
+        try
+        {
+            var taskResponse = await api.GetTask(taskId);
+
+            var dialog = await DialogService.ShowAsync<EditTaskDialog>(null,
+                new DialogParameters<EditTaskDialog>
+                {
+                    {
+                        x => x.Task, taskResponse.Task
+                    }
+                },
+                new DialogOptions()
+                {
+                    MaxWidth = MaxWidth.Medium,
+                    FullWidth = true
+                });
+            var dialogResult = await dialog.Result;
+
+            if (dialogResult.Canceled) return;
+
+            var task = dialogResult.Data as TaskDTO;
+            var r = await api.EditTask(new EditTaskCommand()
+            {
+                TaskId = taskId,
+                Task = task
+            });
+            SnackbarService.Add(r.Message, Severity.Info);
+            await LoadTasks();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    private async void AddTaskClick()
+    {
+        var dialog = await DialogService.ShowAsync<CreateTaskDialog>(null, new DialogOptions()
+        {
+            MaxWidth = MaxWidth.Medium,
+            FullWidth = true
+        });
+        var dialogResult = await dialog.Result;
+        if (dialogResult.Canceled) return;
+
+        try
+        {
+            var task = dialogResult.Data as TaskDTO;
+            var r = await api.CreateTask(task);
+            SnackbarService.Add(r.Message, Severity.Info);
+            await LoadTasks();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+
 }

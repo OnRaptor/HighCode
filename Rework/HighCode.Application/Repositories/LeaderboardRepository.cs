@@ -8,7 +8,7 @@ public class LeaderboardRepository(AppDbContext _context)
 {
     public async Task<IEnumerable<Leaderboard>> GetLeaderboard()
     {
-        return await _context.Leaderboard.AsNoTracking().ToListAsync();
+        return await _context.Leaderboard.AsNoTracking().Include(x => x.User).ToListAsync();
     }
 
     public async Task<Leaderboard?> GetLeaderboardByUserId(Guid userId) =>

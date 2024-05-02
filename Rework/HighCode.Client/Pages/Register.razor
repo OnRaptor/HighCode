@@ -44,7 +44,7 @@
             });
             if (result.Success)
             {
-                await AuthService.SaveToken(result.Token, result.ValidTo.Value);
+                await AuthService.SaveAuthData(result.Token, result.ValidTo.Value, result.Role);
                 NavigationManager.NavigateTo("/tasks", true, true);
             }
         }

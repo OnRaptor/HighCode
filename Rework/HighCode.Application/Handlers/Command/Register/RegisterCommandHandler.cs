@@ -36,7 +36,8 @@ public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<Re
                 Message = "Успех",
                 Success = true,
                 Token = result.Token,
-                ValidTo = DateTime.UtcNow.Add(TimeSpan.FromMinutes(60))
+                ValidTo = DateTime.UtcNow.Add(TimeSpan.FromMinutes(60)),
+                Role = user.Role
             });
         return _responseFactory.BadRequestResponse(result.UserExist
             ? "Пользователь существует"

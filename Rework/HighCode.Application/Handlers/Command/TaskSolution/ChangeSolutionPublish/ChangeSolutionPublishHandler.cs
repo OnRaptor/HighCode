@@ -29,19 +29,27 @@ public class ChangeSolutionPublishHandler(
         if (existingSolution == null) return responseFactory.BadRequestResponse("Решение не найдено");
 
         existingSolution.IsPublished = request.IsPublish;
-        if (!existingSolution.FirstPublishDate.HasValue)
+        if (!existingSolution.FirstPublishDate.HasValue && request.IsPublish)
         {
-            existingSolution.FirstPublishDate = DateTime.UtcNow;
-            var testResult = await mediator.Send(new TestCodeCommand
+            try
             {
-                TaskId = request.TaskId,
-                Code = existingSolution.Code
-            });
-            if (testResult.Response.Success)
-                await ratingService.ApplyScoreFromCompletedTask(
-                    userId.Value,
-                    testResult.Response.TestResult,
-                    await taskRepository.GetById(request.TaskId));
+                var testResult = await mediator.Send(new TestCodeCommand
+                {
+                    TaskId = request.TaskId,
+                    Code = existingSolution.Code
+                }, cancellationToken);
+                if (testResult.Response is { Success: true, TestResult: not null })
+                {
+                    existingSolution.FirstPublishDate = DateTime.UtcNow;
+                    await ratingService.ApplyScoreFromCompletedTask(
+                        userId.Value,
+                        testResult.Response.TestResult,
+                        await taskRepository.GetById(request.TaskId));
+                }
+            }
+            catch
+            {
+            }
         }
         await repository.UpdateSolution(existingSolution);
         return responseFactory.SuccessResponse(new SimpleResponse { Message = "Статус публикации решения изменен" });

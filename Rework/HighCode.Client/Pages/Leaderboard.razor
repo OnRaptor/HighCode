@@ -37,30 +37,9 @@
         if (firstRender)
         try
         {
-            Leaderboards.Add(new LeaderboardDTO()
-            {
-                Score = 155,
-                Username = "aby abak ali"
-            });
-            Leaderboards.Add(new LeaderboardDTO()
-            {
-                Score = 155,
-                Username = "aby abak ali"
-            });
-            Leaderboards.Add(new LeaderboardDTO()
-            {
-                Score = 155,
-                Username = "aby abak ali"
-            });
-            Leaderboards.Add(new LeaderboardDTO()
-            {
-                Score = 155,
-                Username = "aby abak ali"
-            });
+            var r = await api.GetLeaderboard();
+            Leaderboards = r.Leaderboards;
             StateHasChanged();
-            //var r = await api.GetLeaderboard();
-            //Leaderboards = r.Leaderboards;
-            //StateHasChanged();
         }
         catch
         {

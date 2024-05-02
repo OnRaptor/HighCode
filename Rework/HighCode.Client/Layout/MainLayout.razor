@@ -9,7 +9,7 @@
 
 <CascadingValue Value="_mudThemeProvider">
     <MudLayout>
-        <MudAppBar WrapContent="true" Color="Color.Transparent" Elevation="5">
+        <MudPaper Style="background: transparent; top: 0; left: 0; right: 0; " Class="px-4 py-1 ma-2 rounded-pill fixed" Elevation="3">
             <MudStack Wrap="Wrap.Wrap" Style="width: 100%" AlignItems="AlignItems.Center" Row="true" Justify="Justify.SpaceBetween">
                 <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
                     <MudHidden Breakpoint="Breakpoint.Xs">
@@ -20,7 +20,7 @@
                 </MudStack>
                 <MudStack Row="true" AlignItems="AlignItems.Center">
                     <MudIconButton Icon="@ThemeSwitchIcon" OnClick="() => IsDarkTheme = !IsDarkTheme"></MudIconButton>
-                    @if (IsAuthenticated)
+                    @if (AuthService.IsAuthenticated)
                     {
                         <MudButton Href="/profile">Профиль</MudButton>
                         <MudButton OnClick="SignOut">Выйти</MudButton>
@@ -31,7 +31,7 @@
                     }
                 </MudStack>
             </MudStack>
-        </MudAppBar>
+        </MudPaper>
         <MudMainContent Class="mt-5">
             @Body
         </MudMainContent>
@@ -40,7 +40,6 @@
 
 @code{
     bool IsDarkTheme { get; set; }
-    bool IsAuthenticated { get; set; }
     string ThemeSwitchIcon => IsDarkTheme ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode;
 
     private MudThemeProvider _mudThemeProvider;
@@ -56,14 +55,13 @@
     
     protected override async Task OnInitializedAsync()
     {
-        IsAuthenticated = await AuthService.IsAuthenticated();
+        await AuthService.Init();
         await base.OnInitializedAsync();
     }
 
     private async void SignOut()
     {
         await AuthService.RemoveToken();
-        IsAuthenticated = false;
         NavigationManager.Refresh(true);
     }
 }

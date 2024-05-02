@@ -17,3 +17,7 @@
         });
     });
 }
+
+window.getCodeFromEditor = () => {
+    return window.codeEditor.getModel().getValue()
+}
