@@ -21,7 +21,9 @@ public class CreateTaskHandler(TaskRepository taskRepository, ResponseFactory<Si
             Complexity = request.Task.Complexity.Value,
             ProgrammingLanguage = request.Task.ProgrammingLanguage,
             CodeTemplate = request.Task.CodeTemplate,
-            AuthorId = request.UserId
+            AuthorId = request.UserId,
+            CreateDate = DateTime.UtcNow,
+            Category = request.Task.Category
         };
         if (await taskRepository.CreateTask(task))
             return responseFactory.SuccessResponse(new SimpleResponse { Message = "Задача успешно создана" });

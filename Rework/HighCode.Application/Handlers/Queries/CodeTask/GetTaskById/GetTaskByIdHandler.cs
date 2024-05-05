@@ -29,7 +29,10 @@ public class GetTaskByIdHandler(
             UnitTestCode = result.UnitTestCode,
             Complexity = result.Complexity,
             ProgrammingLanguage = result.ProgrammingLanguage,
-            CodeTemplate = result.CodeTemplate
+            CodeTemplate = result.CodeTemplate,
+            Category = result.Category,
+            Id = result.Id,
+            IsPublished = result.IsPublished ? true : null
         };
         return responseFactory.SuccessResponse(new GetTaskByIdResponse
         {

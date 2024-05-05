@@ -1,4 +1,5 @@
-﻿<MudDialog>
+﻿@using HighCode.Domain.DTO
+<MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">Создание задачи</MudText>
     </TitleContent>
@@ -11,6 +12,8 @@
                 <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
                 <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
             </MudSelect>
+            <MudCheckBox T="bool?" @bind-Value="Task.IsPublished">Опубликовать</MudCheckBox>
+            <MudTextField Required="true" @bind-Value="Task.Category" T="string" Label="Категория" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="3" Required="true" @bind-Value="Task.Description" T="string" Label="Описание" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="6" Required="true" @bind-Value="Task.CodeTemplate" T="string" Label="Шаблон кода" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="6" Required="true" @bind-Value="Task.UnitTestCode" T="string" Label="Код для тестирования" Variant="Variant.Outlined"></MudTextField>
@@ -18,7 +21,7 @@
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Отмена</MudButton>
-        <MudButton Disabled="@(!modelValid)" Color="Color.Primary" OnClick="Edit">Добавить</MudButton>
+        <MudButton Disabled="@(!modelValid)" Color="Color.Primary" OnClick="Edit">Изменить</MudButton>
     </DialogActions>
 </MudDialog>
 

@@ -26,7 +26,9 @@ public class EditTaskHandler(
             Complexity = request.Task.Complexity.HasValue ? request.Task.Complexity.Value : 0,
             ProgrammingLanguage = request.Task.ProgrammingLanguage ?? baseTask.ProgrammingLanguage,
             CodeTemplate = request.Task.CodeTemplate ?? baseTask.CodeTemplate,
-            AuthorId = baseTask.AuthorId
+            AuthorId = baseTask.AuthorId,
+            IsPublished = request.Task.IsPublished ?? baseTask.IsPublished,
+            Category = request.Task.Category ?? baseTask.Category
         };
         if (await repository.EditTask(task))
             return responseFactory.SuccessResponse(new SimpleResponse { Message = "Задача обновлена" });

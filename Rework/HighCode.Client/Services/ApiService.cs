@@ -7,6 +7,7 @@ using Refit;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using HighCode.Domain.DTO;
 
 namespace HighCode.Client.Services
 {
@@ -244,8 +245,8 @@ namespace HighCode.Client.Services
         /// </list>
         /// </exception>
         [Headers("Accept: application/json")]
-        [Get("/api/tasks/GetTasks")]
-        Task<GetAllTaskResponse> GetTasks();
+        [Post("/api/tasks/GetTasks")]
+        Task<GetAllTaskResponse> GetTasks([Body] GetAllTaskQuery query);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -364,7 +365,30 @@ namespace HighCode.Client
 {
     using System = global::System;
 
+    public partial class GetAllTaskQuery
+    {
+
+        [JsonPropertyName("isUnPublishedOnly")]
+        public bool? IsUnPublishedOnly { get; set; }
+
+        [JsonPropertyName("searchQuery")]
+        public string SearchQuery { get; set; }
+
+        [JsonPropertyName("filters")]
+        public IEnumerable<FilterType>? Filters { get; set; }
+
+    }
     
+    public partial class FilterType
+    {
+
+        [JsonPropertyName("type")]
+        public string Type { get; set; }
+
+        [JsonPropertyName("value")]
+        public string Value { get; set; }
+
+    }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ChangeSolutionPublishCommand
@@ -408,36 +432,6 @@ namespace HighCode.Client
 
         [JsonPropertyName("author")]
         public User Author { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class CommentDTO
-    {
-
-        [JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
-
-        [JsonPropertyName("content")]
-        public string Content { get; set; }
-
-        [JsonPropertyName("authorName")]
-        public string AuthorName { get; set; }
-
-        [JsonPropertyName("repliedAuthorName")]
-        public string RepliedAuthorName { get; set; }
-
-        [JsonPropertyName("createdDate")]
-        public System.DateTimeOffset CreatedDate { get; set; }
-
-        [JsonPropertyName("likes")]
-        public int Likes { get; set; }
-
-        [JsonPropertyName("dislikes")]
-        public int Dislikes { get; set; }
-
-        [JsonPropertyName("myReaction")]
-        public int? MyReaction { get; set; }
 
     }
 
@@ -503,11 +497,7 @@ namespace HighCode.Client
         public bool Success { get; set; } = true;
 
         [JsonPropertyName("tasks")]
-        public ICollection<CodeTask> Tasks { get; set; }
-
-        [JsonPropertyName("count")]
-        public int Count { get; set; }
-
+        public ICollection<TaskDTO> Tasks { get; set; }
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -589,18 +579,7 @@ namespace HighCode.Client
         public bool? IsTestingAvailable { get; set; }
 
     }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class LeaderboardDTO
-    {
-
-        [JsonPropertyName("username")]
-        public string Username { get; set; }
-
-        [JsonPropertyName("score")]
-        public double Score { get; set; }
-
-    }
+    
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class LoginCommand
@@ -803,33 +782,6 @@ namespace HighCode.Client
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class SolutionDTO
-    {
-
-        [JsonPropertyName("id")]
-        public System.Guid? Id { get; set; }
-
-        [JsonPropertyName("code")]
-        public string Code { get; set; }
-
-        [JsonPropertyName("isPublished")]
-        public bool? IsPublished { get; set; }
-
-        [JsonPropertyName("isTested")]
-        public bool? IsTested { get; set; }
-
-        [JsonPropertyName("solutionReactions")]
-        public SolutionReactions SolutionReactions { get; set; }
-
-        [JsonPropertyName("myReaction")]
-        public int? MyReaction { get; set; }
-
-        [JsonPropertyName("authorName")]
-        public string AuthorName { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public enum SolutionReactionType
     {
 
@@ -855,30 +807,7 @@ namespace HighCode.Client
         public int FunCount { get; set; }
 
     }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class TaskDTO
-    {
-
-        [JsonPropertyName("title")]
-        public string Title { get; set; }
-
-        [JsonPropertyName("description")]
-        public string Description { get; set; }
-
-        [JsonPropertyName("unitTestCode")]
-        public string UnitTestCode { get; set; }
-
-        [JsonPropertyName("codeTemplate")]
-        public string CodeTemplate { get; set; }
-
-        [JsonPropertyName("complexity")]
-        public int? Complexity { get; set; }
-
-        [JsonPropertyName("programmingLanguage")]
-        public string ProgrammingLanguage { get; set; }
-
-    }
+    
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.0.3.0 (NJsonSchema v11.0.0.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class TestCodeCommand

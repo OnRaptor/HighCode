@@ -8,6 +8,9 @@ public class CodeTask
     public string UnitTestCode { get; set; }
     public string CodeTemplate { get; set; }
     public int Complexity { get; set; }
+    public bool IsPublished { get; set; }
+    public DateTime? CreateDate { get; set; }
+    public string? Category { get; set; }
     public string ProgrammingLanguage { get; set; }
     public Guid? AuthorId { get; set; }
     public User? Author { get; set; }

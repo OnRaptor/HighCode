@@ -537,6 +537,25 @@
         "tags": [
           "Tasks"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllTaskQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllTaskQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetAllTaskQuery"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success",
@@ -827,13 +846,21 @@
             "type": "string",
             "nullable": true
           },
-          "templateFuncSignature": {
+          "codeTemplate": {
             "type": "string",
             "nullable": true
           },
           "complexity": {
             "type": "integer",
             "format": "int32"
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "createDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           },
           "programmingLanguage": {
             "type": "string",
@@ -946,6 +973,37 @@
         },
         "additionalProperties": false
       },
+      "FilterType": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetAllTaskQuery": {
+        "type": "object",
+        "properties": {
+          "isUnPublishedOnly": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "searchQuery": {
+            "type": "string",
+            "nullable": true
+          },
+          "filter": {
+            "$ref": "#/components/schemas/FilterType"
+          }
+        },
+        "additionalProperties": false
+      },
       "GetAllTaskResponse": {
         "type": "object",
         "properties": {
@@ -964,10 +1022,6 @@
               "$ref": "#/components/schemas/CodeTask"
             },
             "nullable": true
-          },
-          "count": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1074,6 +1128,10 @@
           },
           "task": {
             "$ref": "#/components/schemas/TaskDTO"
+          },
+          "isTestingAvailable": {
+            "type": "boolean",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1109,16 +1167,25 @@
       "LoginCommandResponse": {
         "type": "object",
         "properties": {
+          "message": {
+            "type": "string",
+            "default": "SUCCESS",
+            "nullable": true
+          },
           "success": {
             "type": "boolean",
             "default": true
           },
-          "message": {
+          "token": {
             "type": "string",
             "nullable": true
           },
-          "token": {
+          "role": {
+            "$ref": "#/components/schemas/RoleType"
+          },
+          "validTo": {
             "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         },
@@ -1276,6 +1343,14 @@
           "token": {
             "type": "string",
             "nullable": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/RoleType"
+          },
+          "validTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1326,7 +1401,8 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "code": {
             "type": "string",
@@ -1337,10 +1413,6 @@
             "nullable": true
           },
           "isTested": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "isTestingAvailable": {
             "type": "boolean",
             "nullable": true
           },
@@ -1401,7 +1473,7 @@
             "type": "string",
             "nullable": true
           },
-          "templateFuncSignature": {
+          "codeTemplate": {
             "type": "string",
             "nullable": true
           },
@@ -1412,6 +1484,10 @@
           },
           "programmingLanguage": {
             "type": "string",
+            "nullable": true
+          },
+          "isPublished": {
+            "type": "boolean",
             "nullable": true
           }
         },

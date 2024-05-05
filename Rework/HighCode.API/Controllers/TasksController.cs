@@ -39,12 +39,15 @@ public class TasksController(
         return await RequestAsync(command, cancellationToken);
     }
 
-    [HttpGet]
+    [HttpPost]
     [ProducesResponseType<GetAllTaskResponse>(200)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
-    public async Task<IActionResult> GetTasks(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetTasks(
+        [FromBody] GetAllTaskQuery query,
+        CancellationToken cancellationToken
+    )
     {
-        return await RequestAsync(new GetAllTaskQuery(), cancellationToken);
+        return await RequestAsync(query, cancellationToken);
     }
 
     [HttpGet]

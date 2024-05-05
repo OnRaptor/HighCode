@@ -1,4 +1,6 @@
 ﻿@page "/tasks"
+@using HighCode.Domain.DTO
+@using HighCode.Domain.Constants
 @using HighCode.Client.Services
 @using Refit
 @using HighCode.Client.Components.Dialogs
@@ -8,44 +10,102 @@
 @inject IDialogService DialogService
 
 <MudContainer MaxWidth="MaxWidth.Small">
-    @if (AuthService.CurrentRole.GetValueOrDefault() != RoleType.User)
-    {
-        <MudButton OnClick="AddTaskClick" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
-    }
-    @if (CodeTasks.Count == 0)
+    <MudStack Wrap="Wrap.Wrap" Row="true" Spacing="2">
+        <MudText Typo="Typo.h6">Задачи (@CodeTasks?.Count)</MudText>
+        @if (AuthService.CurrentRole.GetValueOrDefault() != RoleType.User)
+        {
+            <MudButton OnClick="AddTaskClick" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
+            <MudSwitch Label="Неопубликованные" @bind-Value="@showUnPublishedOnly" @bind-Value:after="LoadTasks" T="bool"/>
+        }
+    </MudStack>
+    @if (CodeTasks == null)
     {
         <MudProgressCircular Indeterminate="true"/>
     }
-    @foreach (var task in CodeTasks)
+    else
     {
-        <MudCard Outlined="true" Class="mt-5">
-            <MudCardContent>
-                <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
-                <MudText Style="white-space: nowrap; max-height: 5vh; overflow: hidden; text-overflow: ellipsis;" Typo="Typo.body1">@task.Description</MudText>
-            </MudCardContent>
-            <MudCardActions>
-                <MudStack Row="true" Spacing="2" Wrap="Wrap.Wrap">
-                    <MudButton Href=@("/solution/" + task.Id) Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
-                    <MudButton Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
-                    @if (AuthService.CurrentRole.GetValueOrDefault() != RoleType.User)
+        <MudGrid >
+            <MudItem>
+                <MudTextField Placeholder="Поиск..." Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" FullWidth="true" T="string" @bind-Value="@searchQuery" @bind-Value:after="LoadTasks"></MudTextField>
+            </MudItem>
+            <MudItem>
+                <MudExpansionPanel Style="background: transparent;" Dense="true" DisableGutters="true" Class="mt-2" Text="Фильтры">
+                    <MudStack Spacing="2">
+                        @foreach (var filterType in filterValues.Keys)
+                        {
+                            @switch (filterType)
+                            {
+                                case FilterTypeConstants.ByCategory:
+                                case FilterTypeConstants.ByLanguage:
+                                {
+                                    <MudTextField Variant="Variant.Outlined" Label="@filterType" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?"/>
+                                    break;
+                                }
+                                case FilterTypeConstants.ByComplexity:
+                                {
+                                    <MudSelect Variant="Variant.Outlined" T="int?" @bind-Value:get="@((int?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" Label="Сложность">
+                                        <MudSelectItem T="int?" Value="@(null)">Нет</MudSelectItem>
+                                        <MudSelectItem T="int?" Value="0">Легко</MudSelectItem>
+                                        <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
+                                        <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
+                                    </MudSelect>
+                                    break;
+                                }
+                            }
+                        }
+                        <MudButton OnClick="ClearFilters" Color="Color.Error">Очистить фильтры</MudButton>
+                    </MudStack>
+                </MudExpansionPanel>
+            </MudItem>
+        </MudGrid>
+
+        @foreach (var task in CodeTasks)
+        {
+            <MudCard Outlined="true" Class="mt-5">
+                <MudCardContent>
+                    <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
+                    <MudText Style="white-space: nowrap; max-height: 5vh; overflow: hidden; text-overflow: ellipsis;" Typo="Typo.body1">@task.Description</MudText>
+                    @if (!string.IsNullOrEmpty(task.Category))
                     {
-                        <MudButton OnClick="() => DeleteTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Error">Удалить</MudButton>
-                        <MudButton OnClick="() => EditTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Warning">Изменить</MudButton>
+                        <MudChip Variant="Variant.Filled" Color="Color.Primary">@task.Category</MudChip>
                     }
-                </MudStack>
-            </MudCardActions>
-        </MudCard>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudStack Class="pl-2" Row="true" Spacing="2" Wrap="Wrap.Wrap">
+                        <MudButton Href=@("/solution/" + task.Id) Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
+                        @if (AuthService.CurrentRole.GetValueOrDefault() != RoleType.User)
+                        {
+                            <MudButton OnClick="() => EditTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Warning">Изменить</MudButton>
+                        }
+                    </MudStack>
+                </MudCardActions>
+            </MudCard>
+        }
     }
 </MudContainer>
-
 @code {
-    ICollection<CodeTask> CodeTasks { get; set; } = new List<CodeTask>();
+    ICollection<TaskDTO>? CodeTasks { get; set; }
+    bool showUnPublishedOnly;
+    string searchQuery { get; set; }
+
+    Dictionary<string, object?> filterValues
+        = new(FilterTypeConstants
+            .GetAll()
+            .Select(x => KeyValuePair.Create<string, object?>(x, null)));
 
     async Task LoadTasks()
     {
         try
         {
-            var r = await api.GetTasks();
+            var r = await api.GetTasks(new GetAllTaskQuery
+            {
+                IsUnPublishedOnly = showUnPublishedOnly,
+                SearchQuery = searchQuery,
+                Filters = filterValues
+                    .Where(x => x.Value != null)
+                    .Select(x => new FilterType { Type = x.Key, Value = x.Value.ToString() })
+            });
             if (r is { Success: true })
             {
                 CodeTasks = r.Tasks;
@@ -59,6 +119,26 @@
         }
     }
 
+    async void ClearFilters()
+    {
+        filterValues
+            = new Dictionary<string, object>(FilterTypeConstants
+                .GetAll()
+                .Select(x => KeyValuePair.Create<string, object?>(x, null)));
+        await LoadTasks();
+    }
+
+    async void ApplyFilterValue(string type, object value)
+    {
+        filterValues[type] = value;
+        await LoadTasks();
+    }
+
+    object? GetFilterValue(string type)
+    {
+        return filterValues[type];
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -67,35 +147,11 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void DeleteTaskClick(Guid taskId)
-    {
-        var result = await DialogService.ShowMessageBox(
-            "Внимание",
-            "Вы уверены что хотите удалить задачу?",
-            "Удалить!", cancelText: "Отмена");
-
-        if (result == null) return;
-
-        try
-        {
-            await api.DeleteTask(new DeleteTaskCommand
-            {
-                TaskId = taskId
-            });
-            SnackbarService.Add("Задача удалена", Severity.Info);
-            await LoadTasks();
-        }
-        catch (ApiException e)
-        {
-            var error = await e.GetContentAsAsync<ErrorResponse>();
-            SnackbarService.Add(error.ErrorMessage, Severity.Error);
-        }
-    }
-
     private async void EditTaskClick(Guid taskId)
     {
         try
         {
+            
             var taskResponse = await api.GetTask(taskId);
 
             var dialog = await DialogService.ShowAsync<EditTaskDialog>(null,
