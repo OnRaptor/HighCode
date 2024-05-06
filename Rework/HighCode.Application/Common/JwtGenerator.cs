@@ -2,7 +2,7 @@
 
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using HighCode.Infrastructure.Entities;
+using HighCode.Domain.Constants;
 using Microsoft.IdentityModel.Tokens;
 
 #endregion
@@ -11,7 +11,7 @@ namespace HighCode.Application.Common;
 
 public class JwtGenerator
 {
-    public static string GenerateToken(string userId, string userName, RoleType role)
+    public static string GenerateToken(string userId, string userName, UserRoleTypes role)
     {
         var claims = new List<Claim>
         {

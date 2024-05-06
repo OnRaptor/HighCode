@@ -1,13 +1,10 @@
 ﻿#region
 
-using HighCode.Application.ApiHandlers.Command.CodeTask.CreateTask;
-using HighCode.Application.ApiHandlers.Command.CodeTask.DeleteTask;
-using HighCode.Application.ApiHandlers.Command.CodeTask.EditTask;
-using HighCode.Application.ApiHandlers.Queries.CodeTask.GetAllTasks;
-using HighCode.Application.ApiHandlers.Queries.CodeTask.GetTaskById;
-using HighCode.Application.Responses;
 using HighCode.Application.Services;
+using HighCode.Domain.ApiRequests.Tasks;
+using HighCode.Domain.ApiResponses.Tasks;
 using HighCode.Domain.DTO;
+using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,7 +22,6 @@ public class TasksController(
 {
     [HttpPost]
     [Authorize(Roles = "Moderator")]
-    [ProducesResponseType<CreateTaskResponse>(200)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateTask(
         [FromBody] TaskDTO task,

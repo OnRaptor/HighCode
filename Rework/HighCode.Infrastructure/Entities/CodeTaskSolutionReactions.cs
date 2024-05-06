@@ -1,11 +1,7 @@
-﻿namespace HighCode.Infrastructure.Entities;
+﻿using HighCode.Domain.Models;
 
-public enum SolutionReactionType
-{
-    Interesting,
-    Clever,
-    Fun
-}
+namespace HighCode.Infrastructure.Entities;
+
 
 public class CodeTaskSolutionReactions
 {

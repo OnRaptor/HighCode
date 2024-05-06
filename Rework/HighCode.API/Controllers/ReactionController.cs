@@ -1,6 +1,6 @@
-﻿using HighCode.Application.ApiHandlers.Command.Reactions.PostReactionForComment;
-using HighCode.Application.ApiHandlers.Command.Reactions.PostReactionForSolution;
-using HighCode.Application.Responses;
+﻿using HighCode.Domain.ApiRequests.Reactions;
+using HighCode.Domain.ApiResponses.Reactions;
+using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

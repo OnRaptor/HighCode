@@ -1,5 +1,6 @@
-﻿using HighCode.Application.ApiHandlers.Queries.Leaderboard;
-using HighCode.Application.Responses;
+﻿using HighCode.Domain.ApiRequests.Leaderboards;
+using HighCode.Domain.ApiResponses.Leaderboards;
+using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

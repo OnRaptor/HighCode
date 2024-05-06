@@ -1,10 +1,6 @@
-﻿namespace HighCode.Infrastructure.Entities;
+﻿using HighCode.Domain.Models;
 
-public enum ReactionType
-{
-    Like,
-    Dislike
-}
+namespace HighCode.Infrastructure.Entities;
 
 public class CommentsReactions
 {
@@ -13,5 +9,5 @@ public class CommentsReactions
     public Comment Comment { get; set; }
     public Guid AuthorId { get; set; }
     public User Author { get; set; }
-    public ReactionType Reaction { get; set; }
+    public CommentReactionType Reaction { get; set; }
 }

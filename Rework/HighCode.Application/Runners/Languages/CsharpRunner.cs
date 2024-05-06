@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Text;
 using HighCode.Application.Runners.Models;
+using HighCode.Domain.Models;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using NUnit.Framework;
@@ -52,11 +53,11 @@ public class CsharpRunner : IRunner
         var sb = new StringBuilder();
         foreach (var type in assembly.GetTypes())
         {
-            if (!Attribute.IsDefined(type, typeof(NUnit.Framework.TestFixtureAttribute))) continue;
+            if (!Attribute.IsDefined(type, typeof(TestFixtureAttribute))) continue;
             var finalException = "";
             foreach (var method in type.GetMethods()
                          .Where(method //берутся методы только с [Test] аттридутом
-                             => Attribute.IsDefined(method, typeof(NUnit.Framework.TestAttribute))))
+                             => Attribute.IsDefined(method, typeof(TestAttribute))))
             {
                 report.TotalTestsCount++;
                 var instance = Activator.CreateInstance(type);

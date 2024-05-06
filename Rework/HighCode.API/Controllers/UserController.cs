@@ -1,8 +1,8 @@
 ﻿#region
 
-using HighCode.Application.ApiHandlers.Command.Login;
-using HighCode.Application.ApiHandlers.Command.Register;
-using HighCode.Application.Responses;
+using HighCode.Domain.ApiRequests.Auth;
+using HighCode.Domain.ApiResponses.Auth;
+using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

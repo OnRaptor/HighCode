@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using HighCode.Application.Responses;
+using HighCode.Domain.Responses;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 

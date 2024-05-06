@@ -1,15 +1,16 @@
 ﻿using Blazored.LocalStorage;
+using HighCode.Domain.Constants;
 
 namespace HighCode.Client.Services;
 
 public class AuthService(ILocalStorageService localStorage)
 {
-    public RoleType? CurrentRole { get; set; }
+    public UserRoleTypes? CurrentRole { get; set; }
     public bool IsAuthenticated { get; set; }
     
     public async Task<string?> GetToken() => await localStorage.GetItemAsStringAsync("token");
 
-    public async Task SaveAuthData(string token, DateTime validTo, RoleType role)
+    public async Task SaveAuthData(string token, DateTime validTo, UserRoleTypes role)
     {
         await localStorage.SetItemAsStringAsync("token", token);
         await localStorage.SetItemAsync("tokenValid", validTo);
@@ -21,7 +22,7 @@ public class AuthService(ILocalStorageService localStorage)
         var tokenValid = await localStorage.GetItemAsync<DateTime?>("tokenValid");
         IsAuthenticated = tokenValid.HasValue && tokenValid > DateTime.UtcNow;
         if (IsAuthenticated)
-            CurrentRole = await localStorage.GetItemAsync<RoleType?>("role");
+            CurrentRole = await localStorage.GetItemAsync<UserRoleTypes?>("role");
     }
 
     public async Task RemoveToken()

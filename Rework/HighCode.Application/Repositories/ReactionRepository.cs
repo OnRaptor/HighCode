@@ -1,10 +1,6 @@
-﻿using HighCode.Application.Models;
-using HighCode.Domain.DTO;
+﻿using HighCode.Domain.Models;
 using HighCode.Infrastructure;
-using HighCode.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations.Builders;
-using ReactionType = HighCode.Infrastructure.Entities.ReactionType;
 
 namespace HighCode.Application.Repositories;
 
@@ -14,7 +10,7 @@ public class ReactionRepository(AppDbContext _context)
     /// Добавляет или удаляет реакцию на комментарий, если она уже есть
     /// </summary>
     /// <returns>Успешна ли операция</returns>
-    public async Task<bool> ApplyReactionToComment(Guid commentId, ReactionType reactionType, Guid userId)
+    public async Task<bool> ApplyReactionToComment(Guid commentId, CommentReactionType commentReactionType, Guid userId)
     {
         var existingReaction = await GetReactionCommentForUser(commentId, userId);
         if (existingReaction != null)
@@ -22,8 +18,8 @@ public class ReactionRepository(AppDbContext _context)
             await _context.CommentsReactions.Where(cr =>
                 cr.CommentId == commentId &&
                 cr.AuthorId == userId).ExecuteDeleteAsync();
-            
-            if (existingReaction == (int?)reactionType)
+
+            if (existingReaction == (int?)commentReactionType)
                 return true;
         }
         
@@ -32,7 +28,7 @@ public class ReactionRepository(AppDbContext _context)
         {
             CommentId = commentId,
             AuthorId = userId,
-            Reaction = reactionType
+            Reaction = commentReactionType
         });
         try
         {
@@ -48,7 +44,7 @@ public class ReactionRepository(AppDbContext _context)
     {
         return await _context.CommentsReactions.Where(cr
             => cr.CommentId == commentId &&
-               cr.Reaction == ReactionType.Like
+               cr.Reaction == CommentReactionType.Like
             ).CountAsync();
     }
     
@@ -56,7 +52,7 @@ public class ReactionRepository(AppDbContext _context)
     {
         return await _context.CommentsReactions.Where(cr
             => cr.CommentId == commentId &&
-               cr.Reaction == ReactionType.Dislike
+               cr.Reaction == CommentReactionType.Dislike
         ).CountAsync();
     }
     

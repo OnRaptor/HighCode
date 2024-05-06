@@ -39,7 +39,7 @@
         try
         {
             var r = await api.GetLeaderboard();
-            Leaderboards = r.Leaderboards;
+            Leaderboards = r.Leaderboards.ToList();
             StateHasChanged();
         }
         catch

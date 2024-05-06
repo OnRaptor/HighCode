@@ -1,8 +1,7 @@
 ﻿#region
 
 using System.Net;
-using HighCode.Application.Responses;
-using HighCode.Application.Services;
+using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

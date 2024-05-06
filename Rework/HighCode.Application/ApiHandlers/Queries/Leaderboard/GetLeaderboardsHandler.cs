@@ -1,6 +1,8 @@
 ﻿using HighCode.Application.Repositories;
-using HighCode.Application.Responses;
+using HighCode.Domain.ApiRequests.Leaderboards;
+using HighCode.Domain.ApiResponses.Leaderboards;
 using HighCode.Domain.DTO;
+using HighCode.Domain.Responses;
 using MediatR;
 
 namespace HighCode.Application.ApiHandlers.Queries.Leaderboard;

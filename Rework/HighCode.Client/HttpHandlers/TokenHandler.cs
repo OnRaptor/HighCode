@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using HighCode.Client.Services;
+using HighCode.Domain.Responses;
 
 namespace HighCode.Client.HttpHandlers;
 

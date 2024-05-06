@@ -1,7 +1,6 @@
-﻿using HighCode.Application.ApiHandlers.Command.Comments.DeleteComment;
-using HighCode.Application.ApiHandlers.Command.Comments.PostComment;
-using HighCode.Application.ApiHandlers.Queries.Comments.GetComments;
-using HighCode.Application.Responses;
+﻿using HighCode.Domain.ApiRequests.Comments;
+using HighCode.Domain.ApiResponses.Comments;
+using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

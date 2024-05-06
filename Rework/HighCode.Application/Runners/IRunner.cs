@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using HighCode.Application.Runners.Models;
+using HighCode.Domain.Models;
 
 namespace HighCode.Application.Runners;
 

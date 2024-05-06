@@ -1,5 +1,5 @@
 ﻿using HighCode.Application.Repositories;
-using HighCode.Application.Runners.Models;
+using HighCode.Domain.Models;
 using HighCode.Infrastructure.Entities;
 
 namespace HighCode.Application.Services;

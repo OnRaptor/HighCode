@@ -1,4 +1,6 @@
-﻿namespace HighCode.Domain.DTO;
+﻿using HighCode.Domain.Models;
+
+namespace HighCode.Domain.DTO;
 
 public class SolutionDTO
 {
