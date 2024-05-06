@@ -3,8 +3,8 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using HighCode.API.Filters;
+using HighCode.Application.ApiHandlers.Command.Register;
 using HighCode.Application.DependencyInjection;
-using HighCode.Application.Handlers.Command.Register;
 using HighCode.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 

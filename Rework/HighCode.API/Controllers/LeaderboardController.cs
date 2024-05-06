@@ -1,4 +1,4 @@
-﻿using HighCode.Application.Handlers.Queries.Leaderboard;
+﻿using HighCode.Application.ApiHandlers.Queries.Leaderboard;
 using HighCode.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

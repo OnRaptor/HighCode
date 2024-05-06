@@ -10,6 +10,5 @@ public class TaskDTO
     public int? Complexity { get; set; }
     public string ProgrammingLanguage { get; set; }
     public bool? IsPublished { get; set; } = false;
-
     public string? Category { get; set; }
 }

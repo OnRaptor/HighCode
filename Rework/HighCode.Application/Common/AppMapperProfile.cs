@@ -1,0 +1,19 @@
+﻿using AutoMapper;
+using HighCode.Domain.DTO;
+using HighCode.Infrastructure.Entities;
+
+namespace HighCode.Application.Common;
+
+public class AppMapperProfile : Profile
+{
+    public AppMapperProfile()
+    {
+        CreateMap<CodeTask, TaskDTO>();
+        CreateMap<CodeTaskSolution, SolutionDTO>()
+            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
+        CreateMap<Comment, CommentDTO>()
+            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
+        CreateMap<Leaderboard, LeaderboardDTO>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName));
+    }
+}

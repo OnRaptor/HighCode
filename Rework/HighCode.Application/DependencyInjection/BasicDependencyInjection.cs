@@ -1,5 +1,6 @@
 ﻿#region
 
+using HighCode.Application.Common;
 using HighCode.Application.Repositories;
 using HighCode.Application.Responses;
 using HighCode.Application.Runners;
@@ -28,6 +29,7 @@ public static class BasicDependencyInjection
         services.AddTransient<IRunner, CsharpRunner>();
         services.AddTransient<RunnerFactory>();
         services.AddTransient(typeof(ResponseFactory<>));
+        services.AddAutoMapper(typeof(AppMapperProfile));
         return services;
     }
 }

@@ -1,7 +1,7 @@
 ﻿#region
 
-using HighCode.Application.Handlers.Command.Login;
-using HighCode.Application.Handlers.Command.Register;
+using HighCode.Application.ApiHandlers.Command.Login;
+using HighCode.Application.ApiHandlers.Command.Register;
 using HighCode.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

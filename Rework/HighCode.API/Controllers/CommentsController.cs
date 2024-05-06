@@ -1,7 +1,6 @@
-﻿using HighCode.Application.Handlers.Command.Comments.DeleteComment;
-using HighCode.Application.Handlers.Command.Comments.PostComment;
-using HighCode.Application.Handlers.Command.TaskSolution.SaveSolution;
-using HighCode.Application.Handlers.Queries.Comments.GetComments;
+﻿using HighCode.Application.ApiHandlers.Command.Comments.DeleteComment;
+using HighCode.Application.ApiHandlers.Command.Comments.PostComment;
+using HighCode.Application.ApiHandlers.Queries.Comments.GetComments;
 using HighCode.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

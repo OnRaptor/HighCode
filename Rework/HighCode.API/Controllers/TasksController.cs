@@ -1,10 +1,10 @@
 ﻿#region
 
-using HighCode.Application.Handlers.Command.CodeTask.CreateTask;
-using HighCode.Application.Handlers.Command.CodeTask.DeleteTask;
-using HighCode.Application.Handlers.Command.CodeTask.EditTask;
-using HighCode.Application.Handlers.Queries.CodeTask.GetAllTasks;
-using HighCode.Application.Handlers.Queries.CodeTask.GetTaskById;
+using HighCode.Application.ApiHandlers.Command.CodeTask.CreateTask;
+using HighCode.Application.ApiHandlers.Command.CodeTask.DeleteTask;
+using HighCode.Application.ApiHandlers.Command.CodeTask.EditTask;
+using HighCode.Application.ApiHandlers.Queries.CodeTask.GetAllTasks;
+using HighCode.Application.ApiHandlers.Queries.CodeTask.GetTaskById;
 using HighCode.Application.Responses;
 using HighCode.Application.Services;
 using HighCode.Domain.DTO;

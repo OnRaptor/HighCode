@@ -1,12 +1,11 @@
 ﻿#region
 
-using HighCode.Application.Handlers.Command.TaskSolution.ChangeSolutionPublish;
-using HighCode.Application.Handlers.Command.TaskSolution.SaveSolution;
-using HighCode.Application.Handlers.Command.TaskSolution.TestCode;
-using HighCode.Application.Handlers.Queries.TaskSolution.GetSolutionForUser;
-using HighCode.Application.Handlers.Queries.TaskSolution.GetSolutions;
+using HighCode.Application.ApiHandlers.Command.TaskSolution.ChangeSolutionPublish;
+using HighCode.Application.ApiHandlers.Command.TaskSolution.SaveSolution;
+using HighCode.Application.ApiHandlers.Command.TaskSolution.TestCode;
+using HighCode.Application.ApiHandlers.Queries.TaskSolution.GetSolutionForUser;
+using HighCode.Application.ApiHandlers.Queries.TaskSolution.GetSolutions;
 using HighCode.Application.Responses;
-using HighCode.Application.Services;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
