@@ -64,22 +64,32 @@
         @foreach (var task in CodeTasks)
         {
             <MudCard Outlined="true" Class="mt-5">
-                <MudCardContent>
-                    <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
-                    <MudText Style="white-space: nowrap; max-height: 5vh; overflow: hidden; text-overflow: ellipsis;" Typo="Typo.body1">@task.Description</MudText>
-                    @if (!string.IsNullOrEmpty(task.Category))
-                    {
-                        <MudChip Variant="Variant.Filled" Color="Color.Primary">@task.Category</MudChip>
-                    }
+                <MudCardHeader Class="pb-0">
+                    <CardHeaderContent>
+                        <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        @if (AuthService.CurrentRole.GetValueOrDefault() != UserRoleTypes.User)
+                        {
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Warning"></MudIconButton>
+                        }
+                    </CardHeaderActions>
+                </MudCardHeader>
+                <MudCardContent Class="pt-0">
+                    <MudText Class="trim_text" Typo="Typo.body1">@task.Description</MudText>
+                    <MudStack Row="true">
+                        @if (!string.IsNullOrEmpty(task.Category))
+                        {
+                            <MudChip Variant="Variant.Filled" Color="Color.Primary">@task.Category</MudChip>
+                        }
+                        <MudChip Variant="Variant.Filled">@task.ProgrammingLanguage</MudChip>
+                        <MudChip Variant="Variant.Filled">@(TaskDTO.ComplexityToString(task.Complexity.GetValueOrDefault()))</MudChip>
+                    </MudStack>
                 </MudCardContent>
                 <MudCardActions>
                     <MudStack Class="pl-2" Row="true" Spacing="2" Wrap="Wrap.Wrap">
                         <MudButton Href=@("/solution/" + task.Id) Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
-                        <MudButton Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
-                        @if (AuthService.CurrentRole.GetValueOrDefault() != UserRoleTypes.User)
-                        {
-                            <MudButton OnClick="() => EditTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Warning">Изменить</MudButton>
-                        }
+                        <MudButton Href=@("/taskdetails/" + task.Id) Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
                     </MudStack>
                 </MudCardActions>
             </MudCard>

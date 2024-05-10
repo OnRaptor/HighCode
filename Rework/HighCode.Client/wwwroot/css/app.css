@@ -101,3 +101,11 @@ a, .btn-link {
 code {
     color: #c02d76;
 }
+
+.trim_text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}

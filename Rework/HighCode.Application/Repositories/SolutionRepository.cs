@@ -67,6 +67,15 @@ public class SolutionRepository
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<CodeTaskSolution>> GetSolutionsForUser(Guid userId)
+    {
+        return await _context.CodeTaskSolutions.AsNoTracking()
+            .Include(x => x.Author)
+            .Include(x => x.RelatedTask)
+            .Where(x => x.AuthorId == userId)
+            .ToListAsync();
+    }
+    
     public async Task<bool> DeleteSolution(Guid id)
     {
         return await _context.CodeTaskSolutions.Where(x => x.Id == id).ExecuteDeleteAsync() == 1;

@@ -11,4 +11,15 @@ public class TaskDTO
     public string ProgrammingLanguage { get; set; }
     public bool? IsPublished { get; set; } = false;
     public string? Category { get; set; }
+
+    public static string ComplexityToString(int complexity)
+    {
+        return complexity switch
+        {
+            0 => "Легко",
+            1 => "Средне",
+            2 => "Сложно",
+            _ => ""
+        };
+    }
 }

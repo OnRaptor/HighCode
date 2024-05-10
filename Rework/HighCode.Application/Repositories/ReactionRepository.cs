@@ -10,7 +10,7 @@ public class ReactionRepository(AppDbContext _context)
     /// Добавляет или удаляет реакцию на комментарий, если она уже есть
     /// </summary>
     /// <returns>Успешна ли операция</returns>
-    public async Task<bool> ApplyReactionToComment(Guid commentId, CommentReactionType commentReactionType, Guid userId)
+    public async Task<bool> ApplyReactionToComment(Guid commentId, int? commentReactionType, Guid userId)
     {
         var existingReaction = await GetReactionCommentForUser(commentId, userId);
         if (existingReaction != null)
@@ -19,7 +19,7 @@ public class ReactionRepository(AppDbContext _context)
                 cr.CommentId == commentId &&
                 cr.AuthorId == userId).ExecuteDeleteAsync();
 
-            if (existingReaction == (int?)commentReactionType)
+            if (existingReaction == commentReactionType)
                 return true;
         }
         
@@ -28,7 +28,7 @@ public class ReactionRepository(AppDbContext _context)
         {
             CommentId = commentId,
             AuthorId = userId,
-            Reaction = commentReactionType
+            Reaction = (CommentReactionType)commentReactionType
         });
         try
         {
@@ -42,7 +42,7 @@ public class ReactionRepository(AppDbContext _context)
     }
     public async Task<int> GetLikesForComment(Guid commentId)
     {
-        return await _context.CommentsReactions.Where(cr
+        return await _context.CommentsReactions.AsNoTracking().Where(cr
             => cr.CommentId == commentId &&
                cr.Reaction == CommentReactionType.Like
             ).CountAsync();
@@ -50,7 +50,7 @@ public class ReactionRepository(AppDbContext _context)
     
     public async Task<int> GetDislikesForComment(Guid commentId)
     {
-        return await _context.CommentsReactions.Where(cr
+        return await _context.CommentsReactions.AsNoTracking().Where(cr
             => cr.CommentId == commentId &&
                cr.Reaction == CommentReactionType.Dislike
         ).CountAsync();

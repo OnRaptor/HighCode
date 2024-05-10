@@ -36,7 +36,7 @@ public class TaskRepository
     {
         return await _context.CodeTasks.AsNoTracking().ToListAsync();
     }
-
+    
     public async Task<CodeTask?> GetById(Guid id)
     {
         return await _context.CodeTasks.AsNoTracking().Where(x => x.Id == id).FirstOrDefaultAsync();

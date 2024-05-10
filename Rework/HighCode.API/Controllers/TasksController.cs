@@ -22,6 +22,7 @@ public class TasksController(
 {
     [HttpPost]
     [Authorize(Roles = "Moderator")]
+    [ProducesResponseType<SimpleResponse>(200)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateTask(
         [FromBody] TaskDTO task,

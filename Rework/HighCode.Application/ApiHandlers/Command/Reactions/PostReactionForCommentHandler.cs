@@ -23,7 +23,8 @@ public class PostReactionForCommentHandler(
             return responseFactory.SuccessResponse(new()
             {
                 DislikesCount = await repository.GetDislikesForComment(request.CommentId),
-                LikesCount = await repository.GetLikesForComment(request.CommentId)
+                LikesCount = await repository.GetLikesForComment(request.CommentId),
+                MyReaction = await repository.GetReactionCommentForUser(request.CommentId, userId)
             });
 
         return responseFactory.BadRequestResponse("Не удалось добавить реакцию на комментарий");

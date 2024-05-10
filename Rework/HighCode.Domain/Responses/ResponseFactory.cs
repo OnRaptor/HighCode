@@ -36,6 +36,20 @@ public class ResponseFactory<TResponse> where TResponse : ResponseBase
         };
     }
 
+    public Result<TResponse> UnAuthResponse()
+    {
+        return new Result<TResponse>
+        {
+            Error = new ErrorResponse
+            {
+                ErrorMessage = "Нет доступа",
+                Success = false
+            },
+            Response = null,
+            StatusCode = HttpStatusCode.Unauthorized
+        };
+    }
+
     public Result<TResponse> SuccessResponse(TResponse response)
     {
         response.Success = true;

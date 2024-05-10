@@ -28,7 +28,7 @@ builder.Services.AddMediatR(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
 builder.Services.AddAuthorization();
 builder.Services.AddAppAuthentication();

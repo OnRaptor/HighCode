@@ -9,15 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HighCode.Application.Repositories;
 
-public class UserRepository
+public class UserRepository(AppDbContext _context)
 {
-    public readonly AppDbContext _context;
-
-    public UserRepository(AppDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<User?> GetUserByIdAsync(Guid id)
     {
         return await _context.Users.FindAsync(id);
@@ -25,7 +18,7 @@ public class UserRepository
 
     public async Task<User?> FindUserByLogin(string login)
     {
-        return await _context.Users.FirstOrDefaultAsync(x => x.Login == login);
+        return await _context.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Login == login);
     }
 
     public async Task<CreateUserResult> CreateUserAsync(User user)

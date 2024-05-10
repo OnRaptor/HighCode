@@ -7,15 +7,16 @@ using HighCode.Domain.DTO;
 using HighCode.Domain.Responses;
 using HighCode.Infrastructure.Entities;
 using MediatR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace HighCode.Application.ApiHandlers.Queries.Comments;
 
 public class GetCommentsHandler(
     ResponseFactory<GetCommentsResponse> responseFactory,
     CommentRepository commentRepository,
-    ReactionRepository reactionRepository,
     CorrelationContext correlationContext,
-    IMapper mapper
+    IMapper mapper,
+    IServiceProvider serviceProvider
 )
     : IRequestHandler<GetCommentsQuery, Result<GetCommentsResponse>>
 {
@@ -33,6 +34,8 @@ public class GetCommentsHandler(
         {
             Comments = await Task.WhenAll(comments.Select(async c =>
             {
+                var reactionRepository = serviceProvider.GetService<ReactionRepository>(); // для параллельных запросов
+                var _commentRepository = serviceProvider.GetService<CommentRepository>(); // для параллельных запросов
                 var commentDto = mapper.Map<CommentDTO>(c);
                 commentDto.Likes = await reactionRepository.GetLikesForComment(c.Id);
                 commentDto.Dislikes = await reactionRepository.GetDislikesForComment(c.Id);
@@ -40,9 +43,10 @@ public class GetCommentsHandler(
                     .GetReactionCommentForUser(
                         c.Id,
                         correlationContext.GetUserId().GetValueOrDefault());
+                var replies = await _commentRepository.GetForComment(commentDto.Id);
+                commentDto.RepliesCount = replies.Count();
                 return commentDto;
-            })),
-            Count = comments.Count
+            }))
         });
     }
 }

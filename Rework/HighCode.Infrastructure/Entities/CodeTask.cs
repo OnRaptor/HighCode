@@ -17,16 +17,12 @@ public class CodeTask
 
     public static string ComplexityToString(int complexity)
     {
-        switch (complexity)
+        return complexity switch
         {
-            case 1:
-                return "Легко";
-            case 2:
-                return "Средне";
-            case 3:
-                return "Сложно";
-            default:
-                return "";
-        }
+            0 => "Легко",
+            1 => "Средне",
+            2 => "Сложно",
+            _ => ""
+        };
     }
 }

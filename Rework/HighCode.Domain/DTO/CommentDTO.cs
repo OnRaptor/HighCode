@@ -10,4 +10,6 @@ public class CommentDTO
     public int Likes { get; set; }
     public int Dislikes { get; set; }
     public int? MyReaction { get; set; }
+    public List<CommentDTO>? Replies { get; set; }
+    public int RepliesCount { get; set; }
 }

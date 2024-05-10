@@ -1,0 +1,68 @@
+﻿@page "/profile"
+@using HighCode.Domain.ApiResponses.UserProfile
+@using HighCode.Domain.Responses
+@using HighCode.Client.Services
+@using Refit
+@inject ISnackbar SnackbarService
+@inject IHighCodeAPI Api;
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    @if (response == null)
+    {
+        <MudProgressCircular Indeterminate="true"/>
+    }
+    else
+    {
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h6">@response.UserName</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit"></MudIconButton>
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText>@response.Description</MudText>
+            </MudCardContent>
+        </MudCard>
+
+        <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-2" Centered="true" Class="mt-2">
+            <MudTabPanel Text="Статистика">
+                <MudText Typo="Typo.body1">Количество очков: @response.Statistics.ratingsScore.GetValueOrDefault()</MudText>
+                <MudText Typo="Typo.body1">Позиция в рейтинге: @response.Statistics.ratingsPosition.GetValueOrDefault()</MudText>
+                <MudText Typo="Typo.body1">Количество решенных задач: @response.Statistics.completedTasks</MudText>
+            </MudTabPanel>
+            <MudTabPanel Text="Задачи">
+                @foreach (var solution in response.Solutions)
+                {
+                    <MudStack AlignItems="AlignItems.Center" Class="mt-2" Row="true" Justify="Justify.SpaceBetween">
+                        <MudText GutterBottom="true" Typo="Typo.body1">@solution.Title</MudText>
+                        <MudButton Href=@("/solution/" + solution.TaskId)>Перейти</MudButton>
+                    </MudStack>
+                }
+            </MudTabPanel>
+        </MudTabs>
+    }
+</MudContainer>
+
+
+@code {
+    GetUserProfileResponse response;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            response = await Api.GetUserProfile();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+}

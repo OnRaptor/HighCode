@@ -10,6 +10,7 @@ using HighCode.Domain.ApiResponses.Leaderboards;
 using HighCode.Domain.ApiResponses.Reactions;
 using HighCode.Domain.ApiResponses.Solutions;
 using HighCode.Domain.ApiResponses.Tasks;
+using HighCode.Domain.ApiResponses.UserProfile;
 using HighCode.Domain.DTO;
 using HighCode.Domain.Responses;
 using Refit;
@@ -53,7 +54,9 @@ namespace HighCode.Client.Services
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/comments/GetComments")]
-        Task<GetCommentsResponse> GetComments([Query, AliasAs("RelatedCommentId")] Guid? relatedCommentId, [Query, AliasAs("RelatedSolutionId")] Guid? relatedSolutionId, [Query, AliasAs("RelatedTaskId")] Guid? relatedTaskId);
+        Task<GetCommentsResponse> GetComments([Query] [AliasAs("RelatedCommentId")] Guid? relatedCommentId = null,
+            [Query] [AliasAs("RelatedSolutionId")] Guid? relatedSolutionId = null,
+            [Query] [AliasAs("RelatedTaskId")] Guid? relatedTaskId = null);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -71,7 +74,7 @@ namespace HighCode.Client.Services
         /// </exception>
         [Headers("Accept: application/json")]
         [Post("/api/comments/DeleteComment")]
-        Task<DeleteCommentResponse> DeleteComment([Query, AliasAs("Id")] Guid? id);
+        Task<DeleteCommentResponse> DeleteComment([Query] [AliasAs("Id")] Guid? id);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -90,6 +93,28 @@ namespace HighCode.Client.Services
         [Headers("Accept: application/json")]
         [Get("/api/leaderboard/GetLeaderboard")]
         Task<GetLeaderboardsResponse> GetLeaderboard();
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// <item>
+        /// <term>401</term>
+        /// <description>Unauthorized</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Get("/api/profile/GetUserProfile")]
+        Task<GetUserProfileResponse> GetUserProfile();
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -179,7 +204,7 @@ namespace HighCode.Client.Services
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/solution/GetSolutionForUser")]
-        Task<GetSolutionResponse> GetSolutionForUser([Query, AliasAs("TaskId")] Guid? taskId);
+        Task<GetSolutionResponse> GetSolutionForUser([Query] [AliasAs("TaskId")] Guid? taskId);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -217,7 +242,7 @@ namespace HighCode.Client.Services
         [Post("/api/solution/TestCode")]
         Task<TestCodeResponse> TestCode([Body] TestCodeCommand body);
 
-        /// <returns>Success</returns>
+        /// <returns>A <see cref="Task"/> that completes when the request is finished.</returns>
         /// <exception cref="ApiException">
         /// Thrown when the request returns a non-success status code:
         /// <list type="table">
@@ -269,7 +294,7 @@ namespace HighCode.Client.Services
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/tasks/GetTask")]
-        Task<GetTaskByIdResponse> GetTask([Query, AliasAs("Id")] Guid? id);
+        Task<GetTaskByIdResponse> GetTask([Query] [AliasAs("Id")] Guid? id);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">

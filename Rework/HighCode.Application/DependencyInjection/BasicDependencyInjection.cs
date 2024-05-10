@@ -17,14 +17,15 @@ public static class BasicDependencyInjection
     public static IServiceCollection AddBasicServices(this IServiceCollection services)
     {
         services.AddHttpContextAccessor();
-        services.AddScoped<UserRepository>();
+        services.AddTransient<UserRepository>();
         services.AddScoped<UserService>();
-        services.AddScoped<TaskRepository>();
-        services.AddScoped<CommentRepository>();
-        services.AddScoped<SolutionRepository>();
-        services.AddScoped<ReactionRepository>();
-        services.AddScoped<LeaderboardRepository>();
-        services.AddScoped<RatingService>();
+        services.AddTransient<TaskRepository>();
+        services.AddTransient<CommentRepository>();
+        services.AddTransient<SolutionRepository>();
+        services.AddTransient<ReactionRepository>();
+        services.AddTransient<LeaderboardRepository>();
+        services.AddTransient<RatingService>();
+        services.AddTransient<StatisticRepository>();
         services.AddTransient<CorrelationContext>();
         services.AddTransient<IRunner, CsharpRunner>();
         services.AddTransient<RunnerFactory>();

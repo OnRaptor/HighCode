@@ -176,6 +176,45 @@
         }
       }
     },
+    "/api/profile/GetUserProfile": {
+      "get": {
+        "tags": [
+          "Profile"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUserProfileResponse"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/reactions/AddReactionToComment": {
       "post": {
         "tags": [
@@ -509,16 +548,6 @@
           }
         },
         "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateTaskResponse"
-                }
-              }
-            }
-          },
           "409": {
             "description": "Conflict",
             "content": {
@@ -533,7 +562,7 @@
       }
     },
     "/api/tasks/GetTasks": {
-      "get": {
+      "post": {
         "tags": [
           "Tasks"
         ],
@@ -827,56 +856,6 @@
         },
         "additionalProperties": false
       },
-      "CodeTask": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "title": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "unitTestCode": {
-            "type": "string",
-            "nullable": true
-          },
-          "codeTemplate": {
-            "type": "string",
-            "nullable": true
-          },
-          "complexity": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "isPublished": {
-            "type": "boolean"
-          },
-          "createDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "programmingLanguage": {
-            "type": "string",
-            "nullable": true
-          },
-          "authorId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "author": {
-            "$ref": "#/components/schemas/User"
-          }
-        },
-        "additionalProperties": false
-      },
       "CommentDTO": {
         "type": "object",
         "properties": {
@@ -892,11 +871,11 @@
             "type": "string",
             "nullable": true
           },
-          "repliedAuthorName": {
+          "anotherAuthor": {
             "type": "string",
             "nullable": true
           },
-          "createdDate": {
+          "dateCreated": {
             "type": "string",
             "format": "date-time"
           },
@@ -916,9 +895,13 @@
         },
         "additionalProperties": false
       },
-      "CreateTaskResponse": {
-        "type": "object",
-        "additionalProperties": false
+      "CommentReactionType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "DeleteCommentResponse": {
         "type": "object",
@@ -998,8 +981,12 @@
             "type": "string",
             "nullable": true
           },
-          "filter": {
-            "$ref": "#/components/schemas/FilterType"
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FilterType"
+            },
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1019,7 +1006,7 @@
           "tasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CodeTask"
+              "$ref": "#/components/schemas/TaskDTO"
             },
             "nullable": true
           }
@@ -1136,6 +1123,39 @@
         },
         "additionalProperties": false
       },
+      "GetUserProfileResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "default": "SUCCESS",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "statistics": {
+            "$ref": "#/components/schemas/StatisticsForUser"
+          },
+          "solutions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SolvingSolutions"
+            },
+            "nullable": true
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "LeaderboardDTO": {
         "type": "object",
         "properties": {
@@ -1181,7 +1201,7 @@
             "nullable": true
           },
           "role": {
-            "$ref": "#/components/schemas/RoleType"
+            "$ref": "#/components/schemas/UserRoleTypes"
           },
           "validTo": {
             "type": "string",
@@ -1242,8 +1262,8 @@
             "type": "string",
             "format": "uuid"
           },
-          "reaction": {
-            "$ref": "#/components/schemas/ReactionType"
+          "commentReaction": {
+            "$ref": "#/components/schemas/CommentReactionType"
           }
         },
         "additionalProperties": false
@@ -1302,14 +1322,6 @@
         },
         "additionalProperties": false
       },
-      "ReactionType": {
-        "enum": [
-          0,
-          1
-        ],
-        "type": "integer",
-        "format": "int32"
-      },
       "RegisterCommand": {
         "type": "object",
         "properties": {
@@ -1345,7 +1357,7 @@
             "nullable": true
           },
           "role": {
-            "$ref": "#/components/schemas/RoleType"
+            "$ref": "#/components/schemas/UserRoleTypes"
           },
           "validTo": {
             "type": "string",
@@ -1354,15 +1366,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "RoleType": {
-        "enum": [
-          0,
-          1,
-          2
-        ],
-        "type": "integer",
-        "format": "int32"
       },
       "SaveSolutionCommand": {
         "type": "object",
@@ -1458,9 +1461,47 @@
         },
         "additionalProperties": false
       },
+      "SolvingSolutions": {
+        "type": "object",
+        "properties": {
+          "solutionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatisticsForUser": {
+        "type": "object",
+        "properties": {
+          "completedTasks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ratingsScore": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ratingsPosition": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TaskDTO": {
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "title": {
             "type": "string",
             "nullable": true
@@ -1488,6 +1529,10 @@
           },
           "isPublished": {
             "type": "boolean",
+            "nullable": true
+          },
+          "category": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -1543,40 +1588,14 @@
         },
         "additionalProperties": false
       },
-      "User": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "login": {
-            "type": "string",
-            "nullable": true
-          },
-          "userName": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "role": {
-            "$ref": "#/components/schemas/RoleType"
-          },
-          "passwordHash": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          },
-          "passwordSalt": {
-            "type": "string",
-            "format": "byte",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
+      "UserRoleTypes": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       }
     },
     "securitySchemes": {
