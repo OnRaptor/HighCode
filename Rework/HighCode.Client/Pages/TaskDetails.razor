@@ -1,24 +1,21 @@
 ﻿@page "/taskdetails/{TaskId}"
 @using HighCode.Domain.DTO
 @using HighCode.Domain.Responses
-@using HighCode.Client.Services
-@using HighCode.Domain.ApiRequests.Comments
-@using HighCode.Domain.ApiRequests.Reactions
+@using HighCode.Client.Components
 @using Refit
-@inject AuthService AuthService
+@using HighCode.Domain.Constants
 @inject ISnackbar SnackbarService
-@inject NavigationManager NavigationManager
 @inject IHighCodeAPI Api;
 
 <MudContainer MaxWidth="MaxWidth.Medium">
-    @if (task == null && comments == null)
+    @if (task == null)
     {
         <MudProgressLinear Indeterminate="true"/>
     }
     else
     {
         <MudPaper Class="pa-4">
-            <MudText Typo="Typo.h6">@task.Title</MudText>
+            <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
             <MudText Style="white-space: pre-line;" Typo="Typo.body1">@task.Description</MudText>
             <MudStack Row="true">
                 @if (!string.IsNullOrEmpty(task.Category))
@@ -31,83 +28,11 @@
         </MudPaper>
 
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" Class="mt-3" PanelClass="pa-2">
-            <MudTabPanel Text="Комментарии" BadgeData="comments?.Count">
-                <MudStack Class="ml-4" Spacing="2">
-                    @foreach (var comment in comments)
-                    {
-                        <MudStack AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Row="true">
-                            <MudText Typo="Typo.h6">@comment.AuthorName</MudText>
-                            <MudText Typo="Typo.caption">@comment.DateCreated</MudText>
-                        </MudStack>
-                        <MudText Typo="Typo.body1">@comment.Content</MudText>
-                        <MudStack AlignItems="AlignItems.Center" Spacing="2" Row="true">
-                            <span>
-                                <MudIconButton OnClick="() => PostReaction(0, comment.Id)" Color="@(comment.MyReaction is 0 ? Color.Primary : Color.Default)" Icon="@Icons.Material.Filled.ThumbUp"></MudIconButton>
-                                @comment.Likes
-                            </span>
-                            <span>
-                                <MudIconButton OnClick="() => PostReaction(1, comment.Id)" Color="@(comment.MyReaction is 1 ? Color.Primary : Color.Default)" Icon="@Icons.Material.Filled.ThumbDown"></MudIconButton>
-                                @comment.Dislikes
-                            </span>
-                            @if (AuthService.IsAuthenticated)
-                            {
-                                <MudButton OnClick="() => SetReplyAbleComment(comment.AuthorName, comment.Id)">Ответить</MudButton>
-                            }
-                        </MudStack>
-                        @if (comment.RepliesCount != 0 && comment.Replies?.Count() == 0)
-                        {
-                            <MudButton
-                                OnClick="async () => { var replies = await LoadReplies(comment.Id); if (replies != null) { comment.Replies = replies.ToList(); StateHasChanged(); } }"
-                                FullWidth="true">
-                                Показать @comment.RepliesCount ответа
-                            </MudButton>
-                        }
-
-                        @if (comment.Replies != null && comment.Replies.Count() != 0)
-                        {
-                            <MudStack Class="ml-4" Spacing="2">
-                                <MudText Typo="Typo.body1">Ответы</MudText>
-                                @foreach (var reply in comment.Replies)
-                                {
-                                    <MudStack AlignItems="AlignItems.Center" Row="true">
-                                        <MudText Typo="Typo.h6">@reply.AuthorName</MudText>
-                                        <MudSpacer/>
-                                        <MudText Typo="Typo.caption">@reply.DateCreated</MudText>
-                                    </MudStack>
-                                    <MudText Typo="Typo.caption">В ответ @reply.AnotherAuthor</MudText>
-                                    <MudText Typo="Typo.body1">@reply.Content</MudText>
-                                    <MudStack AlignItems="AlignItems.Center" Spacing="2" Row="true">
-                                        <span>
-                                            <MudIconButton OnClick="() => PostReaction(0, comment.Id, true, reply.Id)" Color="@(reply.MyReaction is 0 ? Color.Primary : Color.Default)" Icon="@Icons.Material.Filled.ThumbUp"></MudIconButton>
-                                            @reply.Likes
-                                        </span>
-                                        <span>
-                                            <MudIconButton OnClick="() => PostReaction(1, comment.Id, true, reply.Id)" Color="@(reply.MyReaction is 1 ? Color.Primary : Color.Default)" Icon="@Icons.Material.Filled.ThumbDown"></MudIconButton>
-                                            @reply.Dislikes
-                                        </span>
-                                        @if (AuthService.IsAuthenticated)
-                                        {
-                                            <MudButton OnClick="() => SetReplyAbleComment(reply.AuthorName, comment.Id)">Ответить</MudButton>
-                                        }
-                                    </MudStack>
-                                }
-                            </MudStack>
-                        }
-                    }
-                    @if (AuthService.IsAuthenticated)
-                    {
-                        <MudTextField @bind-Value="newTaskComment" Variant="Variant.Outlined" Placeholder="Ваш комментарий" Lines="4" T="string" FullWidth="true"/>
-                        @if (!string.IsNullOrEmpty(replyAbleAuthorName))
-                        {
-                            <MudText Typo="Typo.caption">В ответ @replyAbleAuthorName</MudText>
-                        }
-
-                        <MudButton OnClick="NewTaskCommentClick" Variant="Variant.Filled" Color="Color.Primary">Оставить комментарий</MudButton>
-                    }
-                </MudStack>
+            <MudTabPanel Text="Комментарии" BadgeData="CommentsCount">
+                <CommentsSection @bind-CommentCount="CommentsCount" BaseTargetTypeForComment="TargetTypeForComment.ToTask" BaseTargetIdForComment="@taskId"/>
             </MudTabPanel>
             <MudTabPanel Text="Решения">
-
+                <SolutionsSection CodeTask="task"/>
             </MudTabPanel>
         </MudTabs>
     }
@@ -118,117 +43,24 @@
 
     TaskDTO? task;
     Guid taskId;
-    List<CommentDTO>? comments;
-    string newTaskComment;
-    string? replyAbleAuthorName;
-    Guid? replyAbleCommentId;
+    int? CommentsCount;
+
 
     protected override async Task OnInitializedAsync()
     {
-        Guid.TryParse(TaskId, out taskId);
-        var getTaskByIdResponse = await Api.GetTask(taskId);
-        if (getTaskByIdResponse.Success)
-            task = getTaskByIdResponse.Task;
+        try
+        {
+            Guid.TryParse(TaskId, out taskId);
+            var getTaskByIdResponse = await Api.GetTask(taskId);
+            if (getTaskByIdResponse.Success)
+                task = getTaskByIdResponse.Task;
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
 
-        await LoadComments();
         await base.OnInitializedAsync();
     }
-
-    async Task<IEnumerable<CommentDTO>?> LoadReplies(Guid commentId)
-    {
-        try
-        {
-            var commentsResponse = await Api.GetComments(commentId);
-            return commentsResponse.Comments;
-        }
-        catch (ApiException e)
-        {
-            var error = await e.GetContentAsAsync<ErrorResponse>();
-            SnackbarService.Add(error.ErrorMessage, Severity.Error);
-        }
-
-        return default;
-    }
-
-    void SetReplyAbleComment(string replyAbleAuthorName, Guid replyAbleCommentId)
-    {
-        this.replyAbleAuthorName = replyAbleAuthorName;
-        this.replyAbleCommentId = replyAbleCommentId;
-        StateHasChanged();
-    }
-
-    async void PostReaction(int reactionType, Guid commentId, bool isReply = false, Guid? replyId = null)
-    {
-        try
-        {
-            var postReactionResponse = await Api.AddReactionToComment(new PostReactionForCommentCommand
-            {
-                CommentId = commentId,
-                CommentReaction = reactionType
-            });
-            if (!postReactionResponse.Success) return;
-
-            var commentIndex = comments.FindIndex(c => c.Id == commentId);
-            if (isReply)
-            {
-                var replyIndex = comments[commentIndex].Replies.ToList().FindIndex(c => c.Id == replyId);
-                comments[commentIndex].Replies[replyIndex].Likes = postReactionResponse.LikesCount;
-                comments[commentIndex].Replies[replyIndex].Dislikes = postReactionResponse.DislikesCount;
-                comments[commentIndex].Replies[replyIndex].MyReaction = postReactionResponse.MyReaction;
-            }
-            else
-            {
-                comments[commentIndex].Likes = postReactionResponse.LikesCount;
-                comments[commentIndex].Dislikes = postReactionResponse.DislikesCount;
-                comments[commentIndex].MyReaction = postReactionResponse.MyReaction;
-            }
-
-            StateHasChanged();
-        }
-        catch (ApiException e)
-        {
-            var error = await e.GetContentAsAsync<ErrorResponse>();
-            SnackbarService.Add(error.ErrorMessage, Severity.Error);
-        }
-    }
-
-    async Task LoadComments()
-    {
-        try
-        {
-            var commentsResponse = await Api.GetComments(relatedTaskId: taskId);
-            comments = commentsResponse.Comments.ToList();
-        }
-        catch (ApiException e)
-        {
-            var error = await e.GetContentAsAsync<ErrorResponse>();
-            SnackbarService.Add(error.ErrorMessage, Severity.Error);
-        }
-    }
-
-    private async void NewTaskCommentClick()
-    {
-        try
-        {
-            var newCommentResponse = await Api.PostComment(new PostCommentCommand
-            {
-                Content = newTaskComment,
-                RelatedTaskId = !replyAbleCommentId.HasValue ? taskId : null,
-                RelatedCommentId = replyAbleCommentId,
-                AnotherAuthorName = replyAbleAuthorName
-            });
-            if (newCommentResponse.Success)
-                SnackbarService.Add(newCommentResponse.Message, Severity.Info);
-
-            newTaskComment = "";
-            await LoadComments();
-            StateHasChanged();
-        }
-        catch (ApiException e)
-        {
-            var error = await e.GetContentAsAsync<ErrorResponse>();
-            SnackbarService.Add(error.ErrorMessage, Severity.Error);
-        }
-    }
-
 }

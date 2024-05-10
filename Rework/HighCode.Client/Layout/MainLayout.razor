@@ -1,7 +1,6 @@
 ﻿@using HighCode.Client.Services
 @inherits LayoutComponentBase
 @inject AuthService AuthService
-@inject NavigationManager NavigationManager
 
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="IsDarkTheme" @bind-IsDarkMode:after="StateHasChanged"/>
 <MudDialogProvider />
@@ -9,28 +8,25 @@
 
 <CascadingValue Value="_mudThemeProvider">
     <MudLayout>
-        <MudPaper Style="top: 0; left: 0; right: 0; " Class="px-4 py-1 ma-2 rounded-pill fixed z-100" Elevation="3">
-            <MudStack Wrap="Wrap.Wrap" Style="width: 100%" AlignItems="AlignItems.Center" Row="true" Justify="Justify.SpaceBetween">
-                <MudStack Row="true" Spacing="2" AlignItems="AlignItems.Center">
-                    <MudHidden Breakpoint="Breakpoint.Xs">
-                        <MudLink Class="mr-2" Typo="Typo.h5" Underline="Underline.None" Href="">HighCode</MudLink>
-                    </MudHidden>
-                    <MudButton StartIcon="@Icons.Material.Filled.Task" Href="/tasks">Задачи</MudButton>
-                    <MudButton StartIcon="@Icons.Material.Filled.TableChart" Href="/rating">Рейтинг</MudButton>
+        <MudPaper Style="top: 0; left: 0; right: 0; background-color: rgba(var(--mud-palette-surface), 0.9); backdrop-filter: blur(12px)" Class="px-4 py-1 ma-2 rounded-pill fixed z-100" Elevation="3">
+            <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                <MudStack AlignItems="AlignItems.Center" Row="true">
+                    <MudLink Class="mr-2 hero_h1_gradient" Typo="Typo.h5" Underline="Underline.None" Href="">HighCode</MudLink>
+                    <MudSpacer/>
+                    <MudIconButton Icon="@ThemeSwitchIcon" OnClick="() => { IsDarkTheme = !IsDarkTheme; }"></MudIconButton>
+                    <MudMenu Icon="@Icons.Material.Filled.MoreVert">
+                        <MudStack Spacing="2">
+                            <NavLinks ShowThemeSwitcher="false" ThemeSwitchIcon="@ThemeSwitchIcon" DarkThemeCallback="() => { IsDarkTheme = !IsDarkTheme; }"/>
+                        </MudStack>
+                    </MudMenu>
                 </MudStack>
-                <MudStack Row="true" AlignItems="AlignItems.Center">
-                    <MudIconButton Icon="@ThemeSwitchIcon" OnClick="() => IsDarkTheme = !IsDarkTheme"></MudIconButton>
-                    @if (AuthService.IsAuthenticated)
-                    {
-                        <MudButton Href="/profile">Профиль</MudButton>
-                        <MudButton OnClick="SignOut">Выйти</MudButton>
-                    }
-                    else
-                    {
-                        <MudButton Href="/login">Войти</MudButton>
-                    }
+            </MudHidden>
+            <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                <MudStack Wrap="Wrap.Wrap" Style="width: 100%" AlignItems="AlignItems.Center" Row="true">
+                    <MudLink Class="mr-2 hero_h1_gradient" Typo="Typo.h5" Underline="Underline.None" Href="">HighCode</MudLink>
+                    <NavLinks ThemeSwitchIcon="@ThemeSwitchIcon" DarkThemeCallback="() => { IsDarkTheme = !IsDarkTheme; }"/>
                 </MudStack>
-            </MudStack>
+            </MudHidden>
         </MudPaper>
         <MudMainContent Class="mt-5">
             @Body
@@ -59,9 +55,5 @@
         await base.OnInitializedAsync();
     }
 
-    private async void SignOut()
-    {
-        await AuthService.RemoveToken();
-        NavigationManager.Refresh(true);
-    }
+    
 }

@@ -109,3 +109,9 @@ code {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
+
+.hero_h1_gradient {
+    background-image: linear-gradient(to right, blue, red);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}

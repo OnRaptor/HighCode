@@ -2,6 +2,7 @@
 using HighCode.Application.Services;
 using HighCode.Domain.ApiRequests.Comments;
 using HighCode.Domain.ApiResponses.Comments;
+using HighCode.Domain.Constants;
 using HighCode.Domain.Responses;
 using HighCode.Infrastructure.Entities;
 using MediatR;
@@ -23,12 +24,12 @@ public class PostCommentHandler(
             DateCreated = DateTime.UtcNow,
             AuthorId = correlationContext.GetUserId().Value
         };
-        if (request.RelatedCommentId.HasValue)
-            comment.RepliedCommentId = request.RelatedCommentId.Value;
-        if (request.RelatedTaskId.HasValue)
-            comment.RelatedTaskId = request.RelatedTaskId.Value;
-        if (request.RelatedSolutionId.HasValue)
-            comment.RelatedTaskSolutionId = request.RelatedSolutionId.Value;
+        if (!request.RelatedTargetId.HasValue)
+            return responseFactory.BadRequestResponse("Не указан идентификатор цели комментария");
+
+        comment.RelatedTargetId = request.RelatedTargetId.GetValueOrDefault();
+        comment.TargetType = (TargetTypeForComment)request.TargetType;
+        
         if (!string.IsNullOrEmpty(request.AnotherAuthorName))
             comment.AnotherAuthor = request.AnotherAuthorName;
         

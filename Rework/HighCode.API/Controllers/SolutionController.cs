@@ -54,9 +54,10 @@ public class SolutionController(
     [ProducesResponseType<GetSolutionsResponse>(200)]
     [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetSolutions(
+        [FromQuery] GetSolutionsQuery query,
         CancellationToken cancellationToken)
     {
-        return await RequestAsync(new GetSolutionsQuery(), cancellationToken);
+        return await RequestAsync(query, cancellationToken);
     }
 
     [HttpPost]

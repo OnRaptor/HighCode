@@ -1,8 +1,8 @@
 ﻿@page "/profile"
 @using HighCode.Domain.ApiResponses.UserProfile
 @using HighCode.Domain.Responses
-@using HighCode.Client.Services
 @using Refit
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @inject ISnackbar SnackbarService
 @inject IHighCodeAPI Api;
 

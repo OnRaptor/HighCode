@@ -1,6 +1,6 @@
 ﻿#region
 
-using System.ComponentModel.DataAnnotations.Schema;
+using HighCode.Domain.Constants;
 
 #endregion
 
@@ -9,12 +9,8 @@ namespace HighCode.Infrastructure.Entities;
 public class Comment
 {
     public Guid Id { get; set; }
-    public Guid? RelatedTaskSolutionId { get; set; }
-    public CodeTaskSolution? RelatedTaskSolution { get; set; }
-    public Guid? RelatedTaskId { get; set; }
-    public CodeTask? RelatedTask { get; set; }
-    public Guid? RepliedCommentId { get; set; }
-    public Comment? RepliedComment { get; set; }
+    public Guid RelatedTargetId { get; set; }
+    public TargetTypeForComment TargetType { get; set; }
     public Guid AuthorId { get; set; }
     public User Author { get; set; }
     public string Content { get; set; }

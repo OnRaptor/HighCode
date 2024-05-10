@@ -1,4 +1,5 @@
-﻿using HighCode.Infrastructure;
+﻿using HighCode.Domain.Constants;
+using HighCode.Infrastructure;
 using HighCode.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,21 +31,12 @@ public class CommentRepository(AppDbContext _context)
             .Where(c => c.Id == commentId).FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<Comment>> GetForComment(Guid commentId)
+    public async Task<IEnumerable<Comment>> GetCommentsForType(TargetTypeForComment typeForComment, Guid targetId)
     {
-        return await _context.Comments.AsNoTracking().Include(c => c.Author)
-            .Where(c => c.RepliedCommentId == commentId).ToListAsync();
-    }
-
-    public async Task<IEnumerable<Comment>> GetForTask(Guid taskId)
-    {
-        return await _context.Comments.AsNoTracking().Include(c => c.Author)
-            .Where(c => c.RelatedTaskId == taskId).ToListAsync();
-    }
-
-    public async Task<IEnumerable<Comment>> GetForSolution(Guid solutionId)
-    {
-        return await _context.Comments.AsNoTracking().Include(c => c.Author)
-            .Where(c => c.RelatedTaskSolutionId == solutionId).ToListAsync();
+        return await _context.Comments
+            .AsNoTracking()
+            .Include(c => c.Author)
+            .Where(c => c.TargetType == typeForComment && c.RelatedTargetId == targetId)
+            .ToListAsync();
     }
 }

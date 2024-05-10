@@ -60,23 +60,15 @@
         ],
         "parameters": [
           {
-            "name": "RelatedCommentId",
+            "name": "TargetTypeForComment",
             "in": "query",
             "schema": {
-              "type": "string",
-              "format": "uuid"
+              "type": "integer",
+              "format": "int32"
             }
           },
           {
-            "name": "RelatedSolutionId",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          },
-          {
-            "name": "RelatedTaskId",
+            "name": "RelatedTargetId",
             "in": "query",
             "schema": {
               "type": "string",
@@ -451,6 +443,16 @@
         "tags": [
           "Solution"
         ],
+        "parameters": [
+          {
+            "name": "TaskId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -548,6 +550,16 @@
           }
         },
         "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          },
           "409": {
             "description": "Conflict",
             "content": {
@@ -891,17 +903,23 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentDTO"
+            },
+            "nullable": true
+          },
+          "repliesCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isMine": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
-      },
-      "CommentReactionType": {
-        "enum": [
-          0,
-          1
-        ],
-        "type": "integer",
-        "format": "int32"
       },
       "DeleteCommentResponse": {
         "type": "object",
@@ -1031,10 +1049,6 @@
               "$ref": "#/components/schemas/CommentDTO"
             },
             "nullable": true
-          },
-          "count": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1222,17 +1236,11 @@
             "type": "string",
             "nullable": true
           },
-          "relatedCommentId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
+          "targetType": {
+            "type": "integer",
+            "format": "int32"
           },
-          "relatedSolutionId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "relatedTaskId": {
+          "relatedTargetId": {
             "type": "string",
             "format": "uuid",
             "nullable": true
@@ -1263,7 +1271,8 @@
             "format": "uuid"
           },
           "commentReaction": {
-            "$ref": "#/components/schemas/CommentReactionType"
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1287,6 +1296,11 @@
           "dislikesCount": {
             "type": "integer",
             "format": "int32"
+          },
+          "myReaction": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1465,6 +1479,10 @@
         "type": "object",
         "properties": {
           "solutionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskId": {
             "type": "string",
             "format": "uuid"
           },

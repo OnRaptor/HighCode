@@ -2,6 +2,7 @@
 using HighCode.Application.Services;
 using HighCode.Domain.ApiRequests.Reactions;
 using HighCode.Domain.ApiResponses.Reactions;
+using HighCode.Domain.Models;
 using HighCode.Domain.Responses;
 using MediatR;
 
@@ -19,14 +20,13 @@ public class PostReactionForSolutionHandler(
         var userId = correlationContext.GetUserId().GetValueOrDefault();
         if (await repository.ApplyReactionToSolution(
                 request.SolutionId,
-                request.Reaction,
+                (SolutionReactionType)request.Reaction,
                 userId))
             return responseFactory.SuccessResponse(new()
             {
-                SolutionReactions = await repository.GetReactionsForSolution(request.SolutionId)
+                SolutionReactions = await repository.GetReactionsForSolution(request.SolutionId),
+                MyReaction = await repository.GetReactionSolutionForUser(request.SolutionId, userId)
             });
-        
-
         return responseFactory.BadRequestResponse("Не удалось добавить реакцию на решение");
     }
 }

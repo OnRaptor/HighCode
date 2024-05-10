@@ -6,7 +6,6 @@ namespace HighCode.Domain.ApiRequests.Comments;
 
 public class GetCommentsQuery : IRequest<Result<GetCommentsResponse>>
 {
-    public Guid? RelatedCommentId { get; set; }
-    public Guid? RelatedSolutionId { get; set; }
-    public Guid? RelatedTaskId { get; set; }
+    public int TargetTypeForComment { get; set; }
+    public Guid? RelatedTargetId { get; set; }
 }

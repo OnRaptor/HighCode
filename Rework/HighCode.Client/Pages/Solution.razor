@@ -11,7 +11,7 @@
 @inject IJSRuntime JSRuntime;
 
 <MudSpacer />
-<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
     @if (loading)
     {
         <MudGrid Spacing="4" Justify="Justify.Center">
@@ -32,7 +32,7 @@
     else
     {
         <MudGrid Spacing="4" Justify="Justify.Center">
-            <MudItem xs="4" sm="3">
+            <MudItem sm="4" md="4">
                 <MudStack Spacing="4">
                     <MudCard>
                         <MudCardContent>
@@ -71,13 +71,13 @@
                     }
                 </MudStack>
             </MudItem>
-            <MudItem xs="6" sm="4">
-                <MudStack Spacing="4">
+            <MudItem sm="4" md="6">
+                <MudStack Style="min-width: 340px;" Spacing="4">
                     <MudPaper Class="pa-4">
-                        <div style="height: 40vh; width: 100%; overflow: clip;" id="container1"></div>
+                        <div style="height: 40vh; overflow: clip;" id="container1"></div>
                     </MudPaper>
                     <MudPaper Class="pa-4">
-                        <div style="height: 30vh; width: 100%; overflow: clip;" id="container2"></div>
+                        <div style="height: 30vh; overflow: clip;" id="container2"></div>
                     </MudPaper>
                 </MudStack>
             </MudItem>

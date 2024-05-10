@@ -1,0 +1,35 @@
+﻿@using HighCode.Client.Services
+@inject AuthService AuthService
+@inject NavigationManager NavigationManager
+
+
+<MudButton StartIcon="@Icons.Material.Filled.Task" Href="/tasks">Задачи</MudButton>
+<MudButton StartIcon="@Icons.Material.Filled.TableChart" Href="/rating">Рейтинг</MudButton>
+<MudSpacer/>
+@if (ShowThemeSwitcher)
+{
+    <MudIconButton Icon="@ThemeSwitchIcon" OnClick="DarkThemeCallback"></MudIconButton>
+}
+@if (AuthService.IsAuthenticated)
+{
+    <MudButton Href="/profile">Профиль</MudButton>
+    <MudButton OnClick="SignOut">Выйти</MudButton>
+}
+else
+{
+    <MudButton Href="/login">Войти</MudButton>
+}
+
+
+@code{
+    [Parameter] public string ThemeSwitchIcon { get; set; } = "";
+    [Parameter] public Action? DarkThemeCallback { get; set; }
+    [Parameter] public bool ShowThemeSwitcher { get; set; } = true;
+
+    private async void SignOut()
+    {
+        await AuthService.RemoveToken();
+        NavigationManager.Refresh(true);
+    }
+
+}

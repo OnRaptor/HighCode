@@ -1,0 +1,111 @@
+﻿@using HighCode.Domain.DTO
+@using HighCode.Domain.Responses
+@using HighCode.Domain.ApiResponses.Reactions
+@using HighCode.Domain.Constants
+@using HighCode.Client.Services
+@using HighCode.Domain.ApiRequests.Reactions
+@using Refit
+@inject ISnackbar SnackbarService
+@inject IHighCodeAPI Api;
+@inject IJSRuntime JsRuntime;
+@inject AuthService AuthService;
+
+@if (solutions == null)
+{
+    <MudProgressCircular Indeterminate="true"/>
+}
+else
+{
+    <div id="solutionsContainer">
+        @foreach (var solution in solutions)
+        {
+            <MudText Typo="Typo.h6">@("@" + solution.AuthorName)</MudText>
+            <pre data-download-link>
+                <code class="@("line-numbers language-" + CodeTask.ProgrammingLanguage)">@solution.Code</code>
+            </pre>
+
+            <MudStack Wrap="Wrap.Wrap" Spacing="2" Row="true">
+                <MudButton OnClick="async () => { var result = await PostReaction(solution.Id.Value, 0); if (result == null) return; solution.SolutionReactions = result.SolutionReactions; solution.MyReaction = result.MyReaction; StateHasChanged(); }"
+                           Variant="@(solution.MyReaction is 0 ? Variant.Filled : Variant.Outlined)" Color="Color.Success">
+                    Интересно! @solution.SolutionReactions.InterestingCount
+                </MudButton>
+
+                <MudButton OnClick="async () => { var result = await PostReaction(solution.Id.Value, 1); if (result == null) return; solution.SolutionReactions = result.SolutionReactions; solution.MyReaction = result.MyReaction; StateHasChanged(); }"
+                           Variant="@(solution.MyReaction is 1 ? Variant.Filled : Variant.Outlined)" Color="Color.Info">
+                    Умно! @solution.SolutionReactions.CleverCount
+                </MudButton>
+
+                <MudButton
+                    OnClick="async () => { var result = await PostReaction(solution.Id.Value, 2); if (result == null) return; solution.SolutionReactions = result.SolutionReactions; solution.MyReaction = result.MyReaction; StateHasChanged(); }"
+                    Variant="@(solution.MyReaction is 2 ? Variant.Filled : Variant.Outlined)" Color="Color.Warning">
+                    Забавно! @solution.SolutionReactions.FunCount
+                </MudButton>
+                <MudButton OnClick="() => { commentBlockShow[solution.Id.Value] = !commentBlockShow[solution.Id.Value]; StateHasChanged(); }">Комментарии</MudButton>
+            </MudStack>
+
+            @if (commentBlockShow[solution.Id.Value])
+            {
+                <CommentsSection BaseTargetTypeForComment="TargetTypeForComment.ToSolution" BaseTargetIdForComment="@solution.Id.Value"/>
+            }
+
+            <div class="mb-4"></div>
+        }
+    </div>
+}
+
+
+@code {
+    [Parameter] public TaskDTO CodeTask { get; set; }
+
+    List<SolutionDTO>? solutions;
+    Dictionary<Guid, bool> commentBlockShow;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var solutionsResponse = await Api.GetSolutions(CodeTask.Id);
+            solutions = solutionsResponse.Solutions.ToList();
+            commentBlockShow = solutions.ToDictionary(s => s.Id.Value, _ => false);
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    async Task<PostReactionForSolutionResponse?> PostReaction(Guid solutionId, int reaction)
+    {
+        try
+        {
+            return await Api.AddReactionToSolution(new PostReactionForSolutionCommand
+            {
+                Reaction = reaction,
+                SolutionId = solutionId
+            });
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+            return null;
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Delay(250); // на всякий случай
+            var solutionsContainer = await JsRuntime.InvokeAsync<IJSObjectReference?>("document.getElementById", "solutionsContainer");
+            if (solutionsContainer == null) return;
+            await JsRuntime.InvokeVoidAsync("Prism.highlightAllUnder", solutionsContainer, true);
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+}

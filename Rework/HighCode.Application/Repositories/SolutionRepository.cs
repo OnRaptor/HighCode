@@ -58,12 +58,12 @@ public class SolutionRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<CodeTaskSolution>> GetSolutions()
+    public async Task<IEnumerable<CodeTaskSolution>> GetSolutions(Guid taskId)
     {
         return await _context.CodeTaskSolutions.AsNoTracking()
             .Include(x => x.Author)
             .Include(x => x.RelatedTask)
-            .Where(x => x.IsPublished)
+            .Where(x => x.IsPublished && x.RelatedTaskId == taskId)
             .ToListAsync();
     }
 

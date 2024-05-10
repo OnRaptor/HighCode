@@ -12,14 +12,17 @@ public class TokenHandler(AuthService authService) : DelegatingHandler
     {
         if (authService.IsAuthenticated)
             request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await authService.GetToken());
+        HttpResponseMessage response = default;
         try
         {
-            return await base.SendAsync(request, cancellationToken);
+            response = await base.SendAsync(request, cancellationToken);
+            return response;
         }
         catch (Exception e)
         {
             var error = new HttpResponseMessage(HttpStatusCode.BadRequest);
-            error.Content = new StringContent(JsonSerializer.Serialize(new ErrorResponse { ErrorMessage = "Network error: \n" + e.Message }));
+            error.Content = new StringContent(JsonSerializer.Serialize(new ErrorResponse
+                { ErrorMessage = "Http error " + response?.StatusCode }));
             error.RequestMessage = request;
             return error;
         }

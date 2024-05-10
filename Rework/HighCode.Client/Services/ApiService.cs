@@ -15,7 +15,7 @@ using HighCode.Domain.DTO;
 using HighCode.Domain.Responses;
 using Refit;
 
-namespace HighCode.Client.Services
+namespace HighCode.Client
 {
     [GeneratedCode("Refitter", "0.9.9.0")]
     public partial interface IHighCodeAPI
@@ -54,9 +54,8 @@ namespace HighCode.Client.Services
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/comments/GetComments")]
-        Task<GetCommentsResponse> GetComments([Query] [AliasAs("RelatedCommentId")] Guid? relatedCommentId = null,
-            [Query] [AliasAs("RelatedSolutionId")] Guid? relatedSolutionId = null,
-            [Query] [AliasAs("RelatedTaskId")] Guid? relatedTaskId = null);
+        Task<GetCommentsResponse> GetComments([Query] [AliasAs("TargetTypeForComment")] int? targetTypeForComment,
+            [Query] [AliasAs("RelatedTargetId")] Guid? relatedTargetId);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -222,7 +221,7 @@ namespace HighCode.Client.Services
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/solution/GetSolutions")]
-        Task<GetSolutionsResponse> GetSolutions();
+        Task<GetSolutionsResponse> GetSolutions([Query] [AliasAs("TaskId")] Guid? taskId);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -242,7 +241,7 @@ namespace HighCode.Client.Services
         [Post("/api/solution/TestCode")]
         Task<TestCodeResponse> TestCode([Body] TestCodeCommand body);
 
-        /// <returns>A <see cref="Task"/> that completes when the request is finished.</returns>
+        /// <returns>Success</returns>
         /// <exception cref="ApiException">
         /// Thrown when the request returns a non-success status code:
         /// <list type="table">

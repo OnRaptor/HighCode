@@ -3,6 +3,7 @@ using HighCode.Application.Repositories;
 using HighCode.Application.Services;
 using HighCode.Domain.ApiRequests.Comments;
 using HighCode.Domain.ApiResponses.Comments;
+using HighCode.Domain.Constants;
 using HighCode.Domain.DTO;
 using HighCode.Domain.Responses;
 using HighCode.Infrastructure.Entities;
@@ -22,14 +23,11 @@ public class GetCommentsHandler(
 {
     public async Task<Result<GetCommentsResponse>> Handle(GetCommentsQuery request, CancellationToken cancellationToken)
     {
-        var comments = new List<Comment>();
-        if (request.RelatedTaskId.HasValue)
-            comments.AddRange(await commentRepository.GetForTask(request.RelatedTaskId.Value));
-        else if (request.RelatedCommentId.HasValue)
-            comments.AddRange(await commentRepository.GetForComment(request.RelatedCommentId.Value));
-        else if (request.RelatedSolutionId.HasValue)
-            comments.AddRange(await commentRepository.GetForSolution(request.RelatedSolutionId.Value));
-
+        if (!request.RelatedTargetId.HasValue)
+            return responseFactory.BadRequestResponse("Не указан идентификатор цели комментария");
+        var userId = correlationContext.GetUserId().GetValueOrDefault();
+        var comments = new List<Comment>(await commentRepository.GetCommentsForType(
+            (TargetTypeForComment)request.TargetTypeForComment, request.RelatedTargetId.GetValueOrDefault()));
         return responseFactory.SuccessResponse(new()
         {
             Comments = await Task.WhenAll(comments.Select(async c =>
@@ -43,7 +41,10 @@ public class GetCommentsHandler(
                     .GetReactionCommentForUser(
                         c.Id,
                         correlationContext.GetUserId().GetValueOrDefault());
-                var replies = await _commentRepository.GetForComment(commentDto.Id);
+                commentDto.IsMine = c.AuthorId == userId;
+                if (c.TargetType == TargetTypeForComment.Reply)
+                    return commentDto; //нет смысла дальше искать ответы если это итак ответ
+                var replies = await _commentRepository.GetCommentsForType(TargetTypeForComment.Reply, c.Id);
                 commentDto.RepliesCount = replies.Count();
                 return commentDto;
             }))

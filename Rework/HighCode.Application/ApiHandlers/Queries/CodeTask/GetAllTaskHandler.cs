@@ -47,6 +47,10 @@ public class GetAllTaskHandler(
                             allTasks = allTasks.Where(x => x.Complexity == val).ToArray();
                         break;
                     }
+                    case FilterTypeConstants.ByCategory:
+                        allTasks = allTasks.Where(t => t.Category != null)
+                            .Where(t => t.Category.ToLower().Trim().Contains(filter.Value.ToLower())).ToArray();
+                        break;
                 }
             }
 

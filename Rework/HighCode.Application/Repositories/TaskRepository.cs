@@ -44,11 +44,6 @@ public class TaskRepository
 
     public async Task<bool> DeleteTask(Guid taskId)
     {
-        // крайне сомнительный вариант TODO: сделать нормльное удаление
-        await _context.Comments
-            .Where(x => x.RelatedTaskId == taskId)
-            .ExecuteUpdateAsync(setters
-                => setters.SetProperty(x => x.RelatedTaskId, null as Guid?));
         return await _context.CodeTasks.Where(x => x.Id == taskId).ExecuteDeleteAsync() == 1;
     }
 
