@@ -1,9 +1,11 @@
 ﻿#region
 
 using HighCode.Domain.ApiRequests.Auth;
+using HighCode.Domain.ApiRequests.UserProfile;
 using HighCode.Domain.ApiResponses.Auth;
 using HighCode.Domain.Responses;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 #endregion
@@ -16,7 +18,6 @@ public class UserController(IMediator _mediator, ILogger<UserController> logger)
 {
     [HttpPost]
     [ProducesResponseType<LoginCommandResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Login(
         [FromBody] LoginCommand command,
         CancellationToken cancellationToken)
@@ -26,9 +27,18 @@ public class UserController(IMediator _mediator, ILogger<UserController> logger)
 
     [HttpPost]
     [ProducesResponseType<RegisterCommandResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> Register(
         [FromBody] RegisterCommand command,
+        CancellationToken cancellationToken)
+    {
+        return await RequestAsync(command, cancellationToken);
+    }
+
+    [HttpPost]
+    [Authorize("StaffOnly")]
+    [ProducesResponseType<SimpleResponse>(200)]
+    public async Task<IActionResult> BanUser(
+        [FromBody] BanUserCommand command,
         CancellationToken cancellationToken)
     {
         return await RequestAsync(command, cancellationToken);

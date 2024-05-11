@@ -13,12 +13,20 @@ public class ProfileController(IMediator _mediator, ILogger<LeaderboardControlle
 {
     [HttpGet]
     [Authorize]
-    [ProducesResponseType<GetUserProfileResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType<GetUserProfileResponse>(200)] 
     public async Task<IActionResult> GetUserProfile(
         CancellationToken cancellationToken)
     {
         return await RequestAsync(new GetUserProfileQuery(), cancellationToken);
+    }
+
+    [HttpPost]
+    [Authorize("AllAuthNotBanned")]
+    [ProducesResponseType<SimpleResponse>(200)]
+    public async Task<IActionResult> EditProfile(
+        [FromBody] EditUserProfileCommand command,
+        CancellationToken cancellationToken)
+    {
+        return await RequestAsync(command, cancellationToken);
     }
 }

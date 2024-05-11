@@ -2,23 +2,20 @@
 @using HighCode.Domain.DTO
 @using HighCode.Domain.Responses
 @using HighCode.Domain.Constants
-@using HighCode.Client.Services
 @using HighCode.Domain.ApiRequests.Tasks
 @using Refit
 @using HighCode.Client.Components.Dialogs
 @inject IHighCodeAPI api;
 @inject ISnackbar SnackbarService
-@inject AuthService AuthService
 @inject IDialogService DialogService
 
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudStack Wrap="Wrap.Wrap" Row="true" Spacing="2">
         <MudText Typo="Typo.h6">Задачи (@CodeTasks?.Count)</MudText>
-        @if (AuthService.CurrentRole.GetValueOrDefault() != UserRoleTypes.User)
-        {
+        <AuthorizeView Policy="StaffOnly">
             <MudButton OnClick="AddTaskClick" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
             <MudSwitch Label="Неопубликованные" @bind-Value="@showUnPublishedOnly" @bind-Value:after="LoadTasks" T="bool"/>
-        }
+        </AuthorizeView>
     </MudStack>
     @if (CodeTasks == null)
     {
@@ -69,10 +66,9 @@
                         <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
                     </CardHeaderContent>
                     <CardHeaderActions>
-                        @if (AuthService.CurrentRole.GetValueOrDefault() != UserRoleTypes.User)
-                        {
+                        <AuthorizeView Policy="StaffOnly">
                             <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Warning"></MudIconButton>
-                        }
+                        </AuthorizeView>
                     </CardHeaderActions>
                 </MudCardHeader>
                 <MudCardContent Class="pt-0">

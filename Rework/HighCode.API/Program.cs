@@ -30,7 +30,21 @@ builder.Services.AddMediatR(options =>
 builder.Services.AddDbContext<AppDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
 
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(opts =>
+{
+    opts.AddPolicy("AllAuthUsers", policy => policy.RequireAuthenticatedUser());
+    opts.DefaultPolicy = opts.GetPolicy("AllAuthUsers");
+    opts.AddPolicy("AllAuthNotBanned", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireAssertion(assert => !assert.User.IsInRole("Banned"));
+    });
+    opts.AddPolicy("StaffOnly", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireRole("Moderator", "Administrator");
+    });
+});
 builder.Services.AddAppAuthentication();
 builder.Services.AddBasicServices();
 

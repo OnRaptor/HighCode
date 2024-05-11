@@ -1,13 +1,13 @@
-﻿@page "/login"
+﻿@page "/login/{*RefUrl}"
 @using HighCode.Client.Services
 @using HighCode.Domain.ApiRequests.Auth
-@using HighCode.Domain.ApiResponses.Auth
 @using HighCode.Domain.Responses
 @using Refit
 @inject AuthService AuthService
 @inject ISnackbar SnackbarService
 @inject NavigationManager NavigationManager
 @inject IHighCodeAPI Api;
+
 
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudCard Style="max-width: 500px">
@@ -29,26 +29,28 @@
 </MudContainer>
 
 @code {
+    [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+    [Parameter] public string? RefUrl { get; set; }
+
     string LoginValue { get; set; }
     string PasswordValue { get; set; }
     bool IsRememberValue { get; set; }
     bool Success;
 
-
     private async void LoginCommand()
     {
-        LoginCommandResponse result = null;
         try
         {
-            result = await Api.Login(new LoginCommand()
+            var result = await Api.Login(new LoginCommand()
             {
                 Login = LoginValue,
                 Password = PasswordValue
             });
             if (result.Success)
             {
-                await AuthService.SaveAuthData(result.Token, result.ValidTo.Value, result.Role);
-                NavigationManager.NavigateTo("/tasks", true, true);
+                await AuthService.SaveAuthData(result.Token, result.ValidTo.Value);
+                NavigationManager.NavigateTo(string.IsNullOrEmpty(RefUrl) ? "/tasks" : '/' + RefUrl);
             }
         }
         catch (ApiException e)
@@ -58,4 +60,15 @@
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var state = await authenticationState;
+            if (state.User.Identity.IsAuthenticated)
+                NavigationManager.NavigateTo("/tasks");
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
 }

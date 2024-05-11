@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using HighCode.Domain.ApiResponses.Tasks
+@using HighCode.Domain.ApiRequests.Tasks
+@inject IHighCodeAPI Api;
 
 <PageTitle>Главная</PageTitle>
 
@@ -7,4 +10,51 @@
     <MudText Typo="Typo.h3">бросая вызов</MudText>
     <MudText Typo="Typo.body1">Совершенствуйте свои навыки разработки, тренируясь со своими коллегами по программировнию, которые постоянно бросают вызов вашей практике программирования и расширяют ее.</MudText>
     <MudButton Href="/tasks" FullWidth="true" Color="Color.Primary" Variant="Variant.Filled">Начать</MudButton>
+
+    @if (popularTasks != null)
+    {
+        <MudText Class="mt-4" Typo="Typo.h5">Популярные задачи</MudText>
+        <MudSimpleTable Hover="true">
+            <thead>
+            <tr>
+                <th>Задача</th>
+                <th>Количество решений</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            @foreach (var ti in popularTasks)
+            {
+                <tr>
+                    <td>
+
+                        <MudButton Href=@("/taskdetails/" + ti.Task.Id)>
+                            @ti.Task.Title
+                        </MudButton>
+                    </td>
+                    <td>@ti.solutionsCount</td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    }
 </MudContainer>
+
+@code{
+    List<GetPopularTasksResponse.PopularTaskItem>? popularTasks { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var popularTasksResponse = await Api.GetPopularTasks(new GetPopularTasksQuery());
+            popularTasks = popularTasksResponse.Tasks.ToList();
+        }
+        catch (Exception e) // тут по сути нечего делать
+        {
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+}

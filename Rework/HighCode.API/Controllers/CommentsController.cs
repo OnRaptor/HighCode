@@ -1,6 +1,5 @@
 ﻿using HighCode.Domain.ApiRequests.Comments;
 using HighCode.Domain.ApiResponses.Comments;
-using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace HighCode.API.Controllers;
 
 [Route("api/comments/[action]")]
+
 public class CommentsController(IMediator _mediator, ILogger<CommentsController> logger)
     : BaseApiController<CommentsController>(_mediator, logger)
 {
     [HttpPost]
-    [Authorize]
+    [Authorize("AllAuthNotBanned")]
     [ProducesResponseType<PostCommentResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> PostComment(
         [FromBody] PostCommentCommand command,
         CancellationToken cancellationToken)
@@ -24,7 +23,6 @@ public class CommentsController(IMediator _mediator, ILogger<CommentsController>
     
     [HttpGet]
     [ProducesResponseType<GetCommentsResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetComments(
         [FromQuery] GetCommentsQuery command,
         CancellationToken cancellationToken)
@@ -33,9 +31,8 @@ public class CommentsController(IMediator _mediator, ILogger<CommentsController>
     }
     
     [HttpPost]
-    [Authorize]
+    [Authorize("AllAuthNotBanned")]
     [ProducesResponseType<DeleteCommentResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> DeleteComment(
         [FromQuery] DeleteCommentCommand command,
         CancellationToken cancellationToken)

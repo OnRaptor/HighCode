@@ -1,13 +1,21 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
-    </Found>
-    <NotFound>
-        <PageTitle>Не найдено</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Страница не найдена</p>
-            <MudButton Href="/" Variant="Variant.Outlined">Вернуться на главную</MudButton>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿@using HighCode.Client.Pages
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <Login/>
+                </NotAuthorized>
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
+        </Found>
+
+        <NotFound>
+            <PageTitle>Не найдено</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Страница не найдена</p>
+                <MudButton Href="/" Variant="Variant.Outlined">Вернуться на главную</MudButton>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>

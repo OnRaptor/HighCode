@@ -1,10 +1,8 @@
 ﻿@page "/solution/{TaskIdParam}"
 @using HighCode.Domain.DTO
 @using HighCode.Domain.Responses
-@using HighCode.Client.Services
 @using HighCode.Domain.ApiRequests.Solutions
 @using Refit
-@inject AuthService AuthService
 @inject ISnackbar SnackbarService
 @inject NavigationManager NavigationManager
 @inject IHighCodeAPI Api;
@@ -49,17 +47,20 @@
                                 {
                                     <MudAlert Dense="true" Severity="Severity.Info">Для данной задачи не поддерживается автоматическое тестирование</MudAlert>
                                 }
-                                @if (AuthService.IsAuthenticated && isTestingAvaible)
-                                {
-                                    if (isPublished)
-                                    {
-                                        <MudButton OnClick="RemoveFromPublishClick" Variant="Variant.Filled" Color="Color.Error">Снять с публикации</MudButton>
+                                <AuthorizeView Policy="AllAuthNotBanned">
+                                    @{
+                                        if (isTestingAvaible)
+                                            switch (isPublished)
+                                            {
+                                                case true:
+                                                    <MudButton OnClick="RemoveFromPublishClick" Variant="Variant.Filled" Color="Color.Error">Снять с публикации</MudButton>
+                                                    break;
+                                                case false:
+                                                    <MudButton OnClick="PublishClick" Variant="Variant.Filled" Color="Color.Primary">Опубликовать</MudButton>
+                                                    break;
+                                            }
                                     }
-                                    else
-                                    {
-                                        <MudButton OnClick="PublishClick" Variant="Variant.Filled" Color="Color.Primary">Опубликовать</MudButton>
-                                    }
-                                }
+                                </AuthorizeView>
                             </MudStack>
                         </MudCardActions>
                     </MudCard>
@@ -88,6 +89,7 @@
 @code {
     [Parameter] public string TaskIdParam { get; set; }
 
+    [CascadingParameter] Task<AuthenticationState>? authenticationState { get; set; }
     [CascadingParameter]
     MudThemingProvider theme { get; set; }
 
@@ -98,6 +100,7 @@
     TaskDTO currentTask;
     string testCodeOutput;
     bool isPublished;
+    bool isAuth;
 
     async Task LoadEditors(string code, string unitTestCode)
     {
@@ -183,7 +186,7 @@
 
     async Task Save()
     {
-        if (!AuthService.IsAuthenticated) return; // сохранение работает только для авторизованных пользователей
+        if (!isAuth) return; // сохранение работает только для авторизованных пользователей
         try
         {
             await Api.SaveSolution(new SaveSolutionCommand
@@ -204,6 +207,8 @@
             SnackbarService.Add("Не корректный индефикатор задачи");
             return;
         }
+
+        isAuth = (await authenticationState).User.Identity.IsAuthenticated;
         try
         {
             var taskResponse = await Api.GetTask(taskId);
@@ -213,7 +218,7 @@
                 isTestingAvaible = taskResponse.IsTestingAvailable.GetValueOrDefault();
             }
 
-            if (AuthService.IsAuthenticated)
+            if (isAuth)
             {
                 var solutionResponse = await Api.GetSolutionForUser(taskId);
                 if (solutionResponse.Success)

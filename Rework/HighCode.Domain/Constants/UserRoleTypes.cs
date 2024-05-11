@@ -4,5 +4,6 @@ public enum UserRoleTypes
 {
     User,
     Moderator,
-    Administrator
+    Administrator,
+    Banned
 }

@@ -1,6 +1,5 @@
 ﻿using HighCode.Domain.ApiRequests.Reactions;
 using HighCode.Domain.ApiResponses.Reactions;
-using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,9 +11,8 @@ public class ReactionController(IMediator _mediator, ILogger<UserController> log
     : BaseApiController<UserController>(_mediator, logger)
 {
     [HttpPost]
-    [Authorize]
+    [Authorize("AllAuthNotBanned")]
     [ProducesResponseType<PostReactionForCommentResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddReactionToComment(
         [FromBody] PostReactionForCommentCommand command,
         CancellationToken cancellationToken)
@@ -23,9 +21,8 @@ public class ReactionController(IMediator _mediator, ILogger<UserController> log
     }
     
     [HttpPost]
-    [Authorize]
+    [Authorize("AllAuthNotBanned")]
     [ProducesResponseType<PostReactionForSolutionResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> AddReactionToSolution(
         [FromBody] PostReactionForSolutionCommand command,
         CancellationToken cancellationToken)

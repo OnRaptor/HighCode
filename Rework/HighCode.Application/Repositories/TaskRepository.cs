@@ -36,6 +36,14 @@ public class TaskRepository
     {
         return await _context.CodeTasks.AsNoTracking().ToListAsync();
     }
+
+    public IEnumerable<(CodeTask task, int count)> GetPopularTasks()
+    {
+        return _context.CodeTasks.AsNoTracking().Where(x => x.IsPublished).OrderByDescending(task =>
+                _context.CodeTaskSolutions.Count(s => s.IsPublished && s.RelatedTaskId == task.Id))
+            .ToList()
+            .Select(t => (t, _context.CodeTaskSolutions.Count(s => s.IsPublished && s.RelatedTaskId == t.Id)));
+    }
     
     public async Task<CodeTask?> GetById(Guid id)
     {

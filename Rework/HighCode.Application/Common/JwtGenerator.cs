@@ -16,7 +16,7 @@ public class JwtGenerator
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Jti, userId),
-            new(JwtRegisteredClaimNames.Name, userName),
+            new(ClaimTypes.Name, userName),
             new(ClaimTypes.Role, role.ToString())
         };
         // создаем JWT-токен

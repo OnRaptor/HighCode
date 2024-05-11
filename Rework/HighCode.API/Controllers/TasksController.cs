@@ -21,9 +21,8 @@ public class TasksController(
     : BaseApiController<TasksController>(_mediator, logger)
 {
     [HttpPost]
-    [Authorize(Roles = "Moderator")]
+    [Authorize("ForStaffOnly")]
     [ProducesResponseType<SimpleResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateTask(
         [FromBody] TaskDTO task,
         CancellationToken cancellationToken)
@@ -38,7 +37,6 @@ public class TasksController(
 
     [HttpPost]
     [ProducesResponseType<GetAllTaskResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetTasks(
         [FromBody] GetAllTaskQuery query,
         CancellationToken cancellationToken
@@ -49,7 +47,6 @@ public class TasksController(
 
     [HttpGet]
     [ProducesResponseType<GetTaskByIdResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> GetTask(
         [FromQuery] GetTaskByIdQuery command,
         CancellationToken cancellationToken)
@@ -58,9 +55,8 @@ public class TasksController(
     }
 
     [HttpPost]
-    [Authorize(Roles = "Moderator")]
+    [Authorize("ForStaffOnly")]
     [ProducesResponseType<SimpleResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> EditTask(
         [FromBody] EditTaskCommand command,
         CancellationToken cancellationToken)
@@ -68,14 +64,22 @@ public class TasksController(
         return await RequestAsync(command, cancellationToken);
     }
 
-    [HttpPost]
-    [Authorize(Roles = "Moderator")]
+    [HttpGet]
+    [ProducesResponseType<GetPopularTasksResponse>(200)]
+    public async Task<IActionResult> GetPopularTasks(
+        [FromQuery] GetPopularTasksQuery query,
+        CancellationToken cancellationToken)
+    {
+        return await RequestAsync(query, cancellationToken);
+    }
+
+    /*[HttpPost]
+    [Authorize(policy: "ForStaffOnly")]
     [ProducesResponseType<SimpleResponse>(200)]
-    [ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> DeleteTask(
         [FromBody] DeleteTaskCommand command,
         CancellationToken cancellationToken)
     {
         return await RequestAsync(command, cancellationToken);
-    }
+    }*/
 }

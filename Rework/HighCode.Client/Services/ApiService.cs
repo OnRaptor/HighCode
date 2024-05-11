@@ -4,6 +4,7 @@ using HighCode.Domain.ApiRequests.Comments;
 using HighCode.Domain.ApiRequests.Reactions;
 using HighCode.Domain.ApiRequests.Solutions;
 using HighCode.Domain.ApiRequests.Tasks;
+using HighCode.Domain.ApiRequests.UserProfile;
 using HighCode.Domain.ApiResponses.Auth;
 using HighCode.Domain.ApiResponses.Comments;
 using HighCode.Domain.ApiResponses.Leaderboards;
@@ -105,15 +106,29 @@ namespace HighCode.Client
         /// <term>409</term>
         /// <description>Conflict</description>
         /// </item>
-        /// <item>
-        /// <term>401</term>
-        /// <description>Unauthorized</description>
-        /// </item>
         /// </list>
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/profile/GetUserProfile")]
         Task<GetUserProfileResponse> GetUserProfile();
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/profile/EditProfile")]
+        Task<SimpleResponse> EditProfile([Body] EditUserProfileCommand body);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -328,8 +343,8 @@ namespace HighCode.Client
         /// </list>
         /// </exception>
         [Headers("Accept: application/json")]
-        [Post("/api/tasks/DeleteTask")]
-        Task<SimpleResponse> DeleteTask([Body] DeleteTaskCommand body);
+        [Get("/api/tasks/GetPopularTasks")]
+        Task<GetPopularTasksResponse> GetPopularTasks([Query] GetPopularTasksQuery query);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -366,6 +381,24 @@ namespace HighCode.Client
         [Headers("Accept: application/json")]
         [Post("/api/user/Register")]
         Task<RegisterCommandResponse> Register([Body] RegisterCommand body);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/user/BanUser")]
+        Task<SimpleResponse> BanUser([Body] BanUserCommand body);
 
 
     }

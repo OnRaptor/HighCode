@@ -1,36 +1,61 @@
-﻿using Blazored.LocalStorage;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using Blazored.LocalStorage;
 using HighCode.Domain.Constants;
 
 namespace HighCode.Client.Services;
 
-public class AuthService(ILocalStorageService localStorage)
+public class AuthService(ILocalStorageService localStorage, HttpClient http)
 {
     public UserRoleTypes? CurrentRole { get; set; }
     public bool IsAuthenticated { get; set; }
     
     public async Task<string?> GetToken() => await localStorage.GetItemAsStringAsync("token");
+    public event Action<ClaimsPrincipal>? AuthStateChanged;
 
-    public async Task SaveAuthData(string token, DateTime validTo, UserRoleTypes role)
+    public async Task SaveAuthData(string token, DateTime validTo)
     {
         await localStorage.SetItemAsStringAsync("token", token);
         await localStorage.SetItemAsync("tokenValid", validTo);
-        await localStorage.SetItemAsync("role", role);
+        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        AuthStateChanged?.Invoke(new ClaimsPrincipal(new ClaimsIdentity(GetClaims(token), "jwt")));
     }
 
-    public async Task Init()
+    private async Task<bool> ValidateToken()
     {
         var tokenValid = await localStorage.GetItemAsync<DateTime?>("tokenValid");
         IsAuthenticated = tokenValid.HasValue && tokenValid > DateTime.UtcNow;
         if (IsAuthenticated)
             CurrentRole = await localStorage.GetItemAsync<UserRoleTypes?>("role");
+
+        return IsAuthenticated;
     }
 
     public async Task RemoveToken()
     {
         await localStorage.RemoveItemAsync("token");
         await localStorage.RemoveItemAsync("tokenValid");
-        await localStorage.RemoveItemAsync("role");
-        IsAuthenticated = false;
-        CurrentRole = null;
+        AuthStateChanged?.Invoke(new ClaimsPrincipal(new ClaimsIdentity()));
+    }
+
+    /// <summary>
+    /// Возвращает клеймы только валидного токена
+    /// </summary>
+    /// <returns></returns>
+    public async Task<IEnumerable<Claim>?> GetClaims()
+    {
+        var token = await GetToken();
+        if (string.IsNullOrEmpty(token) && !await ValidateToken())
+            return null;
+
+        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return GetClaims(token);
+    }
+
+    private IEnumerable<Claim>? GetClaims(string token)
+    {
+        var handler = new JwtSecurityTokenHandler();
+        return handler.ReadJwtToken(token).Claims;
     }
 }

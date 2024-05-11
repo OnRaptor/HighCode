@@ -29,6 +29,9 @@
     </MudCard>
 </MudContainer>
 @code {
+    [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
+
+
     string LoginValue { get; set; }
     string UserNameValue { get; set; }
     string PasswordValue { get; set; }
@@ -47,7 +50,7 @@
             });
             if (result.Success)
             {
-                await AuthService.SaveAuthData(result.Token, result.ValidTo.Value, result.Role);
+                await AuthService.SaveAuthData(result.Token, result.ValidTo.Value);
                 NavigationManager.NavigateTo("/tasks", true, true);
             }
         }
@@ -58,4 +61,15 @@
         }
     }
 
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var state = await authenticationState;
+            if (state.User.Identity.IsAuthenticated)
+                NavigationManager.NavigateTo("/tasks");
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
 }

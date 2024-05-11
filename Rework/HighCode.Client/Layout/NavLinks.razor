@@ -10,15 +10,23 @@
 {
     <MudIconButton Icon="@ThemeSwitchIcon" OnClick="DarkThemeCallback"></MudIconButton>
 }
-@if (AuthService.IsAuthenticated)
-{
-    <MudButton Href="/profile">Профиль</MudButton>
-    <MudButton OnClick="SignOut">Выйти</MudButton>
-}
-else
-{
-    <MudButton Href="/login">Войти</MudButton>
-}
+<AuthorizeView>
+    <Authorized>
+        <MudButton StartIcon="@Icons.Material.Filled.ManageAccounts" Href="/profile">
+            <MudStack Spacing="0">
+                <MudText Typo="Typo.body1" Color=@(context.User.IsInRole("Banned") ? Color.Error : Color.Default)>@context.User.Identity.Name</MudText>
+                @if (context.User.IsInRole("Banned"))
+                {
+                    <MudText Style="font-size: 9px;" Typo="Typo.caption">Вы заблокированы</MudText>
+                }
+            </MudStack>
+        </MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Logout" OnClick="SignOut">Выйти</MudButton>
+    </Authorized>
+    <NotAuthorized>
+        <MudButton StartIcon="@Icons.Material.Filled.Login" Href=@("/login/" + currentLocation)>Войти</MudButton>
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code{
@@ -26,10 +34,22 @@ else
     [Parameter] public Action? DarkThemeCallback { get; set; }
     [Parameter] public bool ShowThemeSwitcher { get; set; } = true;
 
+    string currentLocation;
+
     private async void SignOut()
     {
         await AuthService.RemoveToken();
-        NavigationManager.Refresh(true);
+    }
+
+    protected override void OnInitialized()
+    {
+        currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += (sender, args) =>
+        {
+            currentLocation = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+            StateHasChanged();
+        };
+        base.OnInitialized();
     }
 
 }

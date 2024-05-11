@@ -17,13 +17,14 @@
         <MudPaper Class="pa-4">
             <MudText Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
             <MudText Style="white-space: pre-line;" Typo="Typo.body1">@task.Description</MudText>
-            <MudStack Row="true">
+            <MudStack Wrap="Wrap.Wrap" Row="true">
                 @if (!string.IsNullOrEmpty(task.Category))
                 {
-                    <MudChip Variant="Variant.Filled" Color="Color.Primary">@task.Category</MudChip>
+                    <MudChip Variant="Variant.Filled" Color="Color.Info">@task.Category</MudChip>
                 }
                 <MudChip Variant="Variant.Filled">@task.ProgrammingLanguage</MudChip>
                 <MudChip Variant="Variant.Filled">@(TaskDTO.ComplexityToString(task.Complexity.GetValueOrDefault()))</MudChip>
+                <MudChip Variant="Variant.Outlined" Href=@("/solution/" + task.Id) Color="Color.Primary">Начать решать</MudChip>
             </MudStack>
         </MudPaper>
 

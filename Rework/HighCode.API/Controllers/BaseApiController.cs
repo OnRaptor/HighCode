@@ -11,6 +11,7 @@ namespace HighCode.API.Controllers;
 
 [ApiController]
 [Produces("application/json")]
+[ProducesResponseType<ErrorResponse>(StatusCodes.Status409Conflict)]
 public class BaseApiController<TController>(
     IMediator _mediator,
     ILogger<TController> logger) : ControllerBase

@@ -2,7 +2,8 @@
 @using HighCode.Domain.ApiResponses.UserProfile
 @using HighCode.Domain.Responses
 @using Refit
-@attribute [Microsoft.AspNetCore.Authorization.Authorize]
+@using HighCode.Domain.ApiRequests.UserProfile
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AllAuthNotBanned")]
 @inject ISnackbar SnackbarService
 @inject IHighCodeAPI Api;
 
@@ -13,17 +14,33 @@
     }
     else
     {
-        <MudCard>
-            <MudCardHeader>
+        <MudCard Class="pt-0">
+            <MudCardHeader Class="pb-0 ">
                 <CardHeaderContent>
-                    <MudText Typo="Typo.h6">@response.UserName</MudText>
+                    @if (isEditing)
+                    {
+                        <MudTextField T="string" @bind-Value="userName" FullWidth="true" Lines="1" Variant="Variant.Outlined" Label="Никнейм"/>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.h6">@userName</MudText>
+                    }
                 </CardHeaderContent>
                 <CardHeaderActions>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit"></MudIconButton>
+                    <MudIconButton Class="mt-4" OnClick="() => isEditing = !isEditing" Icon="@Icons.Material.Filled.Edit"></MudIconButton>
                 </CardHeaderActions>
             </MudCardHeader>
-            <MudCardContent>
-                <MudText>@response.Description</MudText>
+            <MudCardContent Class="pt-0">
+                @if (isEditing)
+                {
+                    <MudTextField @bind-Value="bio" T="string" FullWidth="true" Lines="3" Variant="Variant.Outlined" Label="Описание"/>
+                    <MudButton OnClick="SaveProfileData" FullWidth="true" Color="Color.Primary">Сохранить</MudButton>
+                }
+                else
+                {
+                    <MudText Typo="Typo.caption" Style="font-size: 9px;">Описание</MudText>
+                    <MudText>@bio</MudText>
+                }
             </MudCardContent>
         </MudCard>
 
@@ -49,12 +66,17 @@
 
 @code {
     GetUserProfileResponse response;
+    bool isEditing;
+    string userName;
+    string bio;
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             response = await Api.GetUserProfile();
+            userName = response.UserName;
+            bio = response.Description;
         }
         catch (ApiException e)
         {
@@ -63,6 +85,25 @@
         }
 
         await base.OnInitializedAsync();
+    }
+
+    private async void SaveProfileData()
+    {
+        try
+        {
+            var saveResponse = await Api.EditProfile(new EditUserProfileCommand
+            {
+                UserName = userName,
+                Description = bio
+            });
+            SnackbarService.Add(saveResponse.Message, Severity.Info);
+            isEditing = false;
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
     }
 
 }

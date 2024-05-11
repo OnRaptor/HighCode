@@ -1,5 +1,6 @@
 ﻿#region
 
+using System.Data.Common;
 using HighCode.Application.Models;
 using HighCode.Infrastructure;
 using HighCode.Infrastructure.Entities;
@@ -35,6 +36,20 @@ public class UserRepository(AppDbContext _context)
         catch (DbUpdateException ex)
         {
             return new CreateUserResult(false, false, null);
+        }
+    }
+
+    public async Task<bool> UpdateUserAsync(User user)
+    {
+        _context.Users.Update(user);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbException ex)
+        {
+            return false;
         }
     }
 }
