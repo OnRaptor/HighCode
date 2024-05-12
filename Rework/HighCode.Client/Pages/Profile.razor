@@ -98,6 +98,7 @@
             });
             SnackbarService.Add(saveResponse.Message, Severity.Info);
             isEditing = false;
+            StateHasChanged();
         }
         catch (ApiException e)
         {

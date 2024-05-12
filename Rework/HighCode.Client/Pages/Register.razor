@@ -51,7 +51,7 @@
             if (result.Success)
             {
                 await AuthService.SaveAuthData(result.Token, result.ValidTo.Value);
-                NavigationManager.NavigateTo("/tasks", true, true);
+                NavigationManager.NavigateTo("/tasks");
             }
         }
         catch (ApiException e)

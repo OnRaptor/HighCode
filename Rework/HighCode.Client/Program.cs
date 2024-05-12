@@ -66,7 +66,7 @@ builder.Services
     .ConfigureHttpClient(c => c.BaseAddress =
         new Uri(builder.HostEnvironment.IsDevelopment()
             ? "http://localhost:5148"
-            : "http://192.168.0.105:5148"));
+            : "http://94.232.191.189:5148"));
 
 builder.Services.AddBlazoredLocalStorageAsSingleton();
 

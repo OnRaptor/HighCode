@@ -21,7 +21,7 @@ public class TasksController(
     : BaseApiController<TasksController>(_mediator, logger)
 {
     [HttpPost]
-    [Authorize("ForStaffOnly")]
+    [Authorize("StaffOnly")]
     [ProducesResponseType<SimpleResponse>(200)]
     public async Task<IActionResult> CreateTask(
         [FromBody] TaskDTO task,
@@ -39,8 +39,7 @@ public class TasksController(
     [ProducesResponseType<GetAllTaskResponse>(200)]
     public async Task<IActionResult> GetTasks(
         [FromBody] GetAllTaskQuery query,
-        CancellationToken cancellationToken
-    )
+        CancellationToken cancellationToken)
     {
         return await RequestAsync(query, cancellationToken);
     }
@@ -55,7 +54,7 @@ public class TasksController(
     }
 
     [HttpPost]
-    [Authorize("ForStaffOnly")]
+    [Authorize("StaffOnly")]
     [ProducesResponseType<SimpleResponse>(200)]
     public async Task<IActionResult> EditTask(
         [FromBody] EditTaskCommand command,
