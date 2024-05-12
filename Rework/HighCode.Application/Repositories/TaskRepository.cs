@@ -39,7 +39,10 @@ public class TaskRepository
 
     public IEnumerable<(CodeTask task, int count)> GetPopularTasks()
     {
-        return _context.CodeTasks.AsNoTracking().Where(x => x.IsPublished).OrderByDescending(task =>
+        return _context.CodeTasks.AsNoTracking()
+            .Where(x => x.IsPublished
+                        && _context.CodeTaskSolutions.Count(s => s.IsPublished && s.RelatedTaskId == x.Id) != 0)
+            .OrderByDescending(task =>
                 _context.CodeTaskSolutions.Count(s => s.IsPublished && s.RelatedTaskId == task.Id))
             .ToList()
             .Select(t => (t, _context.CodeTaskSolutions.Count(s => s.IsPublished && s.RelatedTaskId == t.Id)));

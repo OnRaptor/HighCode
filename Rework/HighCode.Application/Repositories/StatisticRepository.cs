@@ -20,7 +20,7 @@ public class StatisticRepository(AppDbContext _context)
                 .OrderByDescending(l => l.Score)
                 .ToListAsync())
             .Select((l, i) => new { l, i })
-            .FirstOrDefault(x => x.l.UserId == userId)?.i ?? null;
+            .FirstOrDefault(x => x.l.UserId == userId)?.i + 1 ?? null;
     }
 
     public async Task<double?> GetScoreForUser(Guid userId)

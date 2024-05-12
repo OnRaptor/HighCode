@@ -9,7 +9,7 @@ public class TaskDTO
     public string CodeTemplate { get; set; }
     public int? Complexity { get; set; }
     public string ProgrammingLanguage { get; set; }
-    public bool? IsPublished { get; set; } = false;
+    public bool IsPublished { get; set; }
     public string? Category { get; set; }
 
     public static string ComplexityToString(int complexity)

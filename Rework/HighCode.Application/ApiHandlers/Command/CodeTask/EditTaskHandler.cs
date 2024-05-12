@@ -29,7 +29,7 @@ public class EditTaskHandler(
             ProgrammingLanguage = request.Task.ProgrammingLanguage ?? baseTask.ProgrammingLanguage,
             CodeTemplate = request.Task.CodeTemplate ?? baseTask.CodeTemplate,
             AuthorId = baseTask.AuthorId,
-            IsPublished = request.Task.IsPublished ?? baseTask.IsPublished,
+            IsPublished = request.Task.IsPublished,
             Category = request.Task.Category ?? baseTask.Category
         };
         if (await repository.EditTask(task))

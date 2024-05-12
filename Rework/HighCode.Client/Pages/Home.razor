@@ -14,11 +14,11 @@
     @if (popularTasks != null)
     {
         <MudText Class="mt-4" Typo="Typo.h5">Популярные задачи</MudText>
-        <MudSimpleTable Hover="true">
+        <MudSimpleTable>
             <thead>
             <tr>
                 <th>Задача</th>
-                <th>Количество решений</th>
+                <th style="text-align: center; vertical-align: middle">Количество решений</th>
             </tr>
             </thead>
 
@@ -27,12 +27,11 @@
             {
                 <tr>
                     <td>
-
                         <MudButton Href=@("/taskdetails/" + ti.Task.Id)>
                             @ti.Task.Title
                         </MudButton>
                     </td>
-                    <td>@ti.solutionsCount</td>
+                    <td style="text-align: center; vertical-align: middle">@ti.solutionsCount</td>
                 </tr>
             }
             </tbody>

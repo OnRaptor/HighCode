@@ -10,7 +10,7 @@ public class RatingService(LeaderboardRepository leaderboardRepository)
     {
         if (report.TotalTestsCount == 0 || report.SuccessTestCount != report.TotalTestsCount) return;
         
-        var score = (5 + report.TotalTestsCount * 0.5) * (task.Complexity == 0?1 : task.Complexity);
+        var score = (5 + report.SuccessTestCount * 0.5) * (task.Complexity == 0?1 : task.Complexity);
         
         var existingLb = await leaderboardRepository.GetLeaderboardByUserId(userId);
 

@@ -12,7 +12,7 @@
                 <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
                 <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
             </MudSelect>
-            <MudCheckBox T="bool?" bind-Value="_task.IsPublished">Опубликовать</MudCheckBox>
+            <MudCheckBox T="bool" @bind-Value="@_task.IsPublished">Опубликовать</MudCheckBox>
             <MudTextField Required="true" @bind-Value="_task.Category" T="string" Label="Категория" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="3" Required="true" @bind-Value="_task.Description" T="string" Label="Описание" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="6" Required="true" @bind-Value="_task.CodeTemplate" T="string" Label="Шаблон кода" Variant="Variant.Outlined"></MudTextField>
@@ -29,7 +29,7 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
 
-    TaskDTO _task = new();
+    TaskDTO _task = new(){ IsPublished = true};
     bool modelValid;
 
     private void Cancel()

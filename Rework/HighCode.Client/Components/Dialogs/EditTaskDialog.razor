@@ -12,7 +12,7 @@
                 <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
                 <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
             </MudSelect>
-            <MudCheckBox T="bool?" @bind-Value="Task.IsPublished">Опубликовать</MudCheckBox>
+            <MudCheckBox T="bool" @bind-Value="Task.IsPublished">Опубликовать</MudCheckBox>
             <MudTextField Required="true" @bind-Value="Task.Category" T="string" Label="Категория" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="3" Required="true" @bind-Value="Task.Description" T="string" Label="Описание" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="6" Required="true" @bind-Value="Task.CodeTemplate" T="string" Label="Шаблон кода" Variant="Variant.Outlined"></MudTextField>

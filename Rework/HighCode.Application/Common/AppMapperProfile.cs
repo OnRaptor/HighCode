@@ -9,6 +9,7 @@ public class AppMapperProfile : Profile
     public AppMapperProfile()
     {
         CreateMap<CodeTask, TaskDTO>();
+        CreateMap<TaskDTO, CodeTask>();
         CreateMap<CodeTaskSolution, SolutionDTO>()
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
         CreateMap<Comment, CommentDTO>()

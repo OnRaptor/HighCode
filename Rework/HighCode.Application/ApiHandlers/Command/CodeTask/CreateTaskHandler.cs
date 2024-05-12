@@ -1,5 +1,6 @@
 ﻿#region
 
+using AutoMapper;
 using HighCode.Application.Repositories;
 using HighCode.Domain.ApiRequests.Tasks;
 using HighCode.Domain.Responses;
@@ -9,23 +10,16 @@ using MediatR;
 
 namespace HighCode.Application.ApiHandlers.Command.CodeTask;
 
-public class CreateTaskHandler(TaskRepository taskRepository, ResponseFactory<SimpleResponse> responseFactory)
+public class CreateTaskHandler(
+    TaskRepository taskRepository,
+    IMapper mapper,
+    ResponseFactory<SimpleResponse> responseFactory)
     : IRequestHandler<CreateTaskCommand, Result<SimpleResponse>>
 {
     public async Task<Result<SimpleResponse>> Handle(CreateTaskCommand request, CancellationToken cancellationToken)
     {
-        var task = new Infrastructure.Entities.CodeTask
-        {
-            Title = request.Task.Title,
-            Description = request.Task.Description,
-            UnitTestCode = request.Task.UnitTestCode,
-            Complexity = request.Task.Complexity.Value,
-            ProgrammingLanguage = request.Task.ProgrammingLanguage,
-            CodeTemplate = request.Task.CodeTemplate,
-            AuthorId = request.UserId,
-            CreateDate = DateTime.UtcNow,
-            Category = request.Task.Category
-        };
+        var task = mapper.Map<Infrastructure.Entities.CodeTask>(request.Task);
+        task.CreateDate = DateTime.UtcNow;
         if (await taskRepository.CreateTask(task))
             return responseFactory.SuccessResponse(new SimpleResponse { Message = "Задача успешно создана" });
         return responseFactory.BadRequestResponse("Не удалось создать задачу");
