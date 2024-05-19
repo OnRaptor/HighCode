@@ -26,4 +26,8 @@
         <ProjectReference Include="..\HighCode.Infrastructure\HighCode.Infrastructure.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <Folder Include="ApiHandlers\Queries\CollectionOfTasks\"/>
+    </ItemGroup>
+
 </Project>
