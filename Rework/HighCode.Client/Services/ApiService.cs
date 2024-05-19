@@ -1,11 +1,13 @@
 using System.CodeDom.Compiler;
 using HighCode.Domain.ApiRequests.Auth;
+using HighCode.Domain.ApiRequests.CollectionOfTasks;
 using HighCode.Domain.ApiRequests.Comments;
 using HighCode.Domain.ApiRequests.Reactions;
 using HighCode.Domain.ApiRequests.Solutions;
 using HighCode.Domain.ApiRequests.Tasks;
 using HighCode.Domain.ApiRequests.UserProfile;
 using HighCode.Domain.ApiResponses.Auth;
+using HighCode.Domain.ApiResponses.CollectionOfTasks;
 using HighCode.Domain.ApiResponses.Comments;
 using HighCode.Domain.ApiResponses.Leaderboards;
 using HighCode.Domain.ApiResponses.Reactions;
@@ -21,6 +23,114 @@ namespace HighCode.Client
     [GeneratedCode("Refitter", "0.9.9.0")]
     public partial interface IHighCodeAPI
     {
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/collectionoftasks/CreateCollection")]
+        Task<SimpleResponse> CreateCollection([Body] CreateCollectionCommand body);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/collectionoftasks/EditCollection")]
+        Task<SimpleResponse> EditCollection([Body] EditCollectionCommand body);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/collectionoftasks/AddTasksToCollection")]
+        Task<SimpleResponse> AddTasksToCollection([Body] AddTasksToCollectionCommand body);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/collectionoftasks/RemoveTaskFromCollection")]
+        Task<SimpleResponse> RemoveTaskFromCollection([Body] RemoveTaskFromCollectionCommand body);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Get("/api/collectionoftasks/GetCollections")]
+        Task<GetCollectionsResponse> GetCollections([Query] GetCollectionsQuery body);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Get("/api/collectionoftasks/GetTasksInCollection")]
+        Task<GetTaskInCollectionResponse> GetTasksInCollection([Query] GetTaskInCollectionQuery body);
+
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
         /// Thrown when the request returns a non-success status code:

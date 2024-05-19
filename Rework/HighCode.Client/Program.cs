@@ -18,8 +18,6 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddAuthorizationCore(opts =>
 {
-    opts.AddPolicy("AllAuthUsers", policy => policy.RequireAuthenticatedUser());
-    opts.DefaultPolicy = opts.GetPolicy("AllAuthUsers");
     opts.AddPolicy("AllAuthNotBanned", policy =>
     {
         policy

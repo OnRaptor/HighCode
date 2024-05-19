@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HighCode.Domain.Constants;
 using HighCode.Domain.DTO;
 using HighCode.Infrastructure.Entities;
 
@@ -13,6 +14,7 @@ public class AppMapperProfile : Profile
         CreateMap<CodeTaskSolution, SolutionDTO>()
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
         CreateMap<Comment, CommentDTO>()
+            .ForMember(dest => dest.IsAuthorBanned, opt => opt.MapFrom(src => src.Author.Role == UserRoleTypes.Banned))
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
         CreateMap<Leaderboard, LeaderboardDTO>()
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName));

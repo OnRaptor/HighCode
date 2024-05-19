@@ -5,6 +5,294 @@
     "version": "v1"
   },
   "paths": {
+    "/api/collectionoftasks/CreateCollection": {
+      "post": {
+        "tags": [
+          "CollectionOfTasks"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCollectionCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCollectionCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCollectionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collectionoftasks/EditCollection": {
+      "post": {
+        "tags": [
+          "CollectionOfTasks"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditCollectionCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditCollectionCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EditCollectionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collectionoftasks/AddTasksToCollection": {
+      "post": {
+        "tags": [
+          "CollectionOfTasks"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTasksToCollectionCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTasksToCollectionCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddTasksToCollectionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collectionoftasks/RemoveTaskFromCollection": {
+      "post": {
+        "tags": [
+          "CollectionOfTasks"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveTaskFromCollectionCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveTaskFromCollectionCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveTaskFromCollectionCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collectionoftasks/GetCollections": {
+      "get": {
+        "tags": [
+          "CollectionOfTasks"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetCollectionsQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetCollectionsQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetCollectionsQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetCollectionsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/collectionoftasks/GetTasksInCollection": {
+      "get": {
+        "tags": [
+          "CollectionOfTasks"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetTaskInCollectionQuery"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetTaskInCollectionQuery"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetTaskInCollectionQuery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTaskInCollectionResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/comments/PostComment": {
       "post": {
         "tags": [
@@ -746,7 +1034,7 @@
         }
       }
     },
-    "/api/tasks/GetPopularSolutions": {
+    "/api/tasks/GetPopularTasks": {
       "get": {
         "tags": [
           "Tasks"
@@ -931,6 +1219,23 @@
   },
   "components": {
     "schemas": {
+      "AddTasksToCollectionCommand": {
+        "type": "object",
+        "properties": {
+          "collectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "BanUserCommand": {
         "type": "object",
         "properties": {
@@ -954,6 +1259,27 @@
         },
         "additionalProperties": false
       },
+      "CollectionOfTasksDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "isPublished": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "CommentDTO": {
         "type": "object",
         "properties": {
@@ -968,6 +1294,10 @@
           "authorName": {
             "type": "string",
             "nullable": true
+          },
+          "authorId": {
+            "type": "string",
+            "format": "uuid"
           },
           "anotherAuthor": {
             "type": "string",
@@ -1003,6 +1333,18 @@
           },
           "isMine": {
             "type": "boolean"
+          },
+          "isAuthorBanned": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateCollectionCommand": {
+        "type": "object",
+        "properties": {
+          "collection": {
+            "$ref": "#/components/schemas/CollectionOfTasksDTO"
           }
         },
         "additionalProperties": false
@@ -1018,6 +1360,19 @@
           "success": {
             "type": "boolean",
             "default": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EditCollectionCommand": {
+        "type": "object",
+        "properties": {
+          "collectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "collection": {
+            "$ref": "#/components/schemas/CollectionOfTasksDTO"
           }
         },
         "additionalProperties": false
@@ -1121,6 +1476,37 @@
         },
         "additionalProperties": false
       },
+      "GetCollectionsQuery": {
+        "type": "object",
+        "properties": {
+          "unPublishedOnly": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetCollectionsResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "default": "SUCCESS",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionOfTasksDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "GetCommentsResponse": {
         "type": "object",
         "properties": {
@@ -1184,7 +1570,7 @@
           "tasks": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TaskDTO"
+              "$ref": "#/components/schemas/PopularTaskItem"
             },
             "nullable": true
           }
@@ -1248,6 +1634,38 @@
           },
           "isTestingAvailable": {
             "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTaskInCollectionQuery": {
+        "type": "object",
+        "properties": {
+          "collectionId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetTaskInCollectionResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "default": "SUCCESS",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskDTO"
+            },
             "nullable": true
           }
         },
@@ -1337,6 +1755,19 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PopularTaskItem": {
+        "type": "object",
+        "properties": {
+          "task": {
+            "$ref": "#/components/schemas/TaskDTO"
+          },
+          "solutionsCount": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1503,6 +1934,20 @@
         },
         "additionalProperties": false
       },
+      "RemoveTaskFromCollectionCommand": {
+        "type": "object",
+        "properties": {
+          "collectionId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false
+      },
       "SaveSolutionCommand": {
         "type": "object",
         "properties": {
@@ -1659,8 +2104,7 @@
             "nullable": true
           },
           "isPublished": {
-            "type": "boolean",
-            "nullable": true
+            "type": "boolean"
           },
           "category": {
             "type": "string",

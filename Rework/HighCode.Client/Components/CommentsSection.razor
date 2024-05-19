@@ -26,7 +26,12 @@
         @foreach (var comment in comments)
         {
             <MudStack AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Row="true">
-                <MudText Typo="Typo.h6">@("@" + comment.AuthorName)</MudText>
+                <MudText
+                    Style=@("text-decoration:" + (comment.IsAuthorBanned ? "line-through" : "none"))
+                    Color=@(comment.IsAuthorBanned ? Color.Error : Color.Default)
+                    Typo="Typo.h6">
+                    @("@" + comment.AuthorName)
+                </MudText>
                 <MudText Typo="Typo.caption">@comment.DateCreated</MudText>
             </MudStack>
             <MudText Typo="Typo.body1">@comment.Content</MudText>
@@ -49,7 +54,10 @@
                 </AuthorizeView>
 
                 <AuthorizeView Policy="StaffOnly">
-                    <MudButton OnClick="() => BanUser(comment.AuthorId)" Color="Color.Error">Заблокировать пользователя</MudButton>
+                    @if (comment is { IsAuthorBanned: false, IsMine: false })
+                    {
+                        <MudButton OnClick="() => BanUser(comment)" Color="Color.Error">Заблокировать пользователя</MudButton>
+                    }
                 </AuthorizeView>
                 
             </MudStack>
@@ -68,7 +76,12 @@
                     @foreach (var reply in comment.Replies)
                     {
                         <MudStack AlignItems="AlignItems.Center" Row="true">
-                            <MudText Typo="Typo.h6">@("@" + reply.AuthorName)</MudText>
+                            <MudText
+                                Style=@("text-decoration:" + (reply.IsAuthorBanned ? "line-through" : "none"))
+                                Color=@(reply.IsAuthorBanned ? Color.Error : Color.Default)
+                                Typo="Typo.h6">
+                                @("@" + reply.AuthorName)
+                            </MudText>
                             <MudSpacer/>
                             <MudText Typo="Typo.caption">@reply.DateCreated</MudText>
                         </MudStack>
@@ -93,7 +106,10 @@
                             </AuthorizeView>
 
                             <AuthorizeView Policy="StaffOnly">
-                                <MudButton OnClick="() => BanUser(comment.AuthorId)" Color="Color.Error">Заблокировать пользователя</MudButton>
+                                @if (comment is { IsAuthorBanned: false, IsMine: false })
+                                {
+                                    <MudButton OnClick="() => BanUser(reply)" Color="Color.Error">Заблокировать пользователя</MudButton>
+                                }
                             </AuthorizeView>
                         </MudStack>
                     }
@@ -265,12 +281,14 @@
         }
     }
 
-    private async void BanUser(Guid authorId)
+    private async void BanUser(CommentDTO comment)
     {
         try
         {
-            var deleteResponse = await Api.BanUser(new BanUserCommand { UserId = authorId });
+            var deleteResponse = await Api.BanUser(new BanUserCommand { UserId = comment.AuthorId });
             SnackbarService.Add(deleteResponse.Message, Severity.Info);
+            comment.IsAuthorBanned = true;
+            StateHasChanged();
         }
         catch (ApiException e)
         {

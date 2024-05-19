@@ -14,4 +14,5 @@ public class CommentDTO
     public List<CommentDTO>? Replies { get; set; }
     public int RepliesCount { get; set; }
     public bool IsMine { get; set; }
+    public bool IsAuthorBanned { get; set; }
 }

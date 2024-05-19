@@ -42,8 +42,8 @@ public class GetCommentsHandler(
                         c.Id,
                         correlationContext.GetUserId().GetValueOrDefault());
                 commentDto.IsMine = c.AuthorId == userId;
-                if (c.TargetType == TargetTypeForComment.Reply)
-                    return commentDto; //нет смысла дальше искать ответы если это итак ответ
+                if (c.TargetType == TargetTypeForComment.Reply) //нет смысла дальше искать ответы если это итак ответ
+                    return commentDto; 
                 var replies = await _commentRepository.GetCommentsForType(TargetTypeForComment.Reply, c.Id);
                 commentDto.RepliesCount = replies.Count();
                 return commentDto;

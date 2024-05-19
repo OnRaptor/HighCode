@@ -67,7 +67,7 @@
                     </CardHeaderContent>
                     <CardHeaderActions>
                         <AuthorizeView Policy="StaffOnly">
-                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditTaskClick(task.Id)" Variant="Variant.Text" Color="Color.Warning"></MudIconButton>
+                            <MudIconButton Icon="@Icons.Material.Filled.Edit" OnClick="() => EditTaskClick(task)" Variant="Variant.Text" Color="Color.Warning"></MudIconButton>
                         </AuthorizeView>
                     </CardHeaderActions>
                 </MudCardHeader>
@@ -155,18 +155,15 @@
         await base.OnAfterRenderAsync(firstRender);
     }
 
-    private async void EditTaskClick(Guid taskId)
+    private async void EditTaskClick(TaskDTO oldTask)
     {
         try
         {
-            
-            var taskResponse = await api.GetTask(taskId);
-
             var dialog = await DialogService.ShowAsync<EditTaskDialog>(null,
                 new DialogParameters<EditTaskDialog>
                 {
                     {
-                        x => x.Task, taskResponse.Task
+                        x => x.Task, oldTask
                     }
                 },
                 new DialogOptions()
@@ -178,14 +175,14 @@
 
             if (dialogResult.Canceled) return;
 
-            var task = dialogResult.Data as TaskDTO;
+            var newTask = dialogResult.Data as TaskDTO;
             var r = await api.EditTask(new EditTaskCommand()
             {
-                TaskId = taskId,
-                Task = task
+                TaskId = oldTask.Id,
+                Task = newTask
             });
             SnackbarService.Add(r.Message, Severity.Info);
-            await LoadTasks();
+            StateHasChanged();
         }
         catch (ApiException e)
         {

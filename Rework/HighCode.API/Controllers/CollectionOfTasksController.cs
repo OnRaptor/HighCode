@@ -1,4 +1,5 @@
 ﻿using HighCode.Domain.ApiRequests.CollectionOfTasks;
+using HighCode.Domain.ApiResponses.CollectionOfTasks;
 using HighCode.Domain.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HighCode.API.Controllers;
 
+[Route("api/collectionoftasks/[action]")]
 public class CollectionOfTasksController(IMediator _mediator, ILogger<CommentsController> logger)
     : BaseApiController<CommentsController>(_mediator, logger)
 {
@@ -50,18 +52,18 @@ public class CollectionOfTasksController(IMediator _mediator, ILogger<CommentsCo
     }
 
     [HttpGet]
-    [ProducesResponseType<SimpleResponse>(200)]
+    [ProducesResponseType<GetCollectionsResponse>(200)]
     public async Task<IActionResult> GetCollections(
-        [FromBody] GetCollectionsQuery command,
+        [FromQuery] GetCollectionsQuery command,
         CancellationToken cancellationToken)
     {
         return await RequestAsync(command, cancellationToken);
     }
 
     [HttpGet]
-    [ProducesResponseType<SimpleResponse>(200)]
+    [ProducesResponseType<GetTaskInCollectionResponse>(200)]
     public async Task<IActionResult> GetTasksInCollection(
-        [FromBody] GetTaskInCollectionQuery command,
+        [FromQuery] GetTaskInCollectionQuery command,
         CancellationToken cancellationToken)
     {
         return await RequestAsync(command, cancellationToken);

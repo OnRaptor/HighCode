@@ -3,7 +3,7 @@ using HighCode.Domain.ApiResponses.CollectionOfTasks;
 using HighCode.Domain.Responses;
 using MediatR;
 
-namespace HighCode.Application.ApiHandlers.Command.CollectionOfTasks;
+namespace HighCode.Application.ApiHandlers.Queries.CollectionOfTasks;
 
 public class GetCollectionsHandler(
     ResponseFactory<GetCollectionsResponse> responseFactory)
