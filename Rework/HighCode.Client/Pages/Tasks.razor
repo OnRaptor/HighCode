@@ -13,8 +13,11 @@
     <MudStack Wrap="Wrap.Wrap" Row="true" Spacing="2">
         <MudText Typo="Typo.h6">Задачи (@CodeTasks?.Count)</MudText>
         <AuthorizeView Policy="StaffOnly">
-            <MudButton OnClick="AddTaskClick" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
+            <MudButton OnClick="() => AddTaskClick()" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
             <MudSwitch Label="Неопубликованные" @bind-Value="@showUnPublishedOnly" @bind-Value:after="LoadTasks" T="bool"/>
+        </AuthorizeView>
+        <AuthorizeView Policy="UserOnly">
+            <MudButton OnClick="() => AddTaskClick(true)" Variant="Variant.Filled" Color="Color.Primary">Предложить задачу</MudButton>
         </AuthorizeView>
     </MudStack>
     @if (CodeTasks == null)
@@ -76,10 +79,10 @@
                     <MudStack Row="true">
                         @if (!string.IsNullOrEmpty(task.Category))
                         {
-                            <MudChip Variant="Variant.Filled" Color="Color.Primary">@task.Category</MudChip>
+                            <MudChip OnClick='() => ApplyFilterValue("category", task.Category)' Variant="Variant.Filled" Color="Color.Info">@task.Category</MudChip>
                         }
-                        <MudChip Variant="Variant.Filled">@task.ProgrammingLanguage</MudChip>
-                        <MudChip Variant="Variant.Filled">@(TaskDTO.ComplexityToString(task.Complexity.GetValueOrDefault()))</MudChip>
+                        <MudChip OnClick='() => ApplyFilterValue("language", task.ProgrammingLanguage)' Variant="Variant.Filled">@task.ProgrammingLanguage</MudChip>
+                        <MudChip OnClick='() => ApplyFilterValue("complexity", task.Complexity)' Variant="Variant.Filled">@(TaskDTO.ComplexityToString(task.Complexity.GetValueOrDefault()))</MudChip>
                     </MudStack>
                 </MudCardContent>
                 <MudCardActions>
@@ -191,9 +194,16 @@
         }
     }
 
-    private async void AddTaskClick()
+    private async void AddTaskClick(bool userSuggest=false)
     {
-        var dialog = await DialogService.ShowAsync<CreateTaskDialog>(null, new DialogOptions()
+        var dialog = await DialogService.ShowAsync<CreateTaskDialog>(null,
+        new DialogParameters<CreateTaskDialog>
+        {
+            {
+                x => x.isUserSuggest, userSuggest
+            }
+        },
+        new DialogOptions()
         {
             MaxWidth = MaxWidth.Medium,
             FullWidth = true
