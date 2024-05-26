@@ -3,7 +3,7 @@
 @using HighCode.Domain.Responses
 @using Refit
 @using HighCode.Domain.ApiRequests.UserProfile
-@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "AllAuthNotBanned")]
+@attribute [Microsoft.AspNetCore.Authorization.Authorize]
 @inject ISnackbar SnackbarService
 @inject IHighCodeAPI Api;
 
@@ -14,43 +14,54 @@
     }
     else
     {
-        <MudCard Class="pt-0">
-            <MudCardHeader Class="pb-0 ">
-                <CardHeaderContent>
+        <AuthorizeView Policy="AllAuthNotBanned">
+            <MudCard Class="pt-0">
+                <MudCardHeader Class="pb-0 ">
+                    <CardHeaderContent>
+                        @if (isEditing)
+                        {
+                            <MudTextField T="string" @bind-Value="userName" FullWidth="true" Lines="1" Variant="Variant.Outlined" Label="Никнейм"/>
+                        }
+                        else
+                        {
+                            <MudText Typo="Typo.h6">@userName</MudText>
+                        }
+                    </CardHeaderContent>
+                    <CardHeaderActions>
+                        <MudIconButton Class="mt-4" OnClick="() => isEditing = !isEditing" Icon="@Icons.Material.Filled.Edit"></MudIconButton>
+                    </CardHeaderActions>
+                </MudCardHeader>
+                <MudCardContent Class="pt-0">
                     @if (isEditing)
                     {
-                        <MudTextField T="string" @bind-Value="userName" FullWidth="true" Lines="1" Variant="Variant.Outlined" Label="Никнейм"/>
+                        <MudTextField @bind-Value="bio" T="string" FullWidth="true" Lines="3" Variant="Variant.Outlined" Label="Описание"/>
+                        <MudButton OnClick="SaveProfileData" FullWidth="true" Color="Color.Primary">Сохранить</MudButton>
                     }
                     else
                     {
-                        <MudText Typo="Typo.h6">@userName</MudText>
+                        <MudText Typo="Typo.caption" Style="font-size: 9px;">Описание</MudText>
+                        <MudText>@bio</MudText>
                     }
-                </CardHeaderContent>
-                <CardHeaderActions>
-                    <MudIconButton Class="mt-4" OnClick="() => isEditing = !isEditing" Icon="@Icons.Material.Filled.Edit"></MudIconButton>
-                </CardHeaderActions>
-            </MudCardHeader>
-            <MudCardContent Class="pt-0">
-                @if (isEditing)
-                {
-                    <MudTextField @bind-Value="bio" T="string" FullWidth="true" Lines="3" Variant="Variant.Outlined" Label="Описание"/>
-                    <MudButton OnClick="SaveProfileData" FullWidth="true" Color="Color.Primary">Сохранить</MudButton>
-                }
-                else
-                {
-                    <MudText Typo="Typo.caption" Style="font-size: 9px;">Описание</MudText>
-                    <MudText>@bio</MudText>
-                }
-            </MudCardContent>
-        </MudCard>
+                </MudCardContent>
+            </MudCard>
+        </AuthorizeView>
 
         <MudTabs Elevation="2" Rounded="true" ApplyEffectsToContainer="true" PanelClass="pa-2" Centered="true" Class="mt-2">
-            <MudTabPanel Text="Статистика">
-                <MudText Typo="Typo.body1">Количество очков: @response.Statistics.ratingsScore.GetValueOrDefault()</MudText>
-                <MudText Typo="Typo.body1">Позиция в рейтинге: @response.Statistics.ratingsPosition.GetValueOrDefault()</MudText>
-                <MudText Typo="Typo.body1">Количество решенных задач: @response.Statistics.completedTasks</MudText>
-            </MudTabPanel>
+            <AuthorizeView Policy="AllAuthNotBanned">
+                <MudTabPanel Text="Статистика">
+                    <MudText Typo="Typo.body1">Количество очков: @response.Statistics.ratingsScore.GetValueOrDefault()</MudText>
+                    <MudText Typo="Typo.body1">Позиция в рейтинге: @response.Statistics.ratingsPosition.GetValueOrDefault()</MudText>
+                    <MudText Typo="Typo.body1">Количество решенных задач: @response.Statistics.completedTasks</MudText>
+                </MudTabPanel>
+            </AuthorizeView>
             <MudTabPanel Text="Задачи">
+                @if (!response.Solutions.Any())
+                {
+                    <MudContainer>
+                        <MudText Typo="Typo.h6">Нет задач</MudText>
+                        <MudButton Color="Color.Primary" Href="/tasks">Начать решать</MudButton>
+                    </MudContainer>
+                }
                 @foreach (var solution in response.Solutions)
                 {
                     <MudStack AlignItems="AlignItems.Center" Class="mt-2" Row="true" Justify="Justify.SpaceBetween">

@@ -31,8 +31,8 @@ builder.Services.AddAuthorizationCore(opts =>
             .RequireRole("Moderator", "Administrator");
     });
     //возможно не нужна
-    opts.AddPolicy("UnAuthOnly", policy =>
-        policy.RequireAssertion(assert => !assert.User.Identity.IsAuthenticated));
+    opts.AddPolicy("UserOnly", policy =>
+        policy.RequireRole("User"));
 
     opts.AddPolicy("DeleteCommentAccess",
         policy =>
