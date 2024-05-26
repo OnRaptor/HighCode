@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace HighCode.API.Controllers;
 
 [Route("api/profile/[action]")]
-public class ProfileController(IMediator _mediator, ILogger<LeaderboardController> logger)
-    : BaseApiController<LeaderboardController>(_mediator, logger)
+public class ProfileController(IMediator _mediator, ILogger<ProfileController> logger)
+    : BaseApiController<ProfileController>(_mediator, logger)
 {
     [HttpGet]
     [Authorize]

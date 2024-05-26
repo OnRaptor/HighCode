@@ -28,7 +28,9 @@ builder.Services.AddMediatR(options =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(opt =>
-    opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")), ServiceLifetime.Transient);
+        opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")),
+    ServiceLifetime.Transient
+);
 
 builder.Services.AddAuthorizationBuilder()
     .AddPolicy("AllAuthNotBanned", policy =>

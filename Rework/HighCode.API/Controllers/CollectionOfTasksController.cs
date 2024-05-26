@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace HighCode.API.Controllers;
 
 [Route("api/collectionoftasks/[action]")]
-public class CollectionOfTasksController(IMediator _mediator, ILogger<CommentsController> logger)
-    : BaseApiController<CommentsController>(_mediator, logger)
+public class CollectionOfTasksController(IMediator _mediator, ILogger<CollectionOfTasksController> logger)
+    : BaseApiController<CollectionOfTasksController>(_mediator, logger)
 {
     [HttpPost]
     [Authorize("StaffOnly")]

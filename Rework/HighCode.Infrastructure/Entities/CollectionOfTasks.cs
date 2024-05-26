@@ -3,7 +3,7 @@
 public class CollectionOfTasks
 {
     public Guid Id { get; set; }
-    public IEnumerable<CodeTask> Tasks { get; set; }
+    public List<CodeTask> Tasks { get; set; }
     public string Title { get; set; }
     public string Description { get; set; }
     public Guid AuthorId { get; set; }

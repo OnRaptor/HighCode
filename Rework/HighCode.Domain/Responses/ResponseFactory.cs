@@ -60,4 +60,5 @@ public class ResponseFactory<TResponse> where TResponse : ResponseBase
             StatusCode = HttpStatusCode.OK
         };
     }
+    
 }

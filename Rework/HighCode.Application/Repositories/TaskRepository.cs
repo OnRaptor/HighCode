@@ -34,7 +34,7 @@ public class TaskRepository
 
     public async Task<IEnumerable<CodeTask>> GetAllTasks()
     {
-        return await _context.CodeTasks.AsNoTracking().ToListAsync();
+        return await _context.CodeTasks.AsNoTracking().Include(x => x.Author).ToListAsync();
     }
 
     public IEnumerable<(CodeTask task, int count)> GetPopularTasks()

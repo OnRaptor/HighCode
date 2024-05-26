@@ -9,12 +9,14 @@ public class CodeTask
     public string CodeTemplate { get; set; }
     public int Complexity { get; set; }
     public bool IsPublished { get; set; }
+    public bool IsSuggested { get; set; }
     public DateTime? CreateDate { get; set; }
     public string? Category { get; set; }
     public string ProgrammingLanguage { get; set; }
     public Guid? AuthorId { get; set; }
     public User? Author { get; set; }
-
+    public IEnumerable<CollectionOfTasks> CollectionsOfTasks { get; set; }
+    
     public static string ComplexityToString(int complexity)
     {
         return complexity switch

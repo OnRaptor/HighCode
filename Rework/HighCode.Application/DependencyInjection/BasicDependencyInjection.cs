@@ -24,6 +24,7 @@ public static class BasicDependencyInjection
         services.AddTransient<SolutionRepository>();
         services.AddTransient<ReactionRepository>();
         services.AddTransient<LeaderboardRepository>();
+        services.AddTransient<TaskCollectionRepository>();
         services.AddTransient<RatingService>();
         services.AddTransient<StatisticRepository>();
         services.AddTransient<CorrelationContext>();

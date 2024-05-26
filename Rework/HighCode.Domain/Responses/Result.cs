@@ -16,8 +16,7 @@ public record Result<TResponse> where TResponse : ResponseBase
 
 public record Result
 {
-    public string Response { get; init; }
-
+    public string? Response { get; init; }
     public ErrorResponse Error { get; init; }
     public HttpStatusCode StatusCode { get; init; }
 }

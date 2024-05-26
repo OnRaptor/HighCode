@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace HighCode.API.Controllers;
 
 [Route("api/reactions/[action]")]
-public class ReactionController(IMediator _mediator, ILogger<UserController> logger)
-    : BaseApiController<UserController>(_mediator, logger)
+public class ReactionController(IMediator _mediator, ILogger<ReactionController> logger)
+    : BaseApiController<ReactionController>(_mediator, logger)
 {
     [HttpPost]
     [Authorize("AllAuthNotBanned")]

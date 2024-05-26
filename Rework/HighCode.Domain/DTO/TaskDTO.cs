@@ -10,6 +10,8 @@ public class TaskDTO
     public int? Complexity { get; set; }
     public string ProgrammingLanguage { get; set; }
     public bool IsPublished { get; set; }
+    public bool IsSuggested { get; set; }
+    public string? AuthorName { get; set; }
     public string? Category { get; set; }
 
     public static string ComplexityToString(int complexity)

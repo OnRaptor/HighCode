@@ -9,7 +9,9 @@ public class AppMapperProfile : Profile
 {
     public AppMapperProfile()
     {
-        CreateMap<CodeTask, TaskDTO>();
+        CreateMap<CodeTask, TaskDTO>()
+            .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
+        ;
         CreateMap<TaskDTO, CodeTask>();
         CreateMap<CodeTaskSolution, SolutionDTO>()
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
@@ -18,5 +20,9 @@ public class AppMapperProfile : Profile
             .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author.UserName));
         CreateMap<Leaderboard, LeaderboardDTO>()
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName));
+        CreateMap<Leaderboard, LeaderboardDTO>()
+            .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName));
+        CreateMap<CollectionOfTasksDTO, CollectionOfTasks>();
+        CreateMap<CollectionOfTasks, CollectionOfTasksDTO>();
     }
 }

@@ -7,6 +7,7 @@ using HighCode.Domain.ApiRequests.Tasks;
 using HighCode.Domain.ApiResponses.Tasks;
 using HighCode.Domain.Constants;
 using HighCode.Domain.DTO;
+using HighCode.Domain.Models;
 using HighCode.Domain.Responses;
 using MediatR;
 
@@ -25,11 +26,23 @@ public class GetAllTaskHandler(
     public async Task<Result<GetAllTaskResponse>> Handle(GetAllTaskQuery request, CancellationToken cancellationToken)
     {
         var allTasks = (await taskRepository.GetAllTasks()).ToArray();
-        if (correlationContext.GetUserRole() != "User" && request.IsUnPublishedOnly.GetValueOrDefault())
-            allTasks = allTasks.Where(x => !x.IsPublished).ToArray();
-        else
-            allTasks = allTasks.Where(x => x.IsPublished).ToArray();
-
+        switch (request.GroupType)
+        {
+            case GetAllGroupTypes.Default:
+                allTasks = allTasks.Where(x => x is { IsPublished: true, IsSuggested: false }).ToArray();
+                break;
+            case GetAllGroupTypes.UnPublishedOnly:
+                if (correlationContext.GetUserRole() != "User")
+                    allTasks = allTasks.Where(x => !x.IsPublished).ToArray();
+                break;
+            case GetAllGroupTypes.SuggestedOnly:
+                if (correlationContext.GetUserRole() != "User")
+                    allTasks = allTasks.Where(x => x.IsSuggested).ToArray();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        
         if (request.Filters != null)
             foreach (var filter in request.Filters)
             {

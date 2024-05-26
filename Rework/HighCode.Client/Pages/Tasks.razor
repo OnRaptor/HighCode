@@ -1,5 +1,6 @@
 ﻿@page "/tasks"
 @using HighCode.Domain.DTO
+@using HighCode.Domain.Models
 @using HighCode.Domain.Responses
 @using HighCode.Domain.Constants
 @using HighCode.Domain.ApiRequests.Tasks
@@ -14,7 +15,6 @@
         <MudText Typo="Typo.h6">Задачи (@CodeTasks?.Count)</MudText>
         <AuthorizeView Policy="StaffOnly">
             <MudButton OnClick="AddTaskClick" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
-            <MudSwitch Label="Неопубликованные" @bind-Value="@showUnPublishedOnly" @bind-Value:after="LoadTasks" T="bool"/>
         </AuthorizeView>
     </MudStack>
     @if (CodeTasks == null)
@@ -94,7 +94,7 @@
 </MudContainer>
 @code {
     ICollection<TaskDTO>? CodeTasks { get; set; }
-    bool showUnPublishedOnly;
+    GetAllGroupTypes requestGroupType = GetAllGroupTypes.Default;
     string searchQuery { get; set; }
 
     Dictionary<string, object?> filterValues
@@ -108,7 +108,7 @@
         {
             var r = await api.GetTasks(new GetAllTaskQuery
             {
-                IsUnPublishedOnly = showUnPublishedOnly,
+                GroupType = requestGroupType,
                 SearchQuery = searchQuery,
                 Filters = filterValues
                     .Where(x => x.Value != null)
