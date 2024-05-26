@@ -18,7 +18,7 @@ public class ServerErrorHttpHandler : DelegatingHandler
         {
             var error = new HttpResponseMessage(HttpStatusCode.BadRequest);
             error.Content = new StringContent(JsonSerializer.Serialize(new ErrorResponse
-                { ErrorMessage = "Http error " + response?.StatusCode }));
+                { ErrorMessage = "Не удалось отправить запрос" + response?.StatusCode }));
             error.RequestMessage = request;
             return error;
         }

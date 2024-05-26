@@ -5,6 +5,10 @@
 
 <MudButton StartIcon="@Icons.Material.Filled.Task" Href="/tasks">Задачи</MudButton>
 <MudButton StartIcon="@Icons.Material.Filled.TableChart" Href="/rating">Рейтинг</MudButton>
+<MudButton StartIcon="@Icons.Material.Filled.ViewList" Href="/collections">Коллекции задач</MudButton>
+<AuthorizeView Policy="StaffOnly">
+    <MudButton StartIcon="@Icons.Material.Filled.AdminPanelSettings" Href="/admin">Администрирование</MudButton>
+</AuthorizeView>
 <MudSpacer/>
 @if (ShowThemeSwitcher)
 {

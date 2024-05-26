@@ -26,7 +26,7 @@ public class GetAllTaskHandler(
     public async Task<Result<GetAllTaskResponse>> Handle(GetAllTaskQuery request, CancellationToken cancellationToken)
     {
         var allTasks = (await taskRepository.GetAllTasks()).ToArray();
-        switch (request.GroupType)
+        switch ((GetAllGroupTypes)request.GroupType)
         {
             case GetAllGroupTypes.Default:
                 allTasks = allTasks.Where(x => x is { IsPublished: true, IsSuggested: false }).ToArray();

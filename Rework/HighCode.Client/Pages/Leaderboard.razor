@@ -1,12 +1,11 @@
 ﻿@page "/rating"
 @using HighCode.Domain.DTO
-@using HighCode.Client.Services
 @inject IHighCodeAPI api;
 
 <MudContainer MaxWidth="MaxWidth.Medium">
     @if (Leaderboards.Count == 0)
     {
-        <MudProgressCircular Indeterminate="true"/>
+        <MudProgressLinear Indeterminate="true"/>
     }
     <MudText Typo="Typo.h5">Рейтинг пользователей</MudText>
     <MudSimpleTable Loading="@(Leaderboards.Count == 0)" Hover="true">

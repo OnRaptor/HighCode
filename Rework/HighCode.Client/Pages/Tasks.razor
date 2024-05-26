@@ -1,6 +1,5 @@
 ﻿@page "/tasks"
 @using HighCode.Domain.DTO
-@using HighCode.Domain.Models
 @using HighCode.Domain.Responses
 @using HighCode.Domain.Constants
 @using HighCode.Domain.ApiRequests.Tasks
@@ -10,57 +9,62 @@
 @inject ISnackbar SnackbarService
 @inject IDialogService DialogService
 
-<MudContainer MaxWidth="MaxWidth.Small">
-    <MudStack Wrap="Wrap.Wrap" Row="true" Spacing="2">
-        <MudText Typo="Typo.h6">Задачи (@CodeTasks?.Count)</MudText>
-        <AuthorizeView Policy="StaffOnly">
-            <MudButton OnClick="() => AddTaskClick()" Variant="Variant.Filled" Color="Color.Primary">Добавить задачу</MudButton>
-        </AuthorizeView>
-        <AuthorizeView Policy="UserOnly">
-            <MudButton OnClick="() => AddTaskClick(true)" Variant="Variant.Filled" Color="Color.Primary">Предложить задачу</MudButton>
-        </AuthorizeView>
-    </MudStack>
+<MudContainer MaxWidth="MaxWidth.Medium">
     @if (CodeTasks == null)
     {
-        <MudProgressCircular Indeterminate="true"/>
+        <MudProgressLinear Indeterminate="true"/>
     }
-    else
-    {
-        <MudGrid >
-            <MudItem>
-                <MudTextField Placeholder="Поиск..." Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" FullWidth="true" T="string" @bind-Value="@searchQuery" @bind-Value:after="LoadTasks"></MudTextField>
-            </MudItem>
-            <MudItem>
-                <MudExpansionPanel Style="background: transparent;" Dense="true" DisableGutters="true" Class="mt-2" Text="Фильтры">
-                    <MudStack Spacing="2">
-                        @foreach (var filterType in filterValues.Keys)
+    <MudDrawerContainer Class="mud-height-full">
+        <MudDrawer @bind-Open="showDrawer" DisableOverlay="true" Elevation="0" Style="background-color: var(--mud-palette-background); z-index: 1">
+            <MudDrawerHeader>
+                <MudText Typo="Typo.h6">Фильтры</MudText>
+            </MudDrawerHeader>
+            <MudStack Class="ms-4 pa-2" Spacing="2">
+                @foreach (var filterType in filterValues.Keys)
+                {
+                    @switch (filterType)
+                    {
+                        case FilterTypeConstants.ByCategory:
+                        case FilterTypeConstants.ByLanguage:
                         {
-                            @switch (filterType)
-                            {
-                                case FilterTypeConstants.ByCategory:
-                                case FilterTypeConstants.ByLanguage:
-                                {
-                                    <MudTextField Variant="Variant.Outlined" Label="@filterType" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?"/>
-                                    break;
-                                }
-                                case FilterTypeConstants.ByComplexity:
-                                {
-                                    <MudSelect Variant="Variant.Outlined" T="int?" @bind-Value:get="@((int?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" Label="Сложность">
-                                        <MudSelectItem T="int?" Value="@(null)">Нет</MudSelectItem>
-                                        <MudSelectItem T="int?" Value="0">Легко</MudSelectItem>
-                                        <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
-                                        <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
-                                    </MudSelect>
-                                    break;
-                                }
-                            }
+                            <MudTextField Variant="Variant.Outlined" Label="@filterType" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?"/>
+                            break;
                         }
-                        <MudButton OnClick="ClearFilters" Color="Color.Error">Очистить фильтры</MudButton>
-                    </MudStack>
-                </MudExpansionPanel>
-            </MudItem>
-        </MudGrid>
-
+                        case FilterTypeConstants.ByComplexity:
+                        {
+                            <MudSelect Variant="Variant.Outlined" T="int?" @bind-Value:get="@((int?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" Label="Сложность">
+                                <MudSelectItem T="int?" Value="@(null)">Нет</MudSelectItem>
+                                <MudSelectItem T="int?" Value="0">Легко</MudSelectItem>
+                                <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
+                                <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
+                            </MudSelect>
+                            break;
+                        }
+                    }
+                }
+                <MudButton Variant="Variant.Outlined" OnClick="ClearFilters" Color="Color.Error">Очистить фильтры</MudButton>
+            </MudStack>
+        </MudDrawer>
+        <MudStack Wrap="Wrap.Wrap" Row="true" Spacing="2">
+            <MudText Typo="Typo.h6">Задачи (@CodeTasks?.Count)</MudText>
+            <AuthorizeView Policy="StaffOnly">
+                <MudFab Class="fixed" Style="right: 15px; bottom: 15px; z-index: 100" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddTaskClick()" Variant="Variant.Filled" Color="Color.Primary"></MudFab>
+                <MudChipSet @bind-SelectedChip:after="LoadTasks" @bind-SelectedChip="selectedGroupChip" Mandatory="true" Filter="true" Color="Color.Primary" Variant="Variant.Outlined">
+                    <MudChip Value="0" Default="true">По умолчанию</MudChip>
+                    <MudChip Value="1">Только неопубликованные</MudChip>
+                    <MudChip Value="2">Только предложенные</MudChip>
+                </MudChipSet>
+            </AuthorizeView>
+            <AuthorizeView Policy="UserOnly">
+                <MudButton OnClick="() => AddTaskClick(true)" Variant="Variant.Filled" Color="Color.Primary">Предложить задачу</MudButton>
+            </AuthorizeView>
+        </MudStack>
+        @if (CodeTasks != null)
+        {
+            <MudStack AlignItems="AlignItems.Center" Spacing="2" Row="true">
+                <MudTextField Placeholder="Поиск..." Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" FullWidth="true" T="string" @bind-Value="@searchQuery" @bind-Value:after="LoadTasks"></MudTextField>
+                <MudButton OnClick="() => showDrawer = !showDrawer">Фильтры</MudButton>
+            </MudStack>
         @foreach (var task in CodeTasks)
         {
             <MudCard Outlined="true" Class="mt-5">
@@ -76,7 +80,7 @@
                 </MudCardHeader>
                 <MudCardContent Class="pt-0">
                     <MudText Class="trim_text" Typo="Typo.body1">@task.Description</MudText>
-                    <MudStack Row="true">
+                    <MudStack Wrap="Wrap.Wrap" Row="true">
                         @if (!string.IsNullOrEmpty(task.Category))
                         {
                             <MudChip OnClick='() => ApplyFilterValue("category", task.Category)' Variant="Variant.Filled" Color="Color.Info">@task.Category</MudChip>
@@ -94,11 +98,15 @@
             </MudCard>
         }
     }
+    </MudDrawerContainer>
+
 </MudContainer>
+
 @code {
     ICollection<TaskDTO>? CodeTasks { get; set; }
-    GetAllGroupTypes requestGroupType = GetAllGroupTypes.Default;
+    MudChip? selectedGroupChip;
     string searchQuery { get; set; }
+    bool showDrawer;
 
     Dictionary<string, object?> filterValues
         = new(FilterTypeConstants
@@ -111,7 +119,7 @@
         {
             var r = await api.GetTasks(new GetAllTaskQuery
             {
-                GroupType = requestGroupType,
+                GroupType = (int)(selectedGroupChip?.Value ?? 0),
                 SearchQuery = searchQuery,
                 Filters = filterValues
                     .Where(x => x.Value != null)
@@ -136,12 +144,14 @@
             = new Dictionary<string, object>(FilterTypeConstants
                 .GetAll()
                 .Select(x => KeyValuePair.Create<string, object?>(x, null)));
+        showDrawer = false;
         await LoadTasks();
     }
 
     async void ApplyFilterValue(string type, object value)
     {
         filterValues[type] = value;
+        showDrawer = true;
         await LoadTasks();
     }
 

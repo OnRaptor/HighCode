@@ -15,8 +15,8 @@
             <MudText Typo="Typo.h5">Авторизация</MudText>
             <MudForm @bind-IsValid="Success">
                 <MudStack Spacing="2">
-                    <MudTextField Required="true" @bind-Value="LoginValue" T="string" Label="Логин" Variant="Variant.Filled"></MudTextField>
-                    <MudTextField Required="true" @bind-Value="PasswordValue" InputType="InputType.Password" T="string" Label="Пароль" Variant="Variant.Filled"></MudTextField>
+                    <MudTextField Required="true" @bind-Value="LoginValue" T="string" Label="Логин" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField Required="true" @bind-Value="PasswordValue" InputType="InputType.Password" T="string" Label="Пароль" Variant="Variant.Outlined"></MudTextField>
                     @* Нужен refresh token что бы это нормально реализовать
                     <MudCheckBox @bind-Value="IsRememberValue" T="bool">Запомнить</MudCheckBox>
                     *@
