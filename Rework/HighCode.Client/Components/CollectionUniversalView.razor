@@ -1,0 +1,209 @@
+﻿@using HighCode.Domain.DTO
+@using HighCode.Domain.Responses
+@using HighCode.Domain.ApiRequests.CollectionOfTasks
+@using Refit
+@using HighCode.Client.Components.Dialogs
+@inject ISnackbar SnackbarService
+@inject NavigationManager NavigationManager
+@inject IHighCodeAPI Api;
+@inject IDialogService DialogService
+
+
+<MudCard Class="mt-4">
+    <MudCardHeader Class="pb-0">
+        <CardHeaderContent>
+            @if (isEdit)
+            {
+                <MudTextField @bind-Value="Collection.Title" FullWidth="true" T="string" Variant="Variant.Outlined" Label="Название"/>
+            }
+            else
+            {
+                <MudText Color="Color.Primary" Typo="Typo.h5">@Collection.Title</MudText>
+            }
+        </CardHeaderContent>
+        <CardHeaderActions>
+            @if (!IsCreateMode)
+            {
+                <AuthorizeView Policy="StaffOnly">
+                    <MudIconButton OnClick="() => isEdit = !isEdit" Icon="@Icons.Material.Filled.Edit"/>
+                </AuthorizeView>
+            }
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent Class="pt-0">
+        @if (isEdit)
+        {
+            <MudTextField @bind-Value="Collection.Description" T="string" Lines="3" FullWidth="true" Variant="Variant.Outlined" Label="Описание"/>
+            <MudSwitch LabelPosition="LabelPosition.End" Label="Опубликовать" T="bool" @bind-Value="Collection.IsPublished"/>
+        }
+        else
+        {
+            <MudText Class="trim_text" Typo="Typo.body1">@Collection.Description</MudText>
+        }
+        @if (!IsCreateMode) //TODO: было бы неплохо реализовать возможность добавления задачи ещё на этапе создания
+        {
+            <MudDivider Class="mb-2 mt-2"/>
+            <MudText Typo="Typo.caption">Задачи:</MudText>
+            @if (isEdit)
+            {
+                <MudButton OnClick="AddTaskToCollection">Добавить</MudButton>
+            }
+
+            <MudStack Class="overflow-x-auto overflow-y-hidden" Row="true" AlignItems="AlignItems.Center">
+                @if (tasks == null && !IsCreateMode)
+                {
+                    <MudProgressCircular Indeterminate="true"/>
+                }
+                else if (tasks != null && !IsCreateMode)
+                {
+                    @foreach (var task in tasks)
+                    {
+                        <MudStack Spacing="2">
+                            <MudPaper MinHeight="160px" MaxHeight="160px" MaxWidth="240px" MinWidth="210px" Outlined="true" Class="pb-3 pa-2 clickable_div">
+                                <MudStack @onclick='() => NavigationManager.NavigateTo("/taskdetails/" + task.Id)' Spacing="2">
+                                    <MudText Class="trim_text_medium" Color="Color.Info" Typo="Typo.h6">@task.Title</MudText>
+                                    <MudText Style="height: 100%" Class="trim_text" Typo="Typo.body1">@task.Description</MudText>
+                                </MudStack>
+                            </MudPaper>
+                            @if (isEdit)
+                            {
+                                <MudButton OnClick="() => DeleteTaskFromCollection(task)" Color="Color.Error">Удалить</MudButton>
+                            }
+                        </MudStack>
+                    }
+                }
+            </MudStack>
+        }
+        @if (isEdit)
+        {
+            <MudButton Variant="Variant.Outlined" OnClick="() => IsCreateMode ? CreateCollection() : EditCollection()" Color="Color.Primary" FullWidth="true">
+                @(IsCreateMode ? "Создать" : "Сохранить")
+            </MudButton>
+        }
+    </MudCardContent>
+</MudCard>
+
+
+@code {
+    [Parameter] public CollectionOfTasksDTO Collection { get; set; }
+    [Parameter] public bool IsCreateMode { get; set; }
+    [Parameter] public EventCallback OnCreateCallback { get; set; }
+
+    bool isEdit;
+    List<TaskDTO>? tasks;
+
+    async Task LoadTasks()
+    {
+        try
+        {
+            var response = await Api.GetTasksInCollection(
+                new GetTaskInCollectionQuery { CollectionId = Collection.Id });
+            tasks = response.Tasks.ToList();
+            StateHasChanged();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsCreateMode)
+        {
+            isEdit = true;
+            Collection = new CollectionOfTasksDTO();
+            return;
+        }
+
+        await LoadTasks();
+        await base.OnInitializedAsync();
+    }
+
+    async Task AddTaskToCollection()
+    {
+        try
+        {
+            var dialog = await DialogService.ShowAsync<PickTaskDialog>(null,
+                new DialogOptions()
+                {
+                    MaxWidth = MaxWidth.Small
+                });
+            var dialogResult = await dialog.Result;
+
+            if (dialogResult.Canceled) return;
+
+            var pickedTask = dialogResult.Data as TaskDTO;
+
+            var r = await Api.AddTasksToCollection(new AddTasksToCollectionCommand()
+            {
+                CollectionId = Collection.Id,
+                TaskId = pickedTask.Id
+            });
+            tasks ??= [];
+            await LoadTasks();
+            SnackbarService.Add(r.Message, Severity.Info);
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    async Task DeleteTaskFromCollection(TaskDTO task)
+    {
+        try
+        {
+            var r = await Api.RemoveTaskFromCollection(new RemoveTaskFromCollectionCommand
+            {
+                CollectionId = Collection.Id,
+                TaskId = task.Id
+            });
+            await LoadTasks();
+            SnackbarService.Add(r.Message, Severity.Success);
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    async Task CreateCollection()
+    {
+        try
+        {
+            var response = await Api.CreateCollection(new CreateCollectionCommand
+            {
+                Collection = Collection
+            });
+            SnackbarService.Add(response.Message, Severity.Info);
+            await OnCreateCallback.InvokeAsync();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    async Task EditCollection()
+    {
+        try
+        {
+            var response = await Api.EditCollection(new EditCollectionCommand
+            {
+                Collection = Collection
+            });
+            SnackbarService.Add(response.Message, Severity.Info);
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+}

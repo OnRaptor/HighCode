@@ -47,6 +47,8 @@
 
     private void Create()
     {
+        if (isUserSuggest)
+            _task.IsSuggested = true;
         MudDialog.Close(DialogResult.Ok(_task));
     }
 

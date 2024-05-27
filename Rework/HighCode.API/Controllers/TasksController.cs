@@ -21,7 +21,7 @@ public class TasksController(
     : BaseApiController<TasksController>(_mediator, logger)
 {
     [HttpPost]
-    [Authorize("StaffOnly")]
+    [Authorize("AllAuthNotBanned")]
     [ProducesResponseType<SimpleResponse>(200)]
     public async Task<IActionResult> CreateTask(
         [FromBody] TaskDTO task,

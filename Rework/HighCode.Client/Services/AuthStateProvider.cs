@@ -23,9 +23,7 @@ public class AuthStateProvider : AuthenticationStateProvider
         if (claims != null)
             identity = new ClaimsIdentity(claims, "jwt");
 
-        var user = new ClaimsPrincipal(identity);
-        var state = new AuthenticationState(user);
-
+        var state = new AuthenticationState(new ClaimsPrincipal(identity));
         NotifyAuthenticationStateChanged(Task.FromResult(state));
         return state;
     }

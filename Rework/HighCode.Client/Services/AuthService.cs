@@ -6,12 +6,16 @@ using HighCode.Domain.Constants;
 
 namespace HighCode.Client.Services;
 
-public class AuthService(ILocalStorageService localStorage, HttpClient http)
+public class AuthService(ILocalStorageService localStorage, HttpClient http, ILogger<AuthService> logger)
 {
-    public UserRoleTypes? CurrentRole { get; set; }
-    public bool IsAuthenticated { get; set; }
-    
-    public async Task<string?> GetToken() => await localStorage.GetItemAsStringAsync("token");
+    private UserRoleTypes? CurrentRole { get; set; }
+    private bool IsAuthenticated { get; set; }
+
+    private async Task<string?> GetToken()
+    {
+        return await localStorage.GetItemAsStringAsync("token");
+    }
+
     public event Action<ClaimsPrincipal>? AuthStateChanged;
 
     public async Task SaveAuthData(string token, DateTime validTo)
@@ -25,9 +29,11 @@ public class AuthService(ILocalStorageService localStorage, HttpClient http)
     private async Task<bool> ValidateToken()
     {
         var tokenValid = await localStorage.GetItemAsync<DateTime?>("tokenValid");
-        IsAuthenticated = tokenValid.HasValue && tokenValid > DateTime.UtcNow;
+        IsAuthenticated = tokenValid.HasValue && tokenValid.Value.ToUniversalTime() > DateTime.UtcNow;
         if (IsAuthenticated)
             CurrentRole = await localStorage.GetItemAsync<UserRoleTypes?>("role");
+        else
+            await RemoveToken();
 
         return IsAuthenticated;
     }
@@ -46,9 +52,10 @@ public class AuthService(ILocalStorageService localStorage, HttpClient http)
     public async Task<IEnumerable<Claim>?> GetClaims()
     {
         var token = await GetToken();
-        if (string.IsNullOrEmpty(token) && !await ValidateToken())
+        if (string.IsNullOrEmpty(token))
             return null;
-
+        if (!await ValidateToken())
+            return null;
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         return GetClaims(token);
     }

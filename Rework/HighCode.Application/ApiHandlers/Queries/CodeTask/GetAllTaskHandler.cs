@@ -26,18 +26,25 @@ public class GetAllTaskHandler(
     public async Task<Result<GetAllTaskResponse>> Handle(GetAllTaskQuery request, CancellationToken cancellationToken)
     {
         var allTasks = (await taskRepository.GetAllTasks()).ToArray();
+        var isModer =
+            correlationContext.GetUserRole() != null &&
+            correlationContext.GetUserRole() != ""
+            && correlationContext.GetUserRole() != "User"
+            && correlationContext.GetUserRole() != "Banned";
+
+        if (!isModer && (GetAllGroupTypes)request.GroupType != GetAllGroupTypes.Default)
+            return responseFactory.UnAuthResponse();
+        
         switch ((GetAllGroupTypes)request.GroupType)
         {
             case GetAllGroupTypes.Default:
                 allTasks = allTasks.Where(x => x is { IsPublished: true, IsSuggested: false }).ToArray();
                 break;
             case GetAllGroupTypes.UnPublishedOnly:
-                if (correlationContext.GetUserRole() != "User")
-                    allTasks = allTasks.Where(x => !x.IsPublished).ToArray();
+                allTasks = allTasks.Where(x => !x.IsPublished).ToArray();
                 break;
             case GetAllGroupTypes.SuggestedOnly:
-                if (correlationContext.GetUserRole() != "User")
-                    allTasks = allTasks.Where(x => x.IsSuggested).ToArray();
+                allTasks = allTasks.Where(x => x.IsSuggested).ToArray();
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

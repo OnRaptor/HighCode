@@ -23,7 +23,7 @@ public class GetCollectionsHandler(
             : collections.Where(x => x.IsPublished).ToList();
         return responseFactory.SuccessResponse(new GetCollectionsResponse
         {
-            Collections = collections.Select(mapper.Map<CollectionOfTasksDTO>)
+            Collections = collections.Select(mapper.Map<CollectionOfTasksDTO>).Reverse()
         });
     }
 }

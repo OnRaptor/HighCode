@@ -90,9 +90,19 @@
                     </MudStack>
                 </MudCardContent>
                 <MudCardActions>
-                    <MudStack Class="pl-2" Row="true" Spacing="2" Wrap="Wrap.Wrap">
-                        <MudButton Href=@("/solution/" + task.Id) Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
-                        <MudButton Href=@("/taskdetails/" + task.Id) Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
+                    <MudStack AlignItems="AlignItems.Center" Class="pl-2" Row="true" Spacing="2" Wrap="Wrap.Wrap">
+                        @if (!task.IsSuggested)
+                        {
+                            <MudButton Href=@("/solution/" + task.Id) Variant="Variant.Filled" Color="Color.Primary">Начать решать</MudButton>
+                            <MudButton Href=@("/taskdetails/" + task.Id) Variant="Variant.Text" Color="Color.Secondary">Подробнее</MudButton>
+                        }
+                        else
+                        {
+                            <AuthorizeView Policy="StaffOnly">
+                                <MudButton OnClick="() => PublishTask(task)" Variant="Variant.Filled" Color="Color.Primary">Опубликовать</MudButton>
+                                <MudText>Предложено: @@@task.AuthorName</MudText>
+                            </AuthorizeView>
+                        }
                     </MudStack>
                 </MudCardActions>
             </MudCard>
@@ -134,7 +144,7 @@
         catch (ApiException e)
         {
             var error = await e.GetContentAsAsync<ErrorResponse>();
-            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+            SnackbarService.Add(error?.ErrorMessage, Severity.Error);
         }
     }
 
@@ -235,5 +245,25 @@
         }
     }
 
+
+    private async void PublishTask(TaskDTO task)
+    {
+        try
+        {
+            task.IsSuggested = false;
+            var r = await api.EditTask(new EditTaskCommand()
+            {
+                TaskId = task.Id,
+                Task = task
+            });
+            SnackbarService.Add("Задача опубликована", Severity.Info);
+            await LoadTasks();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
 
 }

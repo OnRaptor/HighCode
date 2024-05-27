@@ -1,0 +1,54 @@
+﻿@using HighCode.Domain.DTO
+@using HighCode.Domain.ApiRequests.Tasks
+@using Refit
+@inject IHighCodeAPI api;
+
+
+<MudDialog ClassContent="pa-0">
+    <TitleContent>
+        <MudText Typo="Typo.h6">Выберите задачу</MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (tasks == null)
+        {
+            <MudSpacer/>
+            <MudProgressCircular Indeterminate="true"/>
+        }
+        else
+        {
+            <MudList Class="pb-0" Clickable="true">
+                @foreach (var task in tasks)
+                {
+                    <MudListItem OnClick="() => Pick(task)" Text="@task.Title"/>
+                }
+            </MudList>
+        }
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+
+    List<TaskDTO> tasks;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var r = await api.GetTasks(new GetAllTaskQuery());
+            tasks = r.Tasks.ToList();
+        }
+        catch (ApiException e)
+        {
+        }
+
+        await base.OnInitializedAsync();
+    }
+
+    private void Pick(TaskDTO pickedTask)
+    {
+        MudDialog.Close(DialogResult.Ok(pickedTask));
+    }
+
+}

@@ -31,6 +31,7 @@ public class BaseApiController<TController>(
             {
                 HttpStatusCode.BadRequest => BadRequest(response.Error),
                 HttpStatusCode.Conflict => Conflict(response.Error),
+                HttpStatusCode.Unauthorized => Conflict(response.Error),
                 _ => Ok(response.Response)
             };
         }

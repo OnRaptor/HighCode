@@ -30,7 +30,8 @@ public class EditTaskHandler(
             CodeTemplate = request.Task.CodeTemplate ?? baseTask.CodeTemplate,
             AuthorId = baseTask.AuthorId,
             IsPublished = request.Task.IsPublished,
-            Category = request.Task.Category ?? baseTask.Category
+            Category = request.Task.Category ?? baseTask.Category,
+            IsSuggested = request.Task.IsSuggested
         };
         if (await repository.EditTask(task))
             return responseFactory.SuccessResponse(new SimpleResponse { Message = "Задача обновлена" });
