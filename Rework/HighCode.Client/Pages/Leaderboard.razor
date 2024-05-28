@@ -7,27 +7,30 @@
     {
         <MudProgressLinear Indeterminate="true"/>
     }
-    <MudText Typo="Typo.h5">Рейтинг пользователей по очкам решений</MudText>
-    <MudSimpleTable Loading="@(Leaderboards.Count == 0)" Hover="false">
-        <thead>
-        <tr>
-            <th style="text-align: center; vertical-align: middle">Место</th>
-            <th style="text-align: center; vertical-align: middle">Пользователь</th>
-            <th style="text-align: center; vertical-align: middle">Очки</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @foreach (var l in Leaderboards.Select((x, i) => new { index = i, leaderboard = x }))
-        {
+    else
+    {
+        <MudText Typo="Typo.h5">Рейтинг пользователей по очкам решений</MudText>
+        <MudSimpleTable Loading="@(Leaderboards.Count == 0)" Hover="false">
+            <thead>
             <tr>
-                <td style="text-align: center; vertical-align: middle">@(l.index + 1)</td>
-                <td style="text-align: center; vertical-align: middle">@l.leaderboard.Username</td>
-                <td style="text-align: center; vertical-align: middle">@l.leaderboard.Score</td>
+                <th style="text-align: center; vertical-align: middle">Место</th>
+                <th style="text-align: center; vertical-align: middle">Пользователь</th>
+                <th style="text-align: center; vertical-align: middle">Очки</th>
             </tr>
-        }
-        </tbody>
-    </MudSimpleTable>
+            </thead>
+
+            <tbody>
+            @foreach (var l in Leaderboards.Select((x, i) => new { index = i, leaderboard = x }))
+            {
+                <tr>
+                    <td style="text-align: center; vertical-align: middle">@(l.index + 1)</td>
+                    <td style="text-align: center; vertical-align: middle">@l.leaderboard.Username</td>
+                    <td style="text-align: center; vertical-align: middle">@l.leaderboard.Score</td>
+                </tr>
+            }
+            </tbody>
+        </MudSimpleTable>
+    }
 </MudContainer>
 
 @code {

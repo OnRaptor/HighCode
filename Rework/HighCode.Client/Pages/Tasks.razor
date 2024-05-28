@@ -125,6 +125,8 @@
 
     async Task LoadTasks()
     {
+        CodeTasks = null;
+        StateHasChanged();
         try
         {
             var r = await api.GetTasks(new GetAllTaskQuery
@@ -170,12 +172,10 @@
         return filterValues[type];
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-            await LoadTasks();
-
-        await base.OnAfterRenderAsync(firstRender);
+        await LoadTasks();
+        await base.OnInitializedAsync();
     }
 
     private async void EditTaskClick(TaskDTO oldTask)

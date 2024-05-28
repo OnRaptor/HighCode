@@ -1,8 +1,8 @@
 ﻿@using HighCode.Domain.DTO
 @using HighCode.Domain.Responses
-@using HighCode.Domain.ApiRequests.CollectionOfTasks
 @using Refit
 @using HighCode.Client.Components.Dialogs
+@using HighCode.Domain.ApiRequests.CollectionOfTasks
 @inject ISnackbar SnackbarService
 @inject NavigationManager NavigationManager
 @inject IHighCodeAPI Api;
@@ -96,8 +96,7 @@
     {
         try
         {
-            var response = await Api.GetTasksInCollection(
-                new GetTaskInCollectionQuery { CollectionId = Collection.Id });
+            var response = await Api.GetTasksInCollection(Collection.Id);
             tasks = response.Tasks.ToList();
             StateHasChanged();
         }
@@ -193,6 +192,7 @@
     {
         try
         {
+            isEdit = false;
             var response = await Api.EditCollection(new EditCollectionCommand
             {
                 Collection = Collection

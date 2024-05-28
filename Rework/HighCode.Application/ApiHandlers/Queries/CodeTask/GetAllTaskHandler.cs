@@ -27,10 +27,9 @@ public class GetAllTaskHandler(
     {
         var allTasks = (await taskRepository.GetAllTasks()).ToArray();
         var isModer =
-            correlationContext.GetUserRole() != null &&
-            correlationContext.GetUserRole() != ""
-            && correlationContext.GetUserRole() != "User"
-            && correlationContext.GetUserRole() != "Banned";
+            correlationContext.GetUserRole() != null
+            && correlationContext.GetUserRole() != UserRoleTypes.User
+            && correlationContext.GetUserRole() != UserRoleTypes.Banned;
 
         if (!isModer && (GetAllGroupTypes)request.GroupType != GetAllGroupTypes.Default)
             return responseFactory.UnAuthResponse();

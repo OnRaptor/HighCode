@@ -1,6 +1,7 @@
 ﻿#region
 
 using System.Security.Claims;
+using HighCode.Domain.Constants;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.JsonWebTokens;
 
@@ -30,10 +31,11 @@ public class CorrelationContext
             : parsedUserId;
     }
 
-    public string GetUserRole()
+    public UserRoleTypes? GetUserRole()
     {
         var context = httpContextAccessor.HttpContext;
-
-        return context?.User.FindFirstValue(ClaimTypes.Role);
+        if (Enum.TryParse<UserRoleTypes>(context?.User.FindFirstValue(ClaimTypes.Role), out var parsedUserRole))
+            return parsedUserRole;
+        return null;
     }
 }

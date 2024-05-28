@@ -18,7 +18,7 @@ public class DeleteCommentHandler(
     public async Task<Result<DeleteCommentResponse>> Handle(DeleteCommentCommand request, CancellationToken cancellationToken)
     {
         var comment = await commentRepository.GetById(request.Id);
-        if (correlationContext.GetUserRole() == UserRoleTypes.User.ToString() 
+        if (correlationContext.GetUserRole() == UserRoleTypes.User 
             && comment.AuthorId != correlationContext.GetUserId())
             return responseFactory.BadRequestResponse("У вас нет доступа");
         

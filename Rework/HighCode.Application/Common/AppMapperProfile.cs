@@ -24,5 +24,7 @@ public class AppMapperProfile : Profile
             .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User.UserName));
         CreateMap<CollectionOfTasksDTO, CollectionOfTasks>();
         CreateMap<CollectionOfTasks, CollectionOfTasksDTO>();
+        CreateMap<User, UserDTO>();
+        CreateMap<UserDTO, User>();
     }
 }

@@ -1,4 +1,5 @@
 using System.CodeDom.Compiler;
+using HighCode.Domain.ApiRequests.Admin;
 using HighCode.Domain.ApiRequests.Auth;
 using HighCode.Domain.ApiRequests.CollectionOfTasks;
 using HighCode.Domain.ApiRequests.Comments;
@@ -6,6 +7,7 @@ using HighCode.Domain.ApiRequests.Reactions;
 using HighCode.Domain.ApiRequests.Solutions;
 using HighCode.Domain.ApiRequests.Tasks;
 using HighCode.Domain.ApiRequests.UserProfile;
+using HighCode.Domain.ApiResponses.Admin;
 using HighCode.Domain.ApiResponses.Auth;
 using HighCode.Domain.ApiResponses.CollectionOfTasks;
 using HighCode.Domain.ApiResponses.Comments;
@@ -23,6 +25,42 @@ namespace HighCode.Client
     [GeneratedCode("Refitter", "0.9.9.0")]
     public partial interface IHighCodeAPI
     {
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/comments/ChangeUserRole")]
+        Task<SimpleResponse> ChangeUserRole([Body] ChangeUserRoleCommand body);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Get("/api/comments/GetUsers")]
+        Task<GetUsersResponse> GetUsers([Query] string searchQuery);
+
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
         /// Thrown when the request returns a non-success status code:
@@ -111,7 +149,7 @@ namespace HighCode.Client
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/collectionoftasks/GetCollections")]
-        Task<GetCollectionsResponse> GetCollections([Query] GetCollectionsQuery body);
+        Task<GetCollectionsResponse> GetCollections([Query] [AliasAs("UnPublishedOnly")] bool? unPublishedOnly);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">
@@ -129,7 +167,7 @@ namespace HighCode.Client
         /// </exception>
         [Headers("Accept: application/json")]
         [Get("/api/collectionoftasks/GetTasksInCollection")]
-        Task<GetTaskInCollectionResponse> GetTasksInCollection([Query] GetTaskInCollectionQuery body);
+        Task<GetTaskInCollectionResponse> GetTasksInCollection([Query] [AliasAs("CollectionId")] Guid? collectionId);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">

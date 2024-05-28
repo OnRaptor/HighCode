@@ -1,6 +1,89 @@
 ﻿@page "/admin"
-<h3>Admin</h3>
+@using HighCode.Domain.DTO
+@using HighCode.Domain.Responses
+@using Refit
+@using HighCode.Domain.ApiRequests.Admin
+@using HighCode.Domain.Constants
+@attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "StaffOnly")]
+@inject ISnackbar SnackbarService
+@inject IHighCodeAPI Api;
+
+<MudContainer MaxWidth="MaxWidth.Small">
+    @if (users == null)
+    {
+        <MudProgressLinear Indeterminate="true"/>
+    }
+    else
+    {
+        <MudText Typo="Typo.h6">Пользователи(@users.Count)</MudText>
+        <MudTextField Placeholder="Поиск..." Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" FullWidth="true" T="string" @bind-Value="@searchQuery" @bind-Value:after="LoadUsers"></MudTextField>
+        @foreach (var user in users)
+        {
+            <MudPaper Class="pa-4 mt-4">
+                <MudStack Justify="Justify.SpaceBetween" Row="true">
+                    <MudStack Justify="Justify.Center" Spacing="0">
+                        <MudText Color="Color.Info" Typo="Typo.body1">@user.UserName</MudText>
+                        @if (!string.IsNullOrEmpty(user.Description))
+                        {
+                            <MudText Class="trim_text_small" Typo="Typo.caption">@user.Description</MudText>
+                        }
+                    </MudStack>
+                    <MudSpacer/>
+                    <div style="width: 140px; max-width: 140px; min-width: 140px;">
+                        <MudSelect @bind-Value:after="() => ChangeRole(user)" Label="Роль" @bind-Value="user.Role" T="UserRoleTypes">
+                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Banned">Забанен</MudSelectItem>
+                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.User">Пользователь</MudSelectItem>
+                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Moderator">Модератор</MudSelectItem>
+                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Administrator">Админ</MudSelectItem>
+                        </MudSelect>
+                    </div>
+                </MudStack>
+            </MudPaper>
+        }
+    }
+</MudContainer>
 
 @code {
+    List<UserDTO> users;
+    string searchQuery;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+        await base.OnInitializedAsync();
+    }
+
+    async Task LoadUsers()
+    {
+        users = null;
+        StateHasChanged();
+        try
+        {
+            var r = await Api.GetUsers(searchQuery);
+            users = r.Users.ToList();
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
+
+    async Task ChangeRole(UserDTO userWithNewRole)
+    {
+        try
+        {
+            var r = await Api.ChangeUserRole(new ChangeUserRoleCommand
+            {
+                UserId = userWithNewRole.Id,
+                Role = (int)userWithNewRole.Role
+            });
+            SnackbarService.Add(r.Message, Severity.Info);
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error.ErrorMessage, Severity.Error);
+        }
+    }
 }

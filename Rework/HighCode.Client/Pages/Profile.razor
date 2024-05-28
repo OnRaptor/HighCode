@@ -102,13 +102,13 @@
     {
         try
         {
+            isEditing = false;
             var saveResponse = await Api.EditProfile(new EditUserProfileCommand
             {
                 UserName = userName,
                 Description = bio
             });
             SnackbarService.Add(saveResponse.Message, Severity.Info);
-            isEditing = false;
             StateHasChanged();
         }
         catch (ApiException e)

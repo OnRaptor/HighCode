@@ -11,7 +11,7 @@ public class AuthService(ILocalStorageService localStorage, HttpClient http, ILo
     private UserRoleTypes? CurrentRole { get; set; }
     private bool IsAuthenticated { get; set; }
 
-    private async Task<string?> GetToken()
+    public async Task<string?> GetToken()
     {
         return await localStorage.GetItemAsStringAsync("token");
     }

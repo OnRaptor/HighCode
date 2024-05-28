@@ -5,6 +5,92 @@
     "version": "v1"
   },
   "paths": {
+    "/api/comments/ChangeUserRole": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeUserRoleCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeUserRoleCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeUserRoleCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/comments/GetUsers": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "searchQuery",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/collectionoftasks/CreateCollection": {
       "post": {
         "tags": [
@@ -202,25 +288,15 @@
         "tags": [
           "CollectionOfTasks"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetCollectionsQuery"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetCollectionsQuery"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetCollectionsQuery"
-              }
+        "parameters": [
+          {
+            "name": "UnPublishedOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
             }
           }
-        },
+        ],
         "responses": {
           "409": {
             "description": "Conflict",
@@ -250,25 +326,16 @@
         "tags": [
           "CollectionOfTasks"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetTaskInCollectionQuery"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetTaskInCollectionQuery"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetTaskInCollectionQuery"
-              }
+        "parameters": [
+          {
+            "name": "CollectionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
             }
           }
-        },
+        ],
         "responses": {
           "409": {
             "description": "Conflict",
@@ -1226,12 +1293,9 @@
             "type": "string",
             "format": "uuid"
           },
-          "tasks": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TaskDTO"
-            },
-            "nullable": true
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -1255,6 +1319,19 @@
           },
           "isPublish": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ChangeUserRoleCommand": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRoleTypes"
           }
         },
         "additionalProperties": false
@@ -1367,10 +1444,6 @@
       "EditCollectionCommand": {
         "type": "object",
         "properties": {
-          "collectionId": {
-            "type": "string",
-            "format": "uuid"
-          },
           "collection": {
             "$ref": "#/components/schemas/CollectionOfTasksDTO"
           }
@@ -1436,9 +1509,9 @@
       "GetAllTaskQuery": {
         "type": "object",
         "properties": {
-          "isUnPublishedOnly": {
-            "type": "boolean",
-            "nullable": true
+          "groupType": {
+            "type": "integer",
+            "format": "int32"
           },
           "searchQuery": {
             "type": "string",
@@ -1472,15 +1545,6 @@
               "$ref": "#/components/schemas/TaskDTO"
             },
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "GetCollectionsQuery": {
-        "type": "object",
-        "properties": {
-          "unPublishedOnly": {
-            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1639,16 +1703,6 @@
         },
         "additionalProperties": false
       },
-      "GetTaskInCollectionQuery": {
-        "type": "object",
-        "properties": {
-          "collectionId": {
-            "type": "string",
-            "format": "uuid"
-          }
-        },
-        "additionalProperties": false
-      },
       "GetTaskInCollectionResponse": {
         "type": "object",
         "properties": {
@@ -1699,6 +1753,28 @@
           },
           "description": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetUsersResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "default": "SUCCESS",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDTO"
+            },
             "nullable": true
           }
         },
@@ -2106,6 +2182,13 @@
           "isPublished": {
             "type": "boolean"
           },
+          "isSuggested": {
+            "type": "boolean"
+          },
+          "authorName": {
+            "type": "string",
+            "nullable": true
+          },
           "category": {
             "type": "string",
             "nullable": true
@@ -2159,6 +2242,27 @@
           "testOutput": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UserDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userName": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "role": {
+            "$ref": "#/components/schemas/UserRoleTypes"
           }
         },
         "additionalProperties": false

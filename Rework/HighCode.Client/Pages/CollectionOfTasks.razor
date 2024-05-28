@@ -2,7 +2,6 @@
 @using HighCode.Domain.DTO
 @using HighCode.Domain.Responses
 @using HighCode.Client.Components
-@using HighCode.Domain.ApiRequests.CollectionOfTasks
 @using Refit
 @inject ISnackbar SnackbarService
 @inject NavigationManager NavigationManager
@@ -44,7 +43,7 @@
     {
         try
         {
-            var response = await Api.GetCollections(new GetCollectionsQuery() { UnPublishedOnly = unPublishedOnly });
+            var response = await Api.GetCollections(unPublishedOnly);
             collections = response.Collections;
             isCreating = false;
             StateHasChanged();

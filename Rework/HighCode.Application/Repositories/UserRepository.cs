@@ -2,6 +2,7 @@
 
 using System.Data.Common;
 using HighCode.Application.Models;
+using HighCode.Domain.Constants;
 using HighCode.Infrastructure;
 using HighCode.Infrastructure.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,35 @@ public class UserRepository(AppDbContext _context)
     public async Task<bool> UpdateUserAsync(User user)
     {
         _context.Users.Update(user);
+        try
+        {
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbException ex)
+        {
+            return false;
+        }
+    }
+
+    public async Task<IEnumerable<User>> GetAllUsers()
+    {
+        return await _context.Users.AsNoTracking().ToListAsync();
+    }
+
+    public async Task<IEnumerable<User>> GetAllUsers(string searchQuery)
+    {
+        return await _context.Users
+            .AsNoTracking()
+            .Where(x => x.UserName.ToLower().Contains(searchQuery.ToLower()))
+            .ToListAsync();
+    }
+
+    public async Task<bool> ChangeUserRole(Guid userId, UserRoleTypes role)
+    {
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return false;
+        user.Role = role;
         try
         {
             await _context.SaveChangesAsync();
