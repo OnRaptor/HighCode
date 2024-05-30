@@ -1,12 +1,14 @@
 ﻿@page "/admin"
 @using HighCode.Domain.DTO
 @using HighCode.Domain.Responses
-@using Refit
+@using HighCode.Client.Services
 @using HighCode.Domain.ApiRequests.Admin
 @using HighCode.Domain.Constants
+@using Refit
 @attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "StaffOnly")]
 @inject ISnackbar SnackbarService
 @inject IHighCodeAPI Api;
+@inject AuthService AuthService;
 
 <MudContainer MaxWidth="MaxWidth.Small">
     @if (users == null)
@@ -29,14 +31,24 @@
                         }
                     </MudStack>
                     <MudSpacer/>
-                    <div style="width: 140px; max-width: 140px; min-width: 140px;">
-                        <MudSelect @bind-Value:after="() => ChangeRole(user)" Label="Роль" @bind-Value="user.Role" T="UserRoleTypes">
-                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Banned">Забанен</MudSelectItem>
-                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.User">Пользователь</MudSelectItem>
-                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Moderator">Модератор</MudSelectItem>
-                            <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Administrator">Админ</MudSelectItem>
-                        </MudSelect>
-                    </div>
+                    @if (user.Role is not (UserRoleTypes.Administrator or UserRoleTypes.Moderator)
+                         && AuthService.CurrentRole != UserRoleTypes.Administrator)
+                    {
+                        <div style="width: 140px; max-width: 140px; min-width: 140px;">
+                            <MudSelect @bind-Value:after="() => ChangeRole(user)" Label="Роль" @bind-Value="user.Role" T="UserRoleTypes">
+                                <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Banned">Забанен</MudSelectItem>
+                                <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.User">Пользователь</MudSelectItem>
+                                <AuthorizeView Roles="Administrator">
+                                    <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Moderator">Модератор</MudSelectItem>
+                                    <MudSelectItem T="UserRoleTypes" Value="UserRoleTypes.Administrator">Админ</MudSelectItem>
+                                </AuthorizeView>
+                            </MudSelect>
+                        </div>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.body1">@user.Role.ToString()</MudText>
+                    }
                 </MudStack>
             </MudPaper>
         }

@@ -40,7 +40,7 @@ public class GetAllTaskHandler(
                 allTasks = allTasks.Where(x => x is { IsPublished: true, IsSuggested: false }).ToArray();
                 break;
             case GetAllGroupTypes.UnPublishedOnly:
-                allTasks = allTasks.Where(x => !x.IsPublished).ToArray();
+                allTasks = allTasks.Where(x => x is { IsPublished: false, IsSuggested: false }).ToArray();
                 break;
             case GetAllGroupTypes.SuggestedOnly:
                 allTasks = allTasks.Where(x => x.IsSuggested).ToArray();

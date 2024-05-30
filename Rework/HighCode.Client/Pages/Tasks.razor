@@ -88,6 +88,10 @@
                         <MudChip OnClick='() => ApplyFilterValue("language", task.ProgrammingLanguage)' Variant="Variant.Filled">@task.ProgrammingLanguage</MudChip>
                         <MudChip OnClick='() => ApplyFilterValue("complexity", task.Complexity)' Variant="Variant.Filled">@(TaskDTO.ComplexityToString(task.Complexity.GetValueOrDefault()))</MudChip>
                     </MudStack>
+                    @if (!string.IsNullOrEmpty(task.AuthorName))
+                    {
+                        <MudText Color="Color.Tertiary" Typo="Typo.caption">Предложено пользователем @task.AuthorName</MudText>
+                    }
                 </MudCardContent>
                 <MudCardActions>
                     <MudStack AlignItems="AlignItems.Center" Class="pl-2" Row="true" Spacing="2" Wrap="Wrap.Wrap">
@@ -99,8 +103,7 @@
                         else
                         {
                             <AuthorizeView Policy="StaffOnly">
-                                <MudButton OnClick="() => PublishTask(task)" Variant="Variant.Filled" Color="Color.Primary">Опубликовать</MudButton>
-                                <MudText>Предложено: @@@task.AuthorName</MudText>
+                                <MudButton OnClick="() => PublishTask(task)" Variant="Variant.Filled" Color="Color.Primary">Одобрить</MudButton>
                             </AuthorizeView>
                         }
                     </MudStack>

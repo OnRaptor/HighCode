@@ -4,6 +4,7 @@ using AutoMapper;
 using HighCode.Application.Repositories;
 using HighCode.Application.Services;
 using HighCode.Domain.ApiRequests.Tasks;
+using HighCode.Domain.Constants;
 using HighCode.Domain.Responses;
 using MediatR;
 
@@ -22,7 +23,8 @@ public class CreateTaskHandler(
     {
         var task = mapper.Map<Infrastructure.Entities.CodeTask>(request.Task);
         task.CreateDate = DateTime.UtcNow;
-        task.AuthorId = correlationContext.GetUserId();
+        if (correlationContext.GetUserRole() is UserRoleTypes.User)
+            task.AuthorId = correlationContext.GetUserId();
         if (await taskRepository.CreateTask(task))
             return responseFactory.SuccessResponse(new SimpleResponse { Message = "Задача успешно создана" });
         return responseFactory.BadRequestResponse("Не удалось создать задачу");

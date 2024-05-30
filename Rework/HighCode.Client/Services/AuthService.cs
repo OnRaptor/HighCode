@@ -8,7 +8,7 @@ namespace HighCode.Client.Services;
 
 public class AuthService(ILocalStorageService localStorage, HttpClient http, ILogger<AuthService> logger)
 {
-    private UserRoleTypes? CurrentRole { get; set; }
+    public UserRoleTypes? CurrentRole { get; set; }
     private bool IsAuthenticated { get; set; }
 
     public async Task<string?> GetToken()
