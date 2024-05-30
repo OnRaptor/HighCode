@@ -69,7 +69,7 @@ public class CsharpRunner : IRunner
                 }
                 catch (Exception ex)
                 {
-                    sb.AppendLine($"{method.Name}: ❌Завален");
+                    sb.AppendLine($"{method.Name}: ❌Провален");
                     finalException = ex.InnerException?.Message;
                 }
             }

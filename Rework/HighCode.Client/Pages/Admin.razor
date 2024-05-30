@@ -31,8 +31,9 @@
                         }
                     </MudStack>
                     <MudSpacer/>
-                    @if (user.Role is not (UserRoleTypes.Administrator or UserRoleTypes.Moderator)
-                         && AuthService.CurrentRole != UserRoleTypes.Administrator)
+                    @if ((user.Role is not (UserRoleTypes.Administrator or UserRoleTypes.Moderator)
+                          && AuthService.CurrentRole == UserRoleTypes.Moderator)
+                         || AuthService.CurrentRole == UserRoleTypes.Administrator)
                     {
                         <div style="width: 140px; max-width: 140px; min-width: 140px;">
                             <MudSelect @bind-Value:after="() => ChangeRole(user)" Label="Роль" @bind-Value="user.Role" T="UserRoleTypes">

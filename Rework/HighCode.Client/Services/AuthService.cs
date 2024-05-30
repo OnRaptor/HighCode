@@ -22,8 +22,15 @@ public class AuthService(ILocalStorageService localStorage, HttpClient http, ILo
     {
         await localStorage.SetItemAsStringAsync("token", token);
         await localStorage.SetItemAsync("tokenValid", validTo);
+        var claims = GetClaims(token);
+        if (Enum.TryParse<UserRoleTypes>(claims?.FirstOrDefault(x => x.Type == ClaimTypes.Role)?.Value, out var role))
+        {
+            await localStorage.SetItemAsync("role", role);
+            CurrentRole = role;
+        }
+
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        AuthStateChanged?.Invoke(new ClaimsPrincipal(new ClaimsIdentity(GetClaims(token), "jwt")));
+        AuthStateChanged?.Invoke(new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt")));
     }
 
     private async Task<bool> ValidateToken()
