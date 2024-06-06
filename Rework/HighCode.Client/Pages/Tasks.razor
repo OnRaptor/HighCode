@@ -31,7 +31,7 @@
                         }
                         case FilterTypeConstants.ByLanguage:
                         {
-                            <MudTextField Variant="Variant.Outlined" Label="Язык программ." @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?"/>
+                            <MudTextField Variant="Variant.Outlined" Label="Язык программирования" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?"/>
                             break;
                         }
                         case FilterTypeConstants.ByComplexity:

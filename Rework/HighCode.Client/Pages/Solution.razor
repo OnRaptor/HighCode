@@ -151,6 +151,7 @@
             if (publishResponse.Success)
             {
                 isPublished = true;
+                SnackbarService.Add(publishResponse.Message, Severity.Info);
                 StateHasChanged();
             }
         }
@@ -171,11 +172,10 @@
                 TaskId = taskId,
                 IsPublish = false
             });
-            if (changePublishResponse.Success)
-            {
-                isPublished = false;
-                StateHasChanged();
-            }
+            if (!changePublishResponse.Success) return;
+            isPublished = false;
+            SnackbarService.Add(changePublishResponse.Message, Severity.Info);
+            StateHasChanged();
         }
         catch (ApiException e)
         {

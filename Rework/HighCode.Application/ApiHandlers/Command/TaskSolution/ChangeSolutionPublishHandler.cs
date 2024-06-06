@@ -41,10 +41,15 @@ public class ChangeSolutionPublishHandler(
                 if (testResult.Response is { Success: true, TestResult: not null })
                 {
                     existingSolution.FirstPublishDate = DateTime.UtcNow;
-                    await ratingService.ApplyScoreFromCompletedTask(
+                    var score = await ratingService.ApplyScoreFromCompletedTask(
                         userId.Value,
                         testResult.Response.TestResult,
                         await taskRepository.GetById(request.TaskId));
+                    if (score.HasValue)
+                        return responseFactory.SuccessResponse(new SimpleResponse
+                        {
+                            Message = $"За ваше решение назначено {score.Value} баллов"
+                        });
                 }
             }
             catch

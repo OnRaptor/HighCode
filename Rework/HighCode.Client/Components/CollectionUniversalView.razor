@@ -43,7 +43,7 @@
         @if (!IsCreateMode) //TODO: было бы неплохо реализовать возможность добавления задачи ещё на этапе создания
         {
             <MudDivider Class="mb-2 mt-2"/>
-            <MudText Typo="Typo.caption">Задачи:</MudText>
+            <MudText Typo="Typo.caption" Style="font-size: 16px">Задачи:</MudText>
             @if (isEdit)
             {
                 <MudButton OnClick="AddTaskToCollection">Добавить</MudButton>
