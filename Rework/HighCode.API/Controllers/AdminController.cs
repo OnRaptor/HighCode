@@ -7,7 +7,7 @@ using SimpleResponse = HighCode.Domain.Responses.SimpleResponse;
 
 namespace HighCode.API.Controllers;
 
-[Route("api/comments/[action]")]
+[Route("api/admin/[action]")]
 [ApiController]
 public class AdminController(IMediator _mediator, ILogger<CollectionOfTasksController> logger)
     : BaseApiController<CollectionOfTasksController>(_mediator, logger)
@@ -27,6 +27,36 @@ public class AdminController(IMediator _mediator, ILogger<CollectionOfTasksContr
     [ProducesResponseType<GetUsersResponse>(200)]
     public async Task<IActionResult> GetUsers(
         [FromQuery] GetUsersQuery command,
+        CancellationToken cancellationToken)
+    {
+        return await RequestAsync(command, cancellationToken);
+    }
+
+    [HttpGet]
+    [Authorize("StaffOnly")]
+    [ProducesResponseType<GetStoreValuesResponse>(200)]
+    public async Task<IActionResult> GetStoreValues(
+        [FromQuery] GetStoreValuesQuery command,
+        CancellationToken cancellationToken)
+    {
+        return await RequestAsync(command, cancellationToken);
+    }
+
+    [HttpPost]
+    [Authorize("StaffOnly")]
+    [ProducesResponseType<SimpleResponse>(200)]
+    public async Task<IActionResult> AddStoreValue(
+        [FromBody] AddStoreValueCommand command,
+        CancellationToken cancellationToken)
+    {
+        return await RequestAsync(command, cancellationToken);
+    }
+
+    [HttpDelete]
+    [Authorize("StaffOnly")]
+    [ProducesResponseType<SimpleResponse>(200)]
+    public async Task<IActionResult> DeleteStoreValue(
+        [FromQuery] DeleteStoreValueCommand command,
         CancellationToken cancellationToken)
     {
         return await RequestAsync(command, cancellationToken);

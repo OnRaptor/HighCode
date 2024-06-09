@@ -26,5 +26,7 @@ public class AppMapperProfile : Profile
         CreateMap<CollectionOfTasks, CollectionOfTasksDTO>();
         CreateMap<User, UserDTO>();
         CreateMap<UserDTO, User>();
+        CreateMap<StoreValue, StoreValueDTO>();
+        CreateMap<StoreValueDTO, StoreValue>();
     }
 }

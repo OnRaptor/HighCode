@@ -21,4 +21,5 @@ public class AppDbContext : DbContext
     public DbSet<CommentsReactions> CommentsReactions { get; set; }
     public DbSet<CodeTaskSolutionReactions> CodeTaskSolutionReactions { get; set; }
     public DbSet<Leaderboard> Leaderboard { get; set; }
+    public DbSet<StoreValue> StoreValues { get; set; }
 }

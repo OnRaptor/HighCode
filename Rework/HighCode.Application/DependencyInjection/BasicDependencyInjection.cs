@@ -27,6 +27,7 @@ public static class BasicDependencyInjection
         services.AddTransient<TaskCollectionRepository>();
         services.AddTransient<RatingService>();
         services.AddTransient<StatisticRepository>();
+        services.AddTransient<StoreValuesRepository>();
         services.AddTransient<CorrelationContext>();
         services.AddTransient<IRunner, CsharpRunner>();
         services.AddTransient<RunnerFactory>();
