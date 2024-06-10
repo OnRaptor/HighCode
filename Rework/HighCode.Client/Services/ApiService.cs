@@ -16,6 +16,7 @@ using HighCode.Domain.ApiResponses.Reactions;
 using HighCode.Domain.ApiResponses.Solutions;
 using HighCode.Domain.ApiResponses.Tasks;
 using HighCode.Domain.ApiResponses.UserProfile;
+using HighCode.Domain.Constants;
 using HighCode.Domain.DTO;
 using HighCode.Domain.Responses;
 using Refit;
@@ -40,7 +41,7 @@ namespace HighCode.Client
         /// </list>
         /// </exception>
         [Headers("Accept: application/json")]
-        [Post("/api/comments/ChangeUserRole")]
+        [Post("/api/admin/ChangeUserRole")]
         Task<SimpleResponse> ChangeUserRole([Body] ChangeUserRoleCommand body);
 
         /// <returns>Success</returns>
@@ -58,8 +59,63 @@ namespace HighCode.Client
         /// </list>
         /// </exception>
         [Headers("Accept: application/json")]
-        [Get("/api/comments/GetUsers")]
+        [Get("/api/admin/GetUsers")]
         Task<GetUsersResponse> GetUsers([Query] string searchQuery);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Get("/api/admin/GetStoreValues")]
+        Task<GetStoreValuesResponse> GetStoreValues([Query] [AliasAs("Type")] StoreValueType? type,
+            [Query] [AliasAs("StoreId")] Guid? storeId);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Post("/api/admin/AddStoreValue")]
+        Task<SimpleResponse> AddStoreValue([Body] AddStoreValueCommand command);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">
+        /// Thrown when the request returns a non-success status code:
+        /// <list type="table">
+        /// <listheader>
+        /// <term>Status</term>
+        /// <description>Description</description>
+        /// </listheader>
+        /// <item>
+        /// <term>409</term>
+        /// <description>Conflict</description>
+        /// </item>
+        /// </list>
+        /// </exception>
+        [Headers("Accept: application/json")]
+        [Delete("/api/admin/DeleteStoreValue")]
+        Task<SimpleResponse> DeleteStoreValue([Query] [AliasAs("StoreId")] Guid? storeId);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">

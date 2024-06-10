@@ -5,12 +5,15 @@
 @using HighCode.Domain.ApiRequests.Admin
 @using HighCode.Domain.Constants
 @using Refit
+@using HighCode.Client.Components.Dialogs
 @attribute [Microsoft.AspNetCore.Authorization.Authorize(Policy = "StaffOnly")]
 @inject ISnackbar SnackbarService
 @inject IHighCodeAPI Api;
 @inject AuthService AuthService;
+@inject IDialogService DialogService;
 
 <MudContainer MaxWidth="MaxWidth.Small">
+    <MudButton OnClick="ShowEditStoreValuesDialog" FullWidth="true" Variant="Variant.Outlined" Color="Color.Info">Редактировать справочники</MudButton>
     @if (users == null)
     {
         <MudProgressLinear Indeterminate="true"/>
@@ -99,4 +102,10 @@
             SnackbarService.Add(error.ErrorMessage, Severity.Error);
         }
     }
+
+    private async void ShowEditStoreValuesDialog()
+    {
+        await DialogService.ShowAsync<EditStoreValuesDialog>("Редактирование справочников");
+    }
+
 }

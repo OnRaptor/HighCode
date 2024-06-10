@@ -1,5 +1,6 @@
 ﻿using HighCode.Application.Repositories;
 using HighCode.Domain.ApiRequests.Admin;
+using HighCode.Domain.Constants;
 using HighCode.Domain.Responses;
 using HighCode.Infrastructure.Entities;
 using MediatR;
@@ -15,7 +16,7 @@ public class AddStoreValueHandler(
     {
         await repository.AddStoreValue(new StoreValue
         {
-            Type = request.Type,
+            Type = (StoreValueType)request.Type,
             Value = request.Value
         });
         return responseFactory.SuccessResponse(new SimpleResponse

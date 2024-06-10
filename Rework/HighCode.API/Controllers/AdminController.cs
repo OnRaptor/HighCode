@@ -33,7 +33,6 @@ public class AdminController(IMediator _mediator, ILogger<CollectionOfTasksContr
     }
 
     [HttpGet]
-    [Authorize("StaffOnly")]
     [ProducesResponseType<GetStoreValuesResponse>(200)]
     public async Task<IActionResult> GetStoreValues(
         [FromQuery] GetStoreValuesQuery command,

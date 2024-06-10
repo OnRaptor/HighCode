@@ -1,0 +1,79 @@
+﻿@using HighCode.Domain.Constants
+@using HighCode.Domain.DTO
+@using Refit
+@using HighCode.Domain.ApiRequests.Admin
+@inject IHighCodeAPI Api;
+
+<MudStack Style="margin: 10px;" Spacing="2">
+    <MudTextField @bind-Value="newStoreValue" Label="Значение" T="string"></MudTextField>
+    <MudButton OnClick="AddNewStoreValue" Variant="Variant.Outlined" Color="Color.Primary">Добавить</MudButton>
+    <MudSelect @bind-Value:after="LoadValues" @bind-Value="selectedType" Variant="Variant.Outlined" Label="Тип" T="StoreValueType">
+        <MudSelectItem T="StoreValueType" Value="StoreValueType.ProgrammingLanguage">Язык программирования</MudSelectItem>
+        <MudSelectItem T="StoreValueType" Value="StoreValueType.Category">Категория</MudSelectItem>
+    </MudSelect>
+
+    @if (storeValues != null)
+        foreach (var value in storeValues)
+        {
+            <MudStack Justify="Justify.Center" Row="true" Spacing="1">
+                <MudText>@value.Value</MudText>
+                <MudSpacer/>
+                <MudButton OnClick="() => DeleteStoreValue(value.Id)" Color="Color.Error">Удалить</MudButton>
+            </MudStack>
+        }
+</MudStack>
+
+@code {
+    string newStoreValue;
+    StoreValueType selectedType = StoreValueType.Category;
+    List<StoreValueDTO> storeValues;
+
+    async Task LoadValues()
+    {
+        try
+        {
+            var response = await Api.GetStoreValues(selectedType, null);
+            storeValues = response.StoreValues;
+        }
+        catch (ApiException e)
+        {
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadValues();
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task AddNewStoreValue()
+    {
+        if (!string.IsNullOrWhiteSpace(newStoreValue))
+            try
+            {
+                await Api.AddStoreValue(new AddStoreValueCommand
+                {
+                    Type = (int)selectedType,
+                    Value = newStoreValue
+                });
+                await LoadValues();
+            }
+            catch (ApiException e)
+            {
+            }
+    }
+
+    private async Task DeleteStoreValue(Guid storeValueId)
+    {
+        try
+        {
+            await Api.DeleteStoreValue(storeValueId);
+            await LoadValues();
+        }
+        catch (ApiException e)
+        {
+        }
+    }
+
+}

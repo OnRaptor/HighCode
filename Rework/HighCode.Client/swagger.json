@@ -5,7 +5,7 @@
     "version": "v1"
   },
   "paths": {
-    "/api/comments/ChangeUserRole": {
+    "/api/admin/ChangeUserRole": {
       "post": {
         "tags": [
           "Admin"
@@ -53,7 +53,7 @@
         }
       }
     },
-    "/api/comments/GetUsers": {
+    "/api/admin/GetUsers": {
       "get": {
         "tags": [
           "Admin"
@@ -84,6 +84,139 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetUsersResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/GetStoreValues": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "Type",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/StoreValueType"
+            }
+          },
+          {
+            "name": "StoreId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetStoreValuesResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/AddStoreValue": {
+      "post": {
+        "tags": [
+          "Admin"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddStoreValueCommand"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddStoreValueCommand"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddStoreValueCommand"
+              }
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/DeleteStoreValue": {
+      "delete": {
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "StoreId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
                 }
               }
             }
@@ -1286,6 +1419,19 @@
   },
   "components": {
     "schemas": {
+      "AddStoreValueCommand": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/StoreValueType"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "AddTasksToCollectionCommand": {
         "type": "object",
         "properties": {
@@ -1331,7 +1477,8 @@
             "format": "uuid"
           },
           "role": {
-            "$ref": "#/components/schemas/UserRoleTypes"
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1675,6 +1822,28 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SolutionDTO"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetStoreValuesResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "default": "SUCCESS",
+            "nullable": true
+          },
+          "success": {
+            "type": "boolean",
+            "default": true
+          },
+          "storeValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StoreValueDTO"
             },
             "nullable": true
           }
@@ -2146,6 +2315,31 @@
           }
         },
         "additionalProperties": false
+      },
+      "StoreValueDTO": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "$ref": "#/components/schemas/StoreValueType"
+          },
+          "value": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "StoreValueType": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "TaskDTO": {
         "type": "object",

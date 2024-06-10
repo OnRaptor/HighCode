@@ -6,14 +6,24 @@
     <DialogContent>
         <MudForm @bind-IsValid="modelValid">
             <MudTextField Immediate="true" Counter="50" MaxLength="50" Required="true" @bind-Value="Task.Title" T="string" Label="Название" Variant="Variant.Outlined"></MudTextField>
-            <MudTextField Immediate="true" Counter="10" MaxLength="10" Required="true" @bind-Value="Task.ProgrammingLanguage" T="string" Label="Язык программирования" Variant="Variant.Outlined"></MudTextField>
+            <MudSelect Immediate="true" Counter="10" MaxLength="10" Required="true" @bind-Value="Task.ProgrammingLanguage" T="string" Label="Язык программирования" Variant="Variant.Outlined">
+                @foreach (var i in StoreValues.prs)
+                {
+                    <MudSelectItem T="string" Value="@i">@i</MudSelectItem>
+                }
+            </MudSelect>
             <MudSelect Variant="Variant.Outlined" T="int?" @bind-Value="Task.Complexity" Label="Сложность">
                 <MudSelectItem T="int?" Value="0">Легко</MudSelectItem>
                 <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
                 <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
             </MudSelect>
             <MudCheckBox T="bool" @bind-Value="Task.IsPublished">Опубликовать</MudCheckBox>
-            <MudTextField Required="true" @bind-Value="Task.Category" T="string" Label="Категория" Variant="Variant.Outlined"></MudTextField>
+            <MudSelect Required="true" @bind-Value="Task.Category" T="string" Label="Категория" Variant="Variant.Outlined">
+                @foreach (var i in StoreValues.categories)
+                {
+                    <MudSelectItem T="string" Value="@i">@i</MudSelectItem>
+                }
+            </MudSelect>
             <MudTextField Lines="3" Required="true" @bind-Value="Task.Description" T="string" Label="Описание" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="6" Required="true" @bind-Value="Task.CodeTemplate" T="string" Label="Шаблон кода" Variant="Variant.Outlined"></MudTextField>
             <MudTextField Lines="6" Required="true" @bind-Value="Task.UnitTestCode" T="string" Label="Код для тестирования" Variant="Variant.Outlined"></MudTextField>
@@ -29,6 +39,7 @@
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter] public TaskDTO Task { get; set; }
+    [Parameter] public (List<string> prs, List<string> categories) StoreValues { get; set; }
 
     bool modelValid;
 

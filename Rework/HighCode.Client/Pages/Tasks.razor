@@ -14,8 +14,8 @@
     {
         <MudProgressLinear Indeterminate="true"/>
     }
-    <MudDrawerContainer Class="mud-height-full">
-        <MudDrawer @bind-Open="showDrawer" DisableOverlay="true" Elevation="0" Style="background-color: var(--mud-palette-background); z-index: 1">
+    <MudDrawerContainer Style="min-height: 600px;" Class="mud-height-full">
+        <MudDrawer Fixed="true" @bind-Open="showDrawer" DisableOverlay="true" Elevation="0" Style="background-color: var(--mud-palette-background); z-index: 1; overflow: hidden">
             <MudDrawerHeader>
                 <MudText Typo="Typo.h6">Фильтры</MudText>
             </MudDrawerHeader>
@@ -26,18 +26,33 @@
                     {
                         case FilterTypeConstants.ByCategory:
                         {
-                            <MudTextField Variant="Variant.Outlined" Label="Категория" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?"/>
+                            <MudSelect Clearable="true" Variant="Variant.Outlined" Label="Категория" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?">
+                                @if (categories != null)
+                                {
+                                    @foreach (var c in categories)
+                                    {
+                                        <MudSelectItem T="string" Value="@c.Value">@c.Value</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
                             break;
                         }
                         case FilterTypeConstants.ByLanguage:
                         {
-                            <MudTextField Variant="Variant.Outlined" Label="Язык программирования" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?"/>
+                            <MudSelect Clearable="true" Variant="Variant.Outlined" Label="Язык программирования" @bind-Value:get="@((string?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" T="string?">
+                                @if (programmingLangugages != null)
+                                {
+                                    @foreach (var pr in programmingLangugages)
+                                    {
+                                        <MudSelectItem T="string" Value="@pr.Value">@pr.Value</MudSelectItem>
+                                    }
+                                }
+                            </MudSelect>
                             break;
                         }
                         case FilterTypeConstants.ByComplexity:
                         {
-                            <MudSelect Variant="Variant.Outlined" T="int?" @bind-Value:get="@((int?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" Label="Сложность">
-                                <MudSelectItem T="int?" Value="@(null)">Нет</MudSelectItem>
+                            <MudSelect Clearable="true" Variant="Variant.Outlined" T="int?" @bind-Value:get="@((int?)GetFilterValue(filterType))" @bind-Value:set="(e) => ApplyFilterValue(filterType, e)" Label="Сложность">
                                 <MudSelectItem T="int?" Value="0">Легко</MudSelectItem>
                                 <MudSelectItem T="int?" Value="1">Средне</MudSelectItem>
                                 <MudSelectItem T="int?" Value="2">Сложно</MudSelectItem>
@@ -116,7 +131,6 @@
         }
     }
     </MudDrawerContainer>
-
 </MudContainer>
 
 @code {
@@ -124,6 +138,8 @@
     MudChip? selectedGroupChip;
     string searchQuery { get; set; }
     bool showDrawer;
+    List<StoreValueDTO> categories;
+    List<StoreValueDTO> programmingLangugages;
 
     Dictionary<string, object?> filterValues
         = new(FilterTypeConstants
@@ -182,6 +198,16 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadTasks();
+        try
+        {
+            programmingLangugages = (await api.GetStoreValues(StoreValueType.ProgrammingLanguage, null)).StoreValues;
+            categories = (await api.GetStoreValues(StoreValueType.Category, null)).StoreValues;
+        }
+        catch (ApiException e)
+        {
+            var error = await e.GetContentAsAsync<ErrorResponse>();
+            SnackbarService.Add(error?.ErrorMessage, Severity.Error);
+        }
         await base.OnInitializedAsync();
     }
 
@@ -194,6 +220,11 @@
                 {
                     {
                         x => x.Task, oldTask
+                    },
+                    {
+                        x => x.StoreValues, new ValueTuple<List<string>, List<string>>(
+                            programmingLangugages.Select(x => x.Value).ToList(),
+                            categories.Select(x => x.Value).ToList())
                     }
                 },
                 new DialogOptions()
@@ -228,6 +259,11 @@
         {
             {
                 x => x.isUserSuggest, userSuggest
+            },
+            {
+                x => x.StoreValues, new ValueTuple<List<string>, List<string>>(
+                    programmingLangugages.Select(x => x.Value).ToList(),
+                    categories.Select(x => x.Value).ToList())
             }
         },
         new DialogOptions()
