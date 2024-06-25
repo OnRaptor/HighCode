@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HighCode.Application", "Rew
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.Client", "Rework\HighCode.Client\HighCode.Client.csproj", "{DD012E67-2451-4E27-A743-86213EC3710D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HighCode.Client.MAUI", "Rework\HighCode.Client.MAUI\HighCode.Client.MAUI.csproj", "{F9198B3C-6EE1-4459-A6C7-A5CD1A70B25B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,6 +49,10 @@ Global
 		{DD012E67-2451-4E27-A743-86213EC3710D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD012E67-2451-4E27-A743-86213EC3710D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD012E67-2451-4E27-A743-86213EC3710D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9198B3C-6EE1-4459-A6C7-A5CD1A70B25B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9198B3C-6EE1-4459-A6C7-A5CD1A70B25B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9198B3C-6EE1-4459-A6C7-A5CD1A70B25B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9198B3C-6EE1-4459-A6C7-A5CD1A70B25B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -57,6 +63,7 @@ Global
 		{87FE6014-8868-4F77-8F1D-AD041F6AF21E} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
 		{3B05E253-C6A6-4A57-99DB-CEB1FFD48604} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
 		{DD012E67-2451-4E27-A743-86213EC3710D} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
+		{F9198B3C-6EE1-4459-A6C7-A5CD1A70B25B} = {7E06F88E-C997-4312-9C9C-B2DD78AFFCE5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {559A6019-2EE5-4BCA-A6DB-EFB35E69C17C}
