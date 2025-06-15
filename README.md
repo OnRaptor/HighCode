@@ -1,8 +1,6 @@
-#### О проекте
-Веб приложение где можно решать задачи по программированию с ведением статитистики, модерированием, автоматическая проверка кода.
+![image](https://github.com/user-attachments/assets/ea24b01a-56a2-403c-9114-694eb6455b22)
 
 В папке актульная версия, в проекте Legacy старая версия на ASP NET MVC
-#### Технологии: ASP.NET Core, MediatR, PostgreSQL, Blazor WASM
 #### Фронт:
 ![image](https://github.com/user-attachments/assets/da9c5689-68e3-45f1-a340-731be9fa587a)
 ![image](https://github.com/user-attachments/assets/7b39d18a-434d-457a-8537-bfca67a0417c)
